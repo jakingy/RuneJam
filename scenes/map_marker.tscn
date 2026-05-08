@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://ch8on2xej3olr"]
+
+[node name="MapMarker" type="Node2D" unique_id=903501902]
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=1707948991]
+
+[node name="Visual" type="Node2D" parent="." unique_id=1467533242]
+
+[node name="HealthRing" type="TextureProgressBar" parent="Visual" unique_id=1470271008]
+offset_right = 40.0
+offset_bottom = 40.0
+value = 75.0
+fill_mode = 4
+
+[node name="Sprite2D" type="Sprite2D" parent="Visual" unique_id=864888150]
