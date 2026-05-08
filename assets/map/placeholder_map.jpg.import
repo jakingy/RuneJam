@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cknvth8xdpbss"
-path="res://.godot/imported/HealthRing.png-e74f2e157af863eb6979b411f9ec809b.ctex"
+uid="uid://det8wijocf6py"
+path="res://.godot/imported/placeholder_map.jpg-b2651a32d18556f3162b871ce342f226.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/HealthRing.png"
-dest_files=["res://.godot/imported/HealthRing.png-e74f2e157af863eb6979b411f9ec809b.ctex"]
+source_file="res://assets/map/placeholder_map.jpg"
+dest_files=["res://.godot/imported/placeholder_map.jpg-b2651a32d18556f3162b871ce342f226.ctex"]
 
 [params]
 
