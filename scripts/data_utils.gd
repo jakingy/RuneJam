@@ -19,3 +19,28 @@ static func load_prompt_text(path: String) -> String:
 	var text = read_file_text(path)
 	prompt_cache[path] = text
 	return text
+
+static func spawn_http_request() -> HTTPRequest:
+	var main_loop: MainLoop = Engine.get_main_loop()
+	if main_loop == null:
+		return null
+	var tree := main_loop as SceneTree
+	if tree == null:
+		return null
+	var root: Window = tree.root
+	if root == null:
+		return null
+	var http := HTTPRequest.new()
+	if root.is_node_ready():
+		root.add_child(http)
+	else:
+		root.call_deferred("add_child", http)
+	var tries: int = 0
+	while is_instance_valid(http) and not http.is_inside_tree() and tries < 8:
+		await tree.process_frame
+		tries += 1
+	if not is_instance_valid(http) or not http.is_inside_tree():
+		if is_instance_valid(http):
+			http.queue_free()
+		return null
+	return http

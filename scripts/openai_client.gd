@@ -26,31 +26,6 @@ func _build_input_messages(
 	messages.append({"role": "user", "content": _serialize_if_json(input_obj)})
 	return messages
 
-
-func _spawn_http_request() -> HTTPRequest:
-	var main_loop := Engine.get_main_loop()
-	if main_loop == null:
-		return null
-
-	var tree := main_loop as SceneTree
-	if tree == null or tree.root == null:
-		return null
-
-	var http := HTTPRequest.new()
-	if tree.root.is_node_ready():
-		tree.root.add_child(http)
-	else:
-		tree.root.call_deferred("add_child", http)
-	var tries: int = 0
-	while is_instance_valid(http) and not http.is_inside_tree() and tries < 8:
-		await tree.process_frame
-		tries += 1
-	if not is_instance_valid(http) or not http.is_inside_tree():
-		if is_instance_valid(http):
-			http.queue_free()
-		return null
-	return http
-
 func _extract_output_text(data: Dictionary) -> String:
 	var output: Array = data.get("output", [])
 	for item in output:
@@ -70,7 +45,7 @@ func call_structured(
 	model_override: String = "",
 	effort_override: String = ""
 ) -> Dictionary:
-	var http: HTTPRequest = await _spawn_http_request()
+	var http: HTTPRequest = await DataUtils.spawn_http_request()
 	if http == null:
 		return {"error": "HTTP request setup failed: request node was not added to the scene tree"}
 
@@ -276,7 +251,7 @@ func call_text(
 	model_override: String = "",
 	effort_override: String = ""
 ) -> Dictionary:
-	var http: HTTPRequest = await _spawn_http_request()
+	var http: HTTPRequest = await DataUtils.spawn_http_request()
 	if http == null:
 		return {"error": "HTTP request setup failed: request node was not added to the scene tree"}
 
