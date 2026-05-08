@@ -1,5 +1,5 @@
-class_name ProjectDataUtils
-extends RefCounted
+class_name DataUtils
+extends Node
 
 static func load_api_key(path: String = "user://api_key.txt") -> String:
 	var file := FileAccess.open(path, FileAccess.READ)

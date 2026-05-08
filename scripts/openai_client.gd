@@ -1,12 +1,12 @@
-extends RefCounted
+extends Node
 
 var api_key: String
-var model: String = "gpt-5.4-mini"
-var reasoning_effort: String = "medium"
-var text_verbosity: String = "low"
+const DEFAULT_MODEL: String = "gpt-5.4-mini"
+const DEFAULT_REASONING: String = "medium"
+const DEFAULT_VERBOSITY: String = "low"
 
-func _init(key: String) -> void:
-	api_key = key
+func _ready() -> void:
+	api_key = DataUtils.load_api_key()
 
 func _serialize_if_json(input_obj: Variant) -> String:
 	if input_obj is String:
@@ -80,12 +80,12 @@ func call_structured(
 	])
 
 	var body = {
-		"model": model_override if not model_override.is_empty() else model,
-		"reasoning": {"effort": effort_override if not effort_override.is_empty() else reasoning_effort},
+		"model": model_override if not model_override.is_empty() else DEFAULT_MODEL,
+		"reasoning": {"effort": effort_override if not effort_override.is_empty() else DEFAULT_REASONING},
 		"input": _build_input_messages(input_obj, instructions),
 		"text": {
 			"format": {"type": "json_schema", "name": schema_name, "strict": true, "schema": schema},
-			"verbosity": text_verbosity,
+			"verbosity": DEFAULT_VERBOSITY,
 		},
 	}
 	if _has_prompt(prompt):
@@ -166,12 +166,12 @@ func call_structured_streaming(
 	])
 
 	var body := {
-		"model": model_override if not model_override.is_empty() else model,
-		"reasoning": {"effort": effort_override if not effort_override.is_empty() else reasoning_effort},
+		"model": model_override if not model_override.is_empty() else DEFAULT_MODEL,
+		"reasoning": {"effort": effort_override if not effort_override.is_empty() else DEFAULT_REASONING},
 		"input": _build_input_messages(input_obj, instructions),
 		"text": {
 			"format": {"type": "json_schema", "name": schema_name, "strict": true, "schema": schema},
-			"verbosity": text_verbosity,
+			"verbosity": DEFAULT_VERBOSITY,
 		},
 		"stream": true,
 	}
@@ -286,10 +286,10 @@ func call_text(
 	]
 
 	var body = {
-		"model": model_override if not model_override.is_empty() else model,
-		"reasoning": {"effort": effort_override if not effort_override.is_empty() else reasoning_effort},
+		"model": model_override if not model_override.is_empty() else DEFAULT_MODEL,
+		"reasoning": {"effort": effort_override if not effort_override.is_empty() else DEFAULT_REASONING},
 		"input": _build_input_messages(input_text, instructions),
-		"text": {"verbosity": text_verbosity},
+		"text": {"verbosity": DEFAULT_VERBOSITY},
 	}
 	if _has_prompt(prompt):
 		body["prompt"] = prompt
