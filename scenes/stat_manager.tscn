@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://uyf6epc5rshj"]
+
+[node name="StatManager" type="Node" unique_id=1090247400]
+
+[node name="Node" type="Node" parent="." unique_id=220601409]
