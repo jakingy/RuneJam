@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Noun" format=3 uid="uid://bk8ku2irwbhoq"]
+
+[ext_resource type="Script" uid="uid://dm0487dyx88tq" path="res://scripts/cards/noun.gd" id="1_ppdpj"]
+
+[resource]
+script = ExtResource("1_ppdpj")
+max_health = 200.0
+physical_attack = 20.0
+physical_defence = 40.0
+magic_attack = 30.0
+magic_defence = 5.0
+speed = 5.0
+metadata/_custom_type_script = "uid://dm0487dyx88tq"
