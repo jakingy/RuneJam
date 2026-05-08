@@ -11,6 +11,8 @@ func _ready() -> void:
 	)
 	print(resp)
 	print(resp["text"])
+
+	print(await PromptAPI.fuse_adjectives(["hot", "watery"]))
 	
 
 
