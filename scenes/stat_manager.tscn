@@ -1,5 +1,12 @@
 [gd_scene format=3 uid="uid://uyf6epc5rshj"]
 
+[ext_resource type="Script" uid="uid://dm0487dyx88tq" path="res://scripts/noun.gd" id="1_p11w3"]
+[ext_resource type="Script" uid="uid://c2viwf0mx13vy" path="res://scripts/adjective.gd" id="2_4khvg"]
+
 [node name="StatManager" type="Node" unique_id=1090247400]
 
-[node name="Node" type="Node" parent="." unique_id=220601409]
+[node name="Noun" type="Node" parent="." unique_id=220601409]
+script = ExtResource("1_p11w3")
+
+[node name="Adjective" type="Node" parent="." unique_id=1853414271]
+script = ExtResource("2_4khvg")

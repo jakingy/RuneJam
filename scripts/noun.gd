@@ -1,11 +1,17 @@
 extends Node
 
+class Noun:
+	var mex_health: float
+	var physical_attack: float
+	var physical_defence: float
+	var magic_attack: float
+	var magic_defence: float
+	var speed: float # determines turn order
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+	func _init(mh: float, pa: float, pd: float, ma: float, md: float, s: float):
+		mex_health = mh
+		physical_attack = pa
+		physical_defence = pd
+		magic_attack = ma
+		magic_defence = md
+		speed = s
