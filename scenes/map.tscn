@@ -1,18 +1,26 @@
 [gd_scene format=3 uid="uid://pvaxjyjrscjx"]
 
 [ext_resource type="Script" uid="uid://on1qt80s6ugp" path="res://scripts/grid_manager.gd" id="1_4xfga"]
+[ext_resource type="Texture2D" uid="uid://det8wijocf6py" path="res://assets/map/placeholder_map.jpg" id="1_paxxb"]
 
 [node name="Map" type="Control" unique_id=151688534]
 clip_contents = true
+custom_minimum_size = Vector2(1024, 1024)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="MapImage" type="TextureRect" parent="." unique_id=1596677699]
-layout_mode = 0
-offset_right = 40.0
-stretch_mode = 6
+custom_minimum_size = Vector2(1024, 1024)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_paxxb")
+stretch_mode = 5
 
 [node name="GridManager" type="Node2D" parent="MapImage" unique_id=369890628]
 script = ExtResource("1_4xfga")

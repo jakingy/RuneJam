@@ -6,9 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://cknvth8xdpbss" path="res://assets/marker/HealthRing.png" id="2_6kfhq"]
 [ext_resource type="Texture2D" uid="uid://bhvlk8cgleybv" path="res://assets/marker/placeholder_portrait.jpg" id="2_rbw48"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_reat5"]
-shader = ExtResource("1_8qftl")
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reat5"]
 bg_color = Color(1, 0.64705884, 0, 1)
 corner_radius_top_left = 100
@@ -16,17 +13,15 @@ corner_radius_top_right = 100
 corner_radius_bottom_right = 100
 corner_radius_bottom_left = 100
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_reat5"]
+shader = ExtResource("1_8qftl")
+
 [node name="MapMarker" type="Node2D" unique_id=903501902]
 script = ExtResource("1_rbw48")
 
 [node name="Shadow" type="Sprite2D" parent="." unique_id=1707948991]
 
 [node name="Visual" type="Node2D" parent="." unique_id=1467533242]
-
-[node name="Portrait" type="Sprite2D" parent="Visual" unique_id=864888150]
-material = SubResource("ShaderMaterial_reat5")
-scale = Vector2(0.35, 0.35)
-texture = ExtResource("2_rbw48")
 
 [node name="Placeholder" type="Label" parent="Visual" unique_id=1387693120]
 custom_minimum_size = Vector2(85, 85)
@@ -46,6 +41,11 @@ theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBoxFlat_reat5")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Portrait" type="Sprite2D" parent="Visual" unique_id=864888150]
+material = SubResource("ShaderMaterial_reat5")
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("2_rbw48")
 
 [node name="HealthRing" type="TextureProgressBar" parent="Visual" unique_id=1470271008]
 offset_left = -50.0
