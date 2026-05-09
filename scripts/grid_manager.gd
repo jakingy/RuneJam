@@ -107,11 +107,11 @@ func move_character(character: Dictionary, target_x: int, target_y: int) -> void
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept"):
-		# Find your test character by their ID "a"
 		var target_marker: MapMarker = marker_container.get_node_or_null("a") as MapMarker
 		
 		if target_marker != null:
-			print("Direct hit! Dealing 25 damage to character 'a'.")
-			target_marker.take_damage(25)
-		else:
-			print("No test target found on the board.")
+			# If they are currently in the air, bring them down. Otherwise, launch them up!
+			if target_marker.current_z > 0:
+				target_marker.apply_elevation(0)
+			else:
+				target_marker.apply_elevation(25)

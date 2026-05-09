@@ -9,9 +9,11 @@ extends Node2D
 @onready var shadow: Panel = $Shadow
 
 var explosion_scene: PackedScene = preload("res://scenes/exploding_effect.tscn")
+var smoke_scene: PackedScene = preload("res://scenes/landing_smoke.tscn")
 var health_tween: Tween
 
 var elevation_tween: Tween
+var current_z: int = 0
 var pixels_per_elevation_level: float = 10.0
 
 var target_portrait_size: float = 85.0
@@ -54,6 +56,10 @@ func _die() -> void:
 
 func apply_elevation(target_z: int) -> void:
 	var target_y_offset: float = float(target_z) * -pixels_per_elevation_level
+	if current_z == 0 && target_z > 0:
+		_spawn_smoke()
+	var prev_z = current_z
+	current_z = target_z
 	if elevation_tween and elevation_tween.is_valid():
 		elevation_tween.kill()
 	
@@ -61,11 +67,19 @@ func apply_elevation(target_z: int) -> void:
 	elevation_tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	elevation_tween.tween_property(visual, "position:y", target_y_offset, 0.4)
 	
-	var target_shadow_scale: float = clampf(1.0 - (float(target_z) * 0.1), 0.7, 1.0)
-	var target_shadow_alpha: float = clampf(0.5 - (float(target_z) * 0.05), 0.3, 0.8)
+	var target_shadow_scale: float = clampf(1.0 - (float(target_z) * 0.05), 0.9, 1.0)
+	var target_shadow_alpha: float = clampf(0.5 - (float(target_z) * 0.05), 0.7, 1.0)
 	elevation_tween.parallel().tween_property(shadow, "scale", Vector2(target_shadow_scale, target_shadow_scale), 0.4)
 	elevation_tween.parallel().tween_property(shadow, "modulate:a", target_shadow_alpha, 0.4)
+	
+	if prev_z > 0 and target_z == 0:
+		elevation_tween.finished.connect(_spawn_smoke)
 
+func _spawn_smoke() -> void:
+	var smoke: AnimatedSprite2D = smoke_scene.instantiate() as AnimatedSprite2D
+	if smoke != null:
+		get_parent().add_child(smoke)
+		smoke.global_position = global_position
 
 func set_ring_color(new_color: Color) -> void:
 	health_ring.tint_progress = new_color
