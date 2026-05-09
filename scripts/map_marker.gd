@@ -47,7 +47,7 @@ func take_damage(damage_amount: int) -> void:
 		health_tween.finished.connect(_die)
 
 func _die() -> void:
-	var explosion: GPUParticles2D = explosion_scene.instantiate() as GPUParticles2D
+	var explosion: AnimatedSprite2D = explosion_scene.instantiate() as AnimatedSprite2D
 	get_parent().add_child(explosion)
 	explosion.global_position = visual.global_position
 	queue_free()
