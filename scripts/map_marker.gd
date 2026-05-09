@@ -15,11 +15,6 @@ var current_z: int = 0
 var pixels_per_elevation_level: float = 10.0
 
 var target_portrait_size: float = 85.0
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	#placeholder.show()
-	# portrait.hide()
-	pass
 
 func set_health(current_hp: int, max_hp: int) -> void:
 	health_ring.max_value = max_hp
@@ -60,7 +55,7 @@ func apply_elevation(target_z: int) -> void:
 	var target_shadow_alpha: float = clampf(0.5 - (float(target_z) * 0.05), 0.7, 1.0)
 	elevation_tween.parallel().tween_property(shadow, "scale", Vector2(target_shadow_scale, target_shadow_scale), 0.4)
 	elevation_tween.parallel().tween_property(shadow, "modulate:a", target_shadow_alpha, 0.4)
-	
+
 	if prev_z > 0 and target_z == 0:
 		elevation_tween.finished.connect(_spawn_smoke)
 

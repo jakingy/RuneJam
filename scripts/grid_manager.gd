@@ -48,10 +48,40 @@ func spawn_character(character: Dictionary) -> void:
 	char_marker.request_portrait(char_noun, char_adjs)
 	char_marker.apply_elevation(character_z)
 
-func spawn_object(object: Dictionary) -> void:
-	pass
+func remove_character(character_id: String) -> void:
+	var marker: MapMarker = marker_container.get_node_or_null(character_id)
+	
+	if marker != null:
+		marker._die()
+		print("Cleanly removed marker: " + character_id)
+	else:
+		push_warning("Could not remove: Marker '%s' is not on board" % character_id)
 
-""" Testing function
+func spawn_object(object: Dictionary) -> void:
+	var object_marker: MapMarker = marker_scene.instantiate() as MapMarker
+	var object_id: String = object["id"]
+	var object_x: int = object["x"]
+	var object_y: int = object["y"]
+	var object_z: int = object["z"]
+	if object_marker == null:
+		push_error("Failed to instantiate MapMarker :(")
+		return
+
+	object_marker.name = object_id
+	marker_container.add_child(object_marker)
+	
+	if object["controller"] == "Team A":
+		object_marker.set_ring_color(Color.BLUE)
+	elif object["controller"] == "Team B":
+		object_marker.set_ring_color(Color.RED)
+	elif object["controller"] == "Neutral":
+		object_marker.set_ring_color(Color.YELLOW)
+	object_marker.position = get_pixel_position_from_grid(object_x, object_y)
+	object_marker.set_health(10000, 10000)
+	var object_noun: String = object["name"]
+	var object_adjs: Array[String] = []
+	object_marker.request_portrait(object_noun, object_adjs)
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	var character: Dictionary = {
@@ -77,9 +107,17 @@ func _ready() -> void:
 		"nouns": "murloc",
 		"adjectives": ["powerful", "muscular", "tiny head"]
 	}
-	call_deferred("spawn_character", character)
-	call_deferred("spawn_character", character_b)
-"""
+	
+	var object: Dictionary = {
+		"id": "excalibur",
+		"name": "excalibur",
+		"controller": "Neutral",
+		"x": 4,
+		"y": 4,
+		"z": 0,
+	}
+	call_deferred("spawn_object", object)
+
 
 """
 moves: Array of Character Objects
