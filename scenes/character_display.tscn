@@ -5,7 +5,7 @@
 
 [sub_resource type="Theme" id="Theme_tqxk0"]
 default_font = ExtResource("2_uhf6v")
-default_font_size = 128
+default_font_size = 16
 
 [node name="CharacterDisplay" type="PanelContainer" unique_id=938068062]
 offset_right = 357.0

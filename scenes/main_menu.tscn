@@ -25,7 +25,7 @@ theme_override_colors/default_color = Color(0.9607843, 0.92941177, 0.8392157, 1)
 theme_override_fonts/normal_font = ExtResource("1_ekxnf")
 theme_override_font_sizes/normal_font_size = 256
 bbcode_enabled = true
-text = "[wave amp=50.0 freq=5.0 connected=1]JAMGAME"
+text = "[wave amp=50.0 freq=2.0 connected=1]JAMGAME"
 horizontal_alignment = 1
 vertical_alignment = 1
 

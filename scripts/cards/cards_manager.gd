@@ -41,8 +41,8 @@ func get_base_adjectives() -> Array[Adjective]:
 	return base_adjs
 
 func fuse_nouns(noun1: Noun, noun2: Noun) -> Noun:
-	return Noun.new (
-		await PromptAPI.fuse_nouns([noun1.get_word(), noun2.get_word()]),
+	var new_noun: Noun = Noun.new (
+		await PromptAPI.fuse_nouns([noun1.get_words(), noun2.get_words()]),
 		(noun1.tier ** 2 + noun2.tier ** 2) ** 0.5,
 		(noun1.max_health_weight + noun2.max_health_weight) / 2,
 		(noun1.physical_attack_weight + noun2.physical_attack_weight) / 2,
@@ -51,10 +51,12 @@ func fuse_nouns(noun1: Noun, noun2: Noun) -> Noun:
 		(noun1.magic_defence_weight + noun2.magic_defence_weight) / 2,
 		(noun1.speed_weight + noun2.speed_weight) / 2
 	)
+	new_noun.normalise()
+	return new_noun
 
 func fuse_adjectives(adj1: Adjective, adj2: Adjective) -> Adjective:
-	return Adjective.new (
-		await PromptAPI.fuse_adjectives([adj1.get_word(), adj2.get_word()]),
+	var new_adj: Adjective = Adjective.new (
+		await PromptAPI.fuse_adjectives([adj1.get_words(), adj2.get_words()]),
 		(adj1.tier ** 2 + adj2.tier ** 2) ** 0.5,
 		(adj1.max_health_multiplier_weight + adj2.max_health_multiplier_weight) / 2,
 		(adj1.physical_attack_multiplier_weight + adj2.physical_attack_multiplier_weight) / 2,
@@ -63,6 +65,8 @@ func fuse_adjectives(adj1: Adjective, adj2: Adjective) -> Adjective:
 		(adj1.magic_defence_multiplier_weight + adj2.magic_defence_multiplier_weight) / 2,
 		(adj1.speed_multiplier_weight + adj2.speed_multiplier_weight) / 2
 	)
+	new_adj.normalise()
+	return new_adj
 
 func create_card(noun: Noun = null, adjectives: Array[Adjective] = []) -> Card:
 	return Card.new(noun, adjectives)
