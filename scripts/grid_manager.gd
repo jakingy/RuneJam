@@ -82,9 +82,8 @@ func move_characters_simultaneously(moves: Array) -> void:
 		var target_id: String = move["id"]
 		var target_grid_x: int = move["x"]
 		var target_grid_y: int = move["y"]
-		
 		var marker: MapMarker = marker_container.get_node_or_null(target_id) as MapMarker
-		
+
 		if marker != null:
 			var target_pixel_pos: Vector2 = get_pixel_position_from_grid(target_grid_x, target_grid_y)
 			board_tween.tween_property(marker, "position", target_pixel_pos, universal_move_time)
@@ -107,4 +106,12 @@ func move_character(character: Dictionary, target_x: int, target_y: int) -> void
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	if Input.is_action_just_pressed("ui_accept"):
+		# Find your test character by their ID "a"
+		var target_marker: MapMarker = marker_container.get_node_or_null("a") as MapMarker
+		
+		if target_marker != null:
+			print("Direct hit! Dealing 25 damage to character 'a'.")
+			target_marker.take_damage(25)
+		else:
+			print("No test target found on the board.")

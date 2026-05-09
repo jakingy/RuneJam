@@ -7,6 +7,8 @@ extends Node2D
 @onready var character_display: PanelContainer = $Visual/CharacterDisplay
 @onready var visual: Node2D = $Visual
 @onready var shadow: Panel = $Shadow
+
+var explosion_scene: PackedScene = preload("res://scenes/exploding_effect.tscn")
 var health_tween: Tween
 
 var elevation_tween: Tween
@@ -40,7 +42,15 @@ func take_damage(damage_amount: int) -> void:
 	health_tween = create_tween()
 	health_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	health_tween.tween_property(health_ring, "value", target_health, 0.4)
+	
+	if target_health <= 0:
+		health_tween.finished.connect(_die)
 
+func _die() -> void:
+	var explosion: GPUParticles2D = explosion_scene.instantiate() as GPUParticles2D
+	get_parent().add_child(explosion)
+	explosion.global_position = visual.global_position
+	queue_free()
 
 func apply_elevation(target_z: int) -> void:
 	var target_y_offset: float = float(target_z) * -pixels_per_elevation_level

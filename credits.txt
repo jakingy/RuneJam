@@ -7,3 +7,6 @@ For cards: font: https://www.1001fonts.com/users/RantauType/
 
 Cards:
 Frame: https://tornioduva.itch.io/tornioduva-card-template?download
+
+Effects:
+Exploding Effect: https://pimen.itch.io/fire-spell-effect-02
