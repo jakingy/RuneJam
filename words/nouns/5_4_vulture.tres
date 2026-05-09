@@ -4,4 +4,12 @@
 
 [resource]
 script = ExtResource("1_0lc1p")
+words = "Vulture"
+tier = 4.0
+max_health_weight = 1.0
+physical_attack_weight = 1.0
+physical_defence_weight = 1.0
+magic_attack_weight = 1.0
+magic_defence_weight = 1.0
+speed_weight = 1.0
 metadata/_custom_type_script = "uid://dm0487dyx88tq"

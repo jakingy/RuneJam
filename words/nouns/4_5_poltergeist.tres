@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="Noun" format=3 uid="uid://c5usw62kwhooe"]
-
-[ext_resource type="Script" uid="uid://dm0487dyx88tq" path="res://scripts/cards/noun.gd" id="1_fla11"]
-
-[resource]
-script = ExtResource("1_fla11")
-metadata/_custom_type_script = "uid://dm0487dyx88tq"

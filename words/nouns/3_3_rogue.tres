@@ -4,4 +4,11 @@
 
 [resource]
 script = ExtResource("1_vu2tw")
+words = "Rogue"
+tier = 3.0
+max_health_weight = 0.75
+physical_attack_weight = 3.0
+physical_defence_weight = 0.5
+magic_defence_weight = 0.25
+speed_weight = 3.0
 metadata/_custom_type_script = "uid://dm0487dyx88tq"
