@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dtlplpwu7e7x5"]
 
+
 [ext_resource type="Script" uid="uid://dxp3t5ee0c4kt" path="res://scripts/battle.gd" id="1_dn72j"]
 [ext_resource type="PackedScene" uid="uid://pvaxjyjrscjx" path="res://scenes/map.tscn" id="2_a12nh"]
 [ext_resource type="PackedScene" uid="uid://bk5g0gqslmyuc" path="res://scenes/battle_ui.tscn" id="2_lpir7"]
@@ -121,26 +122,35 @@ size_flags_vertical = 0
 
 [node name="InputPadding" type="MarginContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent" unique_id=1671314676]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 6
+mouse_filter = 1
+
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
 
 [node name="InputBar" type="HBoxContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding" unique_id=959946410]
-custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
+mouse_filter = 1
 theme_override_constants/separation = 8
 
 [node name="PlayerInput" type="LineEdit" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding/InputBar" unique_id=1543182552]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Enter your action..."
-editable = false
+size_flags_vertical = 4
+custom_minimum_size = Vector2(0, 42)
+placeholder_text = "Enter your action."
+caret_blink = true
+caret_blink_interval = 0.55
+mouse_filter = 0
 
 [node name="PlayBtn" type="Button" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding/InputBar" unique_id=156650495]
 layout_mode = 2
-disabled = true
-text = "Send"
+custom_minimum_size = Vector2(54, 42)
+text = ""
+flat = true
+mouse_filter = 0
+focus_mode = 0
 
 [node name="ManuscriptRuneLayer" type="Control" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface" unique_id=1100482026]
 anchors_preset = 0

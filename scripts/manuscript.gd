@@ -35,6 +35,7 @@ const MANUSCRIPT_RUNE_SEQUENCE := ["A", "R", "X", "V", "N", "K", "L", "E", "O", 
 
 const COLOR_TEXT := Color(0.0, 0.0, 0.0, 0.8)
 const COLOR_TEXT_DIM := Color(0.533, 0.533, 0.533)
+const COLOR_ACCENT := Color(0.788, 0.659, 0.298)
 const COLOR_ACCENT_DIM := Color(0.541, 0.427, 0.169)
 const COLOR_BORDER := Color(0.2, 0.2, 0.2)
 const COLOR_SURFACE2 := Color(0.141, 0.141, 0.141)
@@ -45,6 +46,16 @@ const TYPEWRITER_DELAY_ACTION := 0.0023
 const TYPEWRITER_DELAY_WAITING := 0.0058
 
 const ACTION_STAMP_SFX_PATH := "res://assets/sfx/writing-stamp.mp3"
+const NARRATOR_RING_SFX_PATHS := [
+	"res://assets/sfx/magic_crystal/SFX_Crystal_Stone_Ring-01.wav",
+	"res://assets/sfx/magic_crystal/SFX_Crystal_Stone_Ring-02.wav",
+	"res://assets/sfx/magic_crystal/SFX_Crystal_Stone_Ring-03.wav",
+]
+const NARRATOR_CRACKLE_SFX_PATHS := [
+	"res://assets/sfx/magic_crystal/SFX_Crystal_Stone_Crackles-01.wav",
+	"res://assets/sfx/magic_crystal/SFX_Crystal_Stone_Crackles-02.wav",
+	"res://assets/sfx/magic_crystal/SFX_Crystal_Stone_Crackles-03.wav",
+]
 
 const THINKING_MESSAGES := {
 	"cost": ["The referee deliberates", "Weighing the odds", "Consulting the probability scrolls", "The judge considers your gambit"],
@@ -86,6 +97,11 @@ var _manuscript_paper_shader: Shader = null
 var _typewriter_queue: Array[Dictionary] = []
 var _typewriter_active := false
 
+var _last_input_text_length := 0
+var _input_crystal_tick := 0
+var _typing_text_magic_tween: Tween = null
+var _ui_sfx_cache: Dictionary = {}
+
 
 func run_debug_test() -> void:
 	add_system_message("System message test.")
@@ -103,6 +119,7 @@ func _ready() -> void:
 	_apply_node_layout_safety()
 	_ensure_rune_nodes()
 	_apply_basic_theme()
+	_apply_original_input_theme()
 	_connect_input()
 	_connect_scroll_and_resize()
 	_ensure_send_button_icon_layers()
@@ -252,19 +269,112 @@ func _apply_basic_theme() -> void:
 		input_bar.add_theme_constant_override("separation", 8)
 
 
+func _apply_original_input_theme() -> void:
+	if not is_instance_valid(player_input):
+		return
+
+	apply_font_to_line_edit(player_input, "narrator")
+	player_input.add_theme_font_size_override("font_size", 18)
+	player_input.add_theme_color_override("font_color", Color(0.23, 0.18, 0.1, 1.0))
+	player_input.add_theme_color_override("font_placeholder_color", Color(0.42, 0.33, 0.21, 0.82))
+
+	var normal_style := StyleBoxFlat.new()
+	normal_style.bg_color = Color(0.84, 0.77, 0.6, 0.98)
+	normal_style.border_color = Color(0.46, 0.35, 0.2, 1.0)
+	normal_style.set_border_width_all(1)
+	normal_style.set_corner_radius_all(7)
+	normal_style.content_margin_left = 14
+	normal_style.content_margin_right = 14
+	normal_style.content_margin_top = 8
+	normal_style.content_margin_bottom = 8
+	normal_style.shadow_color = Color(0.08, 0.05, 0.02, 0.25)
+	normal_style.shadow_size = 2
+	player_input.add_theme_stylebox_override("normal", normal_style)
+
+	var focus_style := normal_style.duplicate() as StyleBoxFlat
+	focus_style.border_color = Color(0.74, 0.58, 0.27, 1.0)
+	focus_style.shadow_color = Color(0.53, 0.41, 0.18, 0.22)
+	focus_style.shadow_size = 4
+	player_input.add_theme_stylebox_override("focus", focus_style)
+
+	var read_only_style := normal_style.duplicate() as StyleBoxFlat
+	read_only_style.border_color = Color(0.36, 0.29, 0.19, 0.9)
+	read_only_style.bg_color = Color(0.67, 0.6, 0.48, 0.92)
+	player_input.add_theme_stylebox_override("read_only", read_only_style)
+
+	_set_typing_text_magic_strength(0.0)
+
+
+func _on_input_text_changed_original(new_text: String) -> void:
+	var new_length := new_text.length()
+	refresh_send_button_state()
+
+	if new_length > _last_input_text_length:
+		var typed_char := new_text.substr(new_length - 1, 1) if new_length > 0 else ""
+		_play_input_crystal_sfx(typed_char)
+	elif new_length < _last_input_text_length:
+		_play_input_erase_sfx()
+
+	if new_length > 0 and player_input.editable:
+		_start_typing_text_magic()
+	else:
+		_stop_typing_text_magic()
+
+	_last_input_text_length = new_length
+
+
+func _play_action_commit_sfx() -> void:
+	if not is_sendable():
+		return
+	_play_ui_sfx(ACTION_STAMP_SFX_PATH, -8.0, randf_range(0.96, 1.04))
+
+
+func _set_typing_text_magic_strength(amount: float) -> void:
+	var clamped := clampf(amount, 0.0, 1.0)
+	var font_color := Color(7.72, 2.49, 0.82, 1.0).lerp(Color(15.72, 0.9, 0.42, 1.0), clamped * 0.9)
+	var caret_color := COLOR_ACCENT.lerp(Color(1.0, 0.89, 0.6, 1.0), clamped)
+
+	if is_instance_valid(player_input):
+		player_input.add_theme_color_override("font_color", font_color)
+		player_input.add_theme_color_override("caret_color", caret_color)
+
+
+func _start_typing_text_magic() -> void:
+	if not is_instance_valid(player_input) or not player_input.editable:
+		return
+	if is_instance_valid(_typing_text_magic_tween):
+		return
+
+	_set_typing_text_magic_strength(0.35)
+	_typing_text_magic_tween = create_tween().set_loops()
+	_typing_text_magic_tween.tween_method(_set_typing_text_magic_strength, 0.1, 1.0, 1.9)
+	_typing_text_magic_tween.tween_method(_set_typing_text_magic_strength, 1.0, 0.1, 0.5)
+
+
+func _stop_typing_text_magic() -> void:
+	if is_instance_valid(_typing_text_magic_tween):
+		_typing_text_magic_tween.kill()
+	_typing_text_magic_tween = null
+	_set_typing_text_magic_strength(0.0)
+
+
 func _connect_input() -> void:
 	if is_instance_valid(player_input):
+		_last_input_text_length = player_input.text.length()
+
 		player_input.text_changed.connect(func(new_text: String) -> void:
-			refresh_send_button_state()
+			_on_input_text_changed_original(new_text)
 			action_text_changed.emit(new_text)
 		)
 
 		player_input.text_submitted.connect(func(text: String) -> void:
+			_play_action_commit_sfx()
 			action_submitted.emit(text.strip_edges())
 		)
 
 	if is_instance_valid(play_btn):
 		play_btn.pressed.connect(func() -> void:
+			_play_action_commit_sfx()
 			action_submitted.emit(get_input_text())
 		)
 
@@ -293,6 +403,11 @@ func enable_input(placeholder: String = "Enter your action.") -> void:
 		return
 	player_input.editable = true
 	player_input.placeholder_text = placeholder
+	_last_input_text_length = player_input.text.length()
+	if _last_input_text_length > 0:
+		_start_typing_text_magic()
+	else:
+		_stop_typing_text_magic()
 	refresh_send_button_state()
 
 
@@ -300,6 +415,8 @@ func disable_input(placeholder: String = "") -> void:
 	if not is_instance_valid(player_input):
 		return
 	player_input.editable = false
+	_last_input_text_length = 0
+	_stop_typing_text_magic()
 	if not placeholder.is_empty():
 		player_input.placeholder_text = placeholder
 	refresh_send_button_state()
@@ -309,6 +426,8 @@ func clear_input() -> void:
 	if not is_instance_valid(player_input):
 		return
 	player_input.text = ""
+	_last_input_text_length = 0
+	_stop_typing_text_magic()
 	refresh_send_button_state()
 	action_text_changed.emit("")
 
@@ -317,6 +436,11 @@ func set_input_text(text: String) -> void:
 	if not is_instance_valid(player_input):
 		return
 	player_input.text = text
+	_last_input_text_length = text.length()
+	if _last_input_text_length > 0 and player_input.editable:
+		_start_typing_text_magic()
+	else:
+		_stop_typing_text_magic()
 	refresh_send_button_state()
 	action_text_changed.emit(text)
 
@@ -629,6 +753,17 @@ func apply_font_to_button(button_node: Button, key: String) -> void:
 	if font_library == null:
 		return
 	font_library.apply_to_button(button_node, key)
+
+
+func apply_font_to_line_edit(line_edit: LineEdit, key: String) -> void:
+	if font_library == null:
+		return
+	if font_library.has_method("apply_to_line_edit"):
+		font_library.apply_to_line_edit(line_edit, key)
+	elif font_library.has_method("get_font"):
+		var font: Font = font_library.get_font(key)
+		if font != null:
+			line_edit.add_theme_font_override("font", font)
 
 func add_msg_to_chat(panel: PanelContainer) -> void:
 	if not is_instance_valid(writing):
@@ -1436,9 +1571,37 @@ func build_effect_bbcode_char(char_text: String, effect_name: String, effect_par
 
 # ── Optional delegated effects/sfx ──
 
+func _get_cached_ui_sfx(path: String) -> AudioStream:
+	if path.is_empty():
+		return null
+	if _ui_sfx_cache.has(path):
+		return _ui_sfx_cache[path]
+	var stream := load(path) as AudioStream
+	if stream == null:
+		push_warning("Could not load UI SFX: %s" % path)
+		return null
+	_ui_sfx_cache[path] = stream
+	return stream
+
+
 func _play_ui_sfx(path: String, volume_db: float = -8.0, pitch_scale: float = 1.0) -> void:
+	if path.is_empty():
+		return
 	if _battle != null and _battle.has_method("_play_ui_sfx"):
 		_battle._play_ui_sfx(path, volume_db, pitch_scale)
+		return
+
+	var stream := _get_cached_ui_sfx(path)
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.pitch_scale = pitch_scale
+	add_child(player)
+	player.finished.connect(player.queue_free)
+	player.play()
 
 
 func _spawn_stamp_burst_effect(target: Control) -> void:
@@ -1446,6 +1609,56 @@ func _spawn_stamp_burst_effect(target: Control) -> void:
 		_battle._spawn_stamp_burst_effect(target)
 
 
+func _is_narrator_writing_effect(effect_name: String, effect_params: String) -> bool:
+	return effect_name == "writing" and effect_params.contains("drop=")
+
+
+func _random_sfx_path(paths: Array) -> String:
+	if paths.is_empty():
+		return ""
+	return str(paths[randi() % paths.size()])
+
+
+func _play_narrator_crystal_hit(is_punctuation: bool = false, crackle: bool = false, ring_boost_db: float = 0.0, crackle_boost_db: float = 0.0) -> void:
+	_play_ui_sfx(
+		_random_sfx_path(NARRATOR_RING_SFX_PATHS),
+		(-13.5 if not is_punctuation else -10.5) + ring_boost_db,
+		randf_range(0.96, 1.05)
+	)
+	if crackle:
+		_play_ui_sfx(
+			_random_sfx_path(NARRATOR_CRACKLE_SFX_PATHS),
+			(-20.5 if not is_punctuation else -17.5) + crackle_boost_db,
+			randf_range(0.94, 1.04)
+		)
+
+
 func _play_narrator_crystal_sfx(entry: Dictionary, next_char: String, effect_name: String, effect_params: String) -> void:
 	if _battle != null and _battle.has_method("_play_narrator_crystal_sfx"):
 		_battle._play_narrator_crystal_sfx(entry, next_char, effect_name, effect_params)
+		return
+
+	if not _is_narrator_writing_effect(effect_name, effect_params):
+		return
+	if next_char.strip_edges().is_empty():
+		return
+	var tick := int(entry.get("narrator_sfx_tick", 0))
+	entry["narrator_sfx_tick"] = tick + 1
+	var is_punctuation := next_char in [".", ",", "!", "?", ";", ":"]
+	_play_narrator_crystal_hit(is_punctuation, is_punctuation or (tick % 6 == 0 and randf() < 0.55))
+
+
+func _play_input_crystal_sfx(typed_char: String) -> void:
+	if typed_char.strip_edges().is_empty():
+		return
+	_input_crystal_tick += 1
+	var is_punctuation := typed_char in [".", ",", "!", "?", ";", ":"]
+	_play_narrator_crystal_hit(is_punctuation, is_punctuation or (_input_crystal_tick % 6 == 0 and randf() < 0.55))
+
+
+func _play_input_erase_sfx() -> void:
+	_play_ui_sfx(
+		_random_sfx_path(NARRATOR_CRACKLE_SFX_PATHS),
+		-16.0,
+		randf_range(0.85, 0.95)
+	)
