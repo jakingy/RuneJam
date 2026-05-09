@@ -1,6 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+*.uid
 
 # WSL
 *:Zone.Identifier
@@ -8,3 +9,4 @@
 # Mac
 **/__MACOSX/
 .DS_Store
+
