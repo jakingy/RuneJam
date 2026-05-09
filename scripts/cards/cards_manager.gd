@@ -4,6 +4,28 @@ var nouns_deck: Array[Noun];
 var adjectives_deck: Array[Adjective];
 var player_cards: Array[Card] = [];
 
+func compute_attack_damage(attacker: Card, defender: Card, is_magic: bool) -> float:
+	var dmg: float = 0;
+	if !is_magic:
+		dmg = attacker.get_physical_attack() - defender.get_physical_defence()
+	else:
+		dmg = attacker.get_magic_attack() - defender.get_magic_defence()
+	var element_multipliers: Dictionary[String, float] = {
+		"fire -> ice" = 1.5,
+		"water -> fire" = 1.5,
+		"lightning -> water" = 1.5,
+		"fire -> plant" = 1.5,
+		"light -> dark" = 1.5,
+		"dark -> plant" = 1.5,
+		"plant -> water" = 1.5,
+		"ice -> earth" = 1.5,
+		"air -> lightning" = 1.5
+	}
+	var matchup_str: String = attacker.get_element() + " -> " + defender.get_element()
+	if matchup_str in element_multipliers:
+		dmg *= element_multipliers[matchup_str]
+	return dmg
+
 func add_card_to_player_cards(card: Card) -> void:
 	player_cards.append(card);
 	
