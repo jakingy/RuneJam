@@ -180,52 +180,52 @@ func call_structured_streaming(
 
 	var response_code := http.get_response_code()
 	var line_buffer := ""
-	var stream_state := {
-		"accumulated": "",
-		"active_field": "",
-		"printed_len": 0,
-		"done_fields": {},
-		"array_item_counts": {},
-		"error": "",
-	}
+var pending_stream_text := ""
 
-	var stream_process_interval_ms := 75
-	var last_stream_process_ms := Time.get_ticks_msec()
+var stream_process_interval_ms := 75
+var last_stream_process_ms := Time.get_ticks_msec()
 
-	while http.get_status() == HTTPClient.STATUS_BODY:
-		http.poll()
-		var chunk := http.read_response_body_chunk()
-		if chunk.size() == 0:
-			await Engine.get_main_loop().process_frame
-			continue
+while http.get_status() == HTTPClient.STATUS_BODY:
+	http.poll()
+	var chunk := http.read_response_body_chunk()
+	if chunk.size() == 0:
+		await Engine.get_main_loop().process_frame
+		continue
 
-		var chunk_text := chunk.get_string_from_utf8()
-		if response_code == 200:
-			var now := Time.get_ticks_msec()
-			if now - last_stream_process_ms >= stream_process_interval_ms:
-				line_buffer = _process_sse_chunk(
-					line_buffer + chunk_text,
-					stream_fields,
-					stream_array_item_fields,
-					stream_state,
-					on_field,
-					on_field_done
-				)
-				if not stream_state["error"].is_empty():
-					return {"error": stream_state["error"]}
-				
-				last_stream_process_ms = now
+	var chunk_text := chunk.get_string_from_utf8()
+
+	if response_code == 200:
+		pending_stream_text += chunk_text
+
+		var now := Time.get_ticks_msec()
+		if now - last_stream_process_ms >= stream_process_interval_ms:
+			line_buffer = _process_sse_chunk(
+				line_buffer + pending_stream_text,
+				stream_fields,
+				stream_array_item_fields,
+				stream_state,
+				on_field,
+				on_field_done
+			)
+
+			pending_stream_text = ""
+
+			if not stream_state["error"].is_empty():
+				return {"error": stream_state["error"]}
+
+			last_stream_process_ms = now
 
 	if response_code != 200:
 		return {"error": "HTTP %d" % [response_code]}
 
-	if not line_buffer.is_empty():
+	var final_stream_text := line_buffer + pending_stream_text
+	if not final_stream_text.is_empty():
 		_process_sse_chunk(
-			line_buffer + "\n",
+			final_stream_text + "\n",
 			stream_fields,
-			stream_array_item_fields, 
-			stream_state, 
-			on_field, 
+			stream_array_item_fields,
+			stream_state,
+			on_field,
 			on_field_done
 		)
 
