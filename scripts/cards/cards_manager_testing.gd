@@ -2,14 +2,33 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	var nouns: Array[Noun] = CardsManager.get_base_nouns()
+	var noun: Noun = Noun.new(
+		"word",
+		1,
+		"element",
+		1,
+		1,
+		1,
+		1,
+		1,
+		1	
+	)
 	
-	for noun in nouns:
-		print(noun.get_words() + " - Tier " + str(noun.get_tier()))
-		print("health: " + str(noun.get_max_health()))
-		print("phys dmg: " + str(noun.get_physical_attack()))
-		print("phys def: " + str(noun.get_physical_defence()))
-		print("magic dmg: " + str(noun.get_magic_attack()))
-		print("magic def: " + str(noun.get_magic_defence()))
-		print("speed: " + str(noun.get_speed()))
-		print()
+	ResourceSaver.save(noun, "res://words/nouns/name.tres");
+
+
+func write_noun(w: String, t: int, e: String, mh: float, pa: 
+	float, pd: float, ma: float, md: float, s: float) -> void:
+	var noun: Noun = Noun.new(
+		w,
+		t,
+		e,
+		mh,
+		pa,
+		pd,
+		ma,
+		md,
+		s	
+	)
+	
+	ResourceSaver.save(noun, "res://words/nouns/%s.tres" % w);

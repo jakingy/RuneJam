@@ -2,6 +2,13 @@ extends Node
 
 var nouns_deck: Array[Noun];
 var adjectives_deck: Array[Adjective];
+var player_cards: Array[Card] = [];
+
+func add_card_to_player_cards(card: Card) -> void:
+	player_cards.append(card);
+	
+func get_player_cards() -> Array[Card]:
+	return player_cards
 
 func init_deck() -> void:
 	"""Draws all base nouns and adjectives to their respective decks"""
