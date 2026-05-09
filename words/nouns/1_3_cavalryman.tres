@@ -4,4 +4,11 @@
 
 [resource]
 script = ExtResource("1_l25vg")
+words = "Cavalryman"
+tier = 3.0
+max_health_weight = 2.0
+physical_attack_weight = 2.0
+physical_defence_weight = 2.0
+magic_defence_weight = 0.25
+speed_weight = 1.0
 metadata/_custom_type_script = "uid://dm0487dyx88tq"

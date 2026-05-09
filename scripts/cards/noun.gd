@@ -41,16 +41,16 @@ func get_max_health() -> float:
 	return 600 * tier * max_health_weight
 
 func get_physical_attack() -> float:
-	return 60 * tier * physical_attack_weight
+	return 80 * tier * physical_attack_weight
 
 func get_physical_defence() -> float:
-	return 60 * tier * physical_defence_weight
+	return 20 * tier * physical_defence_weight
 
 func get_magic_attack() -> float:
-	return 60 * tier * magic_attack_weight
+	return 80 * tier * magic_attack_weight
 
 func get_magic_defence() -> float:
-	return 60 * tier * magic_defence_weight
+	return 20 * tier * magic_defence_weight
 
 func get_speed() -> float:
 	return 60 * tier * speed_weight
