@@ -20,7 +20,23 @@ func get_base_nouns() -> Array[Noun]:
 	return base_nouns
 
 func get_base_adjectives() -> Array[Adjective]:
-	return []
+	var base_adjs: Array[Adjective] = []
+	
+	var path = "res://resources/adjectives/"
+	var dir = DirAccess.open(path)
+
+	dir.list_dir_begin()
+	var file_name = dir.get_next()
+	while file_name != "":
+		if not dir.current_is_dir() and file_name.ends_with(".tres"):
+			var full_path = path + file_name
+			var noun_res = load(full_path)
+			
+			if noun_res is Noun:
+				base_adjs.append(noun_res)
+		
+		file_name = dir.get_next()
+	return base_adjs
 
 func fuse_nouns(noun1: Noun, noun2: Noun) -> Noun:
 	return null
