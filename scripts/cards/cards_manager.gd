@@ -1,5 +1,59 @@
 extends Node
 
+var nouns_deck: Array[Noun];
+var adjectives_deck: Array[Adjective];
+
+func init_deck() -> void:
+	"""Draws all base nouns and adjectives to their respective decks"""
+	nouns_deck = get_base_nouns()
+	adjectives_deck = get_base_adjectives()
+
+func draw_nouns(num: int = 3, min_tier: float = 1) -> Array[Noun]:
+	var drawn: Array[Noun] = []
+	
+	for i in range(num):
+		var weights: Array[float] = []
+		var elems: Array[Noun] = []
+		for noun in nouns_deck:
+			if noun.get_tier() > min_tier:
+				elems.append(noun)
+				weights.append(1 / (noun.tier ** 2))
+				
+		var drawn_noun: Noun = pick_random_weighted(elems, weights)
+		nouns_deck.remove_at(nouns_deck.find(drawn_noun))
+		drawn.append(drawn_noun)
+	
+	return drawn
+
+func draw_adjectives(num: int = 3, min_tier: float = 1) -> Array[Adjective]:
+	var drawn: Array[Adjective] = []
+	
+	for i in range(num):
+		var weights: Array[float] = []
+		var elems: Array[Adjective] = []
+		for adj in adjectives_deck:
+			if adj.get_tier() > min_tier:
+				elems.append(adj)
+				weights.append(1 / (adj.tier ** 2))
+				
+		var drawn_adj: Adjective = pick_random_weighted(elems, weights)
+		adjectives_deck.remove_at(adjectives_deck.find(drawn_adj))
+		drawn.append(drawn_adj)
+	
+	return drawn
+	
+func pick_random_weighted(a: Array, w: Array[float]):
+	var sum_of_weights: float = 0
+	for elem in w:
+		sum_of_weights += elem
+	
+	var thres: float = randf() * sum_of_weights
+	var cw: float = 0
+	for i in range(len(a)):
+		cw += w[i]
+		if cw > thres:
+			return a[i]
+
 func get_base_nouns() -> Array[Noun]:
 	var base_nouns: Array[Noun] = []
 	
