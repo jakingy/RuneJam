@@ -1154,6 +1154,11 @@ func _apply_single_story_fragment(fragment: Dictionary) -> void:
 	if fragment_data.is_empty():
 		return
 
+	# Resolved visual events are recorded while deltas are actually applied.
+	# This is important for value_source == "intent", where the schema may contain
+	# int_value = 0 and the real damage/healing amount only exists at runtime.
+	fragment_data["_visual_events"] = []
+
 	_apply_created_entities(fragment_data)
 	_apply_removed_entities(fragment_data)
 
@@ -1163,6 +1168,7 @@ func _apply_single_story_fragment(fragment: Dictionary) -> void:
 			_apply_game_state_delta(op_variant, fragment_data)
 
 	_apply_fragment_visual_stubs(fragment_data)
+	redraw_tokens()
 
 
 func _flatten_fragment_for_runtime(fragment: Dictionary) -> Dictionary:
@@ -1342,6 +1348,7 @@ func _apply_character_change_entry(next_character: Dictionary, change_entry: Dic
 	var field_name = str(change_entry.get("field", "")).strip_edges()
 	if field_name.is_empty():
 		return next_character
+
 	var mode = _normalized_change_mode(change_entry)
 	var value_source = _normalized_change_value_source(change_entry)
 	var current_value: Variant = next_character.get(field_name, null)
@@ -1351,17 +1358,39 @@ func _apply_character_change_entry(next_character: Dictionary, change_entry: Dic
 		return next_character
 
 	if current_value is int or current_value is float or _is_computed_numeric_character_field(field_name) or field_name in ["x", "y", "z", "size", "width", "height"]:
+		var before_hp = int(next_character.get("hp", 0))
 		var current_numeric_value = int(next_character.get(field_name, 0))
+
 		if value_source == "intent" and _is_computed_numeric_character_field(field_name) and mode in ["add", "subtract"]:
 			if _fragment_has_computable_character_source(base_state, fragment_data):
 				var computed_delta = _computed_character_numeric_delta(change_entry, fragment_data, base_state, next_character)
-				next_character[field_name] = current_numeric_value + computed_delta if mode == "add" else current_numeric_value - computed_delta
+				if mode == "add":
+					next_character[field_name] = current_numeric_value + computed_delta
+				else:
+					next_character[field_name] = current_numeric_value - computed_delta
 			else:
 				next_character[field_name] = _manual_apply_numeric_mode(current_numeric_value, mode, change_entry)
 		else:
 			next_character[field_name] = _manual_apply_numeric_mode(current_numeric_value, mode, change_entry)
+
 		if field_name == "hp":
-			next_character["hp"] = clampi(int(next_character.get("hp", 0)), 0, int(next_character.get("max_hp", 999)))
+			next_character["hp"] = clampi(
+				int(next_character.get("hp", 0)),
+				0,
+				int(next_character.get("max_hp", 999))
+			)
+
+			var after_hp = int(next_character.get("hp", 0))
+			var hp_delta = after_hp - before_hp
+			if hp_delta != 0:
+				_record_fragment_visual_event(fragment_data, {
+					"type": "hp_delta",
+					"target_id": str(next_character.get("id", "")),
+					"hp_delta": hp_delta,
+					"before_hp": before_hp,
+					"after_hp": after_hp,
+				})
+
 		return next_character
 
 	if _uses_bool_payload(field_name, current_value):
@@ -1371,6 +1400,12 @@ func _apply_character_change_entry(next_character: Dictionary, change_entry: Dic
 	var string_value: Variant = change_entry.get("string_value", null)
 	next_character[field_name] = "" if string_value == null else str(string_value)
 	return next_character
+
+
+func _record_fragment_visual_event(fragment_data: Dictionary, event: Dictionary) -> void:
+	if not fragment_data.has("_visual_events") or not (fragment_data["_visual_events"] is Array):
+		fragment_data["_visual_events"] = []
+	fragment_data["_visual_events"].append(event)
 
 
 func _apply_generic_change_entry(current_container: Dictionary, change_entry: Dictionary) -> Dictionary:
@@ -2083,6 +2118,13 @@ func trigger_attack(source_id: String, target_ids: Array, effect: String = "hit"
 
 	print("TODO map.trigger_attack: ", source_id, " -> ", target_ids, " effect=", effect, " hp_delta=", hp_delta)
 
+
+func show_hp_delta(target_id: String, hp_delta: int) -> void:
+	if map_manager != null and map_manager.has_method("show_hp_delta"):
+		map_manager.show_hp_delta(target_id, hp_delta)
+		return
+	print("TODO map.show_hp_delta: ", target_id, " hp_delta=", hp_delta)
+
 func trigger_effect_at(x: int, y: int, z: int, effect: String) -> void:
 	if map_manager != null and map_manager.has_method("trigger_effect_at"):
 		map_manager.trigger_effect_at(x, y, z, effect)
@@ -2114,9 +2156,29 @@ func redraw_battlefield_features() -> void:
 func _update_token_from_entity(entity: Dictionary) -> void:
 	if entity.is_empty():
 		return
+
+	var entity_id = str(entity.get("id", ""))
+	if entity_id.is_empty():
+		return
+
+	if _entity_should_be_visually_removed(entity):
+		remove_token(entity_id)
+		return
+
+	# Ensure the token exists before moving it. This prevents transient missing tokens
+	# when an update arrives before the map has performed a full redraw.
+	spawn_token(entity)
+
 	if entity.has("x") and entity.has("y"):
-		move_token(str(entity.get("id", "")), int(entity.get("x", 0)), int(entity.get("y", 0)), int(entity.get("z", 0)))
-	redraw_token(str(entity.get("id", "")))
+		move_token(entity_id, int(entity.get("x", 0)), int(entity.get("y", 0)), int(entity.get("z", 0)))
+
+	redraw_token(entity_id)
+
+
+func _entity_should_be_visually_removed(entity: Dictionary) -> bool:
+	if entity.has("hp") and entity.has("max_hp"):
+		return int(entity.get("hp", 0)) <= 0
+	return false
 
 
 func _sync_token_attachments() -> void:
@@ -2141,13 +2203,41 @@ func _sync_single_token_attachment(entity: Dictionary) -> void:
 
 
 func _apply_fragment_visual_stubs(fragment_data: Dictionary) -> void:
-	var effect = str(fragment_data.get("text_effect", "hit"))
+	var effect = str(fragment_data.get("text_effect", "hit")).strip_edges().to_lower()
 	if effect.is_empty():
 		effect = "hit"
+
 	var source_id = str(fragment_data.get("source_id", ""))
 	var target_ids: Array = fragment_data.get("target_ids", []) if fragment_data.get("target_ids", []) is Array else []
+	var hp_delta_by_target: Dictionary = {}
+
+	for event_variant in fragment_data.get("_visual_events", []):
+		if not (event_variant is Dictionary):
+			continue
+
+		var event: Dictionary = event_variant
+		if str(event.get("type", "")) != "hp_delta":
+			continue
+
+		var target_id = str(event.get("target_id", ""))
+		if target_id.is_empty():
+			continue
+
+		hp_delta_by_target[target_id] = int(hp_delta_by_target.get(target_id, 0)) + int(event.get("hp_delta", 0))
+		if not target_ids.has(target_id):
+			target_ids.append(target_id)
+
 	if not source_id.is_empty() and not target_ids.is_empty():
-		trigger_attack(source_id, target_ids, effect)
+		for target_id_variant in target_ids:
+			var target_id = str(target_id_variant)
+			var hp_delta = int(hp_delta_by_target.get(target_id, 0))
+			trigger_attack(source_id, [target_id], effect, hp_delta)
+		return
+
+	# Some effects are environmental or have no source marker. Still show resolved HP
+	# deltas so healing, poison, hazards, etc. are visible.
+	for target_id_variant in hp_delta_by_target.keys():
+		show_hp_delta(str(target_id_variant), int(hp_delta_by_target[target_id_variant]))
 
 
 

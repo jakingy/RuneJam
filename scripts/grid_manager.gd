@@ -9,12 +9,25 @@ class_name GridManager
 @export var spawn_debug_markers: bool = false
 @export var movement_time: float = 0.5
 @export var attack_impact_delay: float = 0.4
+@export var effect_sfx_base_dir: String = "res://assets/sfx/effects"
+@export var cast_sfx_volume_db: float = -8.0
+@export var impact_sfx_volume_db: float = -7.0
+@export var sfx_pitch_min: float = 0.96
+@export var sfx_pitch_max: float = 1.04
+@export var enable_character_tooltips: bool = true
+@export var tooltip_radius_px: float = 34.0
+@export var hp_delta_float_time: float = 0.85
 
 @onready var map_image: TextureRect = $".."
 @onready var marker_container: Node2D = $MarkerContainer
 
 var _last_game_state: Dictionary = {}
 var _attached_children: Dictionary = {}
+var _sfx_cache: Dictionary = {}
+var _missing_sfx_reported: Dictionary = {}
+var _tooltip_panel: PanelContainer = null
+var _tooltip_label: RichTextLabel = null
+var _current_tooltip_entity_id = ""
 
 const TEAM_A_COLOR := Color.BLUE
 const TEAM_B_COLOR := Color.RED
@@ -32,14 +45,24 @@ const ELEMENT_EFFECTS := [
 	"air",
 ]
 
+const ACTION_EFFECTS := ["hit", "move"]
+const ALL_EFFECTS := ["fire", "ice", "lightning", "water", "plant", "earth", "light", "dark", "air", "hit", "move"]
+
 
 func _ready() -> void:
 	if not is_instance_valid(marker_container):
 		push_error("GridManager requires a child MarkerContainer node.")
 		return
 
+	_ensure_tooltip_nodes()
+
 	if spawn_debug_markers:
 		_spawn_debug_markers()
+
+
+func _process(_delta: float) -> void:
+	if enable_character_tooltips:
+		_update_hover_tooltip()
 
 
 # ─────────────────────────────────────────────────────────────
@@ -104,17 +127,42 @@ func _marker_visual_global_position(marker: MapMarker) -> Vector2:
 
 func redraw_tokens(game_state: Dictionary) -> void:
 	_last_game_state = game_state.duplicate(true)
-	_clear_markers()
+
+	var wanted_ids: Dictionary = {}
 
 	var characters: Array = _array_from(game_state.get("characters", []))
 	for character_variant in characters:
-		if character_variant is Dictionary:
-			spawn_character(character_variant)
+		if not (character_variant is Dictionary):
+			continue
+
+		var character: Dictionary = character_variant
+		var character_id = str(character.get("id", ""))
+		if character_id.is_empty():
+			continue
+
+		if _entity_should_be_hidden(character):
+			remove_token(character_id)
+			continue
+
+		wanted_ids[character_id] = true
+		spawn_character(character)
 
 	var objects: Array = _array_from(game_state.get("objects", []))
 	for object_variant in objects:
-		if object_variant is Dictionary:
-			spawn_object(object_variant)
+		if not (object_variant is Dictionary):
+			continue
+
+		var object_data: Dictionary = object_variant
+		var object_id = str(object_data.get("id", ""))
+		if object_id.is_empty():
+			continue
+
+		wanted_ids[object_id] = true
+		spawn_object(object_data)
+
+	for child in marker_container.get_children():
+		if child is MapMarker and not wanted_ids.has(child.name):
+			_remove_marker(child.name, true)
 
 	_sync_all_attachments_from_state(game_state)
 
@@ -127,8 +175,8 @@ func spawn_token(entity: Dictionary) -> void:
 	if entity_id.is_empty():
 		return
 
-	if _marker_for_id(entity_id) != null:
-		redraw_token(entity_id, _last_game_state)
+	if _entity_should_be_hidden(entity):
+		remove_token(entity_id)
 		return
 
 	if _is_character_entity(entity):
@@ -145,7 +193,8 @@ func redraw_token(entity_id: String, game_state: Dictionary) -> void:
 	_last_game_state = game_state.duplicate(true)
 
 	var entity: Dictionary = _find_entity_in_game_state(entity_id, game_state)
-	if entity.is_empty():
+	if entity.is_empty() or _entity_should_be_hidden(entity):
+		remove_token(entity_id)
 		return
 
 	var marker: MapMarker = _marker_for_id(entity_id)
@@ -159,6 +208,12 @@ func redraw_token(entity_id: String, game_state: Dictionary) -> void:
 
 func move_token(entity_id: String, x: int, y: int, z: int = 0) -> void:
 	var marker: MapMarker = _marker_for_id(entity_id)
+	if marker == null:
+		var entity: Dictionary = _find_entity_in_game_state(entity_id, _last_game_state)
+		if not entity.is_empty():
+			spawn_token(entity)
+			marker = _marker_for_id(entity_id)
+
 	if marker == null:
 		push_warning("Tried to move marker, but ID was not found: %s" % entity_id)
 		return
@@ -258,6 +313,8 @@ func _clear_markers() -> void:
 func _update_marker_from_entity(marker: MapMarker, entity: Dictionary, request_portrait_if_new: bool) -> void:
 	var side: String = _entity_side(entity)
 	_set_marker_ring_color(marker, side)
+	marker.set_meta("entity_id", str(entity.get("id", "")))
+	marker.set_meta("entity_snapshot", entity.duplicate(true))
 
 	var pos: Vector3i = _entity_grid_position(entity)
 	marker.position = get_pixel_position_from_grid(pos.x, pos.y)
@@ -355,15 +412,21 @@ func move_character(character: Dictionary, target_x: int, target_y: int) -> void
 # ─────────────────────────────────────────────────────────────
 
 func trigger_attack(source_id: String, target_ids: Array, effect: String = "hit", hp_delta: int = 0) -> void:
+	var resolved_effect = _normalize_effect_type(effect)
+	if not source_id.is_empty():
+		_play_effect_sfx(resolved_effect, "cast")
+
 	for target_id_variant in target_ids:
 		var target_id: String = str(target_id_variant)
 		if target_id.is_empty():
 			continue
 
-		if _is_element_effect(effect):
-			await do_elemental_attack_characters(source_id, target_id, effect)
+		if _is_element_effect(resolved_effect):
+			await do_elemental_attack_characters(source_id, target_id, resolved_effect)
 		else:
 			await do_physical_attack_characters(source_id, target_id)
+
+		_play_effect_sfx(resolved_effect, "impact")
 
 		if hp_delta != 0:
 			show_hp_delta(target_id, hp_delta)
@@ -448,8 +511,9 @@ func show_hp_delta(entity_id: String, hp_delta: int) -> void:
 
 	if marker.has_method("show_hp_delta"):
 		marker.show_hp_delta(hp_delta)
-	else:
-		print("TODO marker.show_hp_delta: %s %+d" % [entity_id, hp_delta])
+		return
+
+	_spawn_hp_delta_label(marker, hp_delta)
 
 
 func show_location_effect(pixel_pos: Vector2, effect: String, z: int = 0) -> void:
@@ -583,6 +647,206 @@ func redraw_battlefield_features(game_state: Dictionary = {}) -> void:
 	print("TODO map.redraw_battlefield_features")
 
 
+
+# ─────────────────────────────────────────────────────────────
+# SFX, HP delta labels, and tooltips
+# ─────────────────────────────────────────────────────────────
+
+func _normalize_effect_type(effect: String) -> String:
+	var key = effect.strip_edges().to_lower()
+	if ALL_EFFECTS.has(key):
+		return key
+	return "hit"
+
+
+func _effect_sfx_candidate_paths(effect: String, phase: String) -> Array[String]:
+	var key = _normalize_effect_type(effect)
+	var p = phase.strip_edges().to_lower()
+	return [
+		"%s/%s-%s.wav" % [effect_sfx_base_dir, key, p],
+		"%s/%s_%s.wav" % [effect_sfx_base_dir, key, p],
+		"%s/%s-%s.ogg" % [effect_sfx_base_dir, key, p],
+		"%s/%s_%s.ogg" % [effect_sfx_base_dir, key, p],
+		"%s/%s-%s.mp3" % [effect_sfx_base_dir, key, p],
+		"%s/%s_%s.mp3" % [effect_sfx_base_dir, key, p],
+	]
+
+
+func _get_cached_sfx(path: String) -> AudioStream:
+	if path.is_empty():
+		return null
+	if _sfx_cache.has(path):
+		return _sfx_cache[path]
+	if not ResourceLoader.exists(path):
+		if not _missing_sfx_reported.has(path):
+			_missing_sfx_reported[path] = true
+		return null
+	var stream = load(path) as AudioStream
+	if stream == null:
+		return null
+	_sfx_cache[path] = stream
+	return stream
+
+
+func _play_effect_sfx(effect: String, phase: String) -> void:
+	for path in _effect_sfx_candidate_paths(effect, phase):
+		var stream = _get_cached_sfx(path)
+		if stream == null:
+			continue
+		var player = AudioStreamPlayer.new()
+		player.stream = stream
+		player.volume_db = cast_sfx_volume_db if phase == "cast" else impact_sfx_volume_db
+		player.pitch_scale = randf_range(sfx_pitch_min, sfx_pitch_max)
+		add_child(player)
+		player.finished.connect(player.queue_free)
+		player.play()
+		return
+
+
+func _spawn_hp_delta_label(marker: MapMarker, hp_delta: int) -> void:
+	var label = Label.new()
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.text = "%+d" % hp_delta
+	label.z_index = 1000
+	label.add_theme_font_size_override("font_size", 20)
+	label.add_theme_color_override("font_color", Color(0.35, 1.0, 0.35, 1.0) if hp_delta > 0 else Color(1.0, 0.22, 0.16, 1.0))
+	label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.85))
+	label.add_theme_constant_override("shadow_offset_x", 2)
+	label.add_theme_constant_override("shadow_offset_y", 2)
+	marker_container.add_child(label)
+	label.position = marker.position + Vector2(-18.0, -46.0)
+
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(label, "position", label.position + Vector2(0.0, -34.0), hp_delta_float_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, hp_delta_float_time).set_delay(hp_delta_float_time * 0.35)
+	tween.finished.connect(func() -> void:
+		if is_instance_valid(label):
+			label.queue_free()
+	)
+
+
+func _ensure_tooltip_nodes() -> void:
+	if not enable_character_tooltips or not is_instance_valid(map_image):
+		return
+	if is_instance_valid(_tooltip_panel):
+		return
+
+	_tooltip_panel = PanelContainer.new()
+	_tooltip_panel.name = "CharacterTooltip"
+	_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_tooltip_panel.visible = false
+	_tooltip_panel.z_index = 5000
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.055, 0.04, 0.025, 0.92)
+	style.border_color = Color(0.85, 0.66, 0.28, 0.92)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(6)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
+	_tooltip_panel.add_theme_stylebox_override("panel", style)
+
+	_tooltip_label = RichTextLabel.new()
+	_tooltip_label.bbcode_enabled = true
+	_tooltip_label.fit_content = true
+	_tooltip_label.scroll_active = false
+	_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_tooltip_label.custom_minimum_size = Vector2(230.0, 0.0)
+	_tooltip_label.add_theme_font_size_override("normal_font_size", 13)
+	_tooltip_label.add_theme_color_override("default_color", Color(0.94, 0.86, 0.68, 1.0))
+	_tooltip_panel.add_child(_tooltip_label)
+	map_image.add_child(_tooltip_panel)
+
+
+func _update_hover_tooltip() -> void:
+	if not is_instance_valid(_tooltip_panel) or not is_instance_valid(_tooltip_label) or not is_instance_valid(map_image):
+		return
+
+	var mouse_pos = map_image.get_local_mouse_position()
+	if mouse_pos.x < 0.0 or mouse_pos.y < 0.0 or mouse_pos.x > map_image.size.x or mouse_pos.y > map_image.size.y:
+		_hide_tooltip()
+		return
+
+	var best_marker: MapMarker = null
+	var best_dist = tooltip_radius_px
+	for child in marker_container.get_children():
+		if not (child is MapMarker):
+			continue
+		var marker: MapMarker = child
+		var dist = marker.position.distance_to(mouse_pos)
+		if dist <= best_dist:
+			best_dist = dist
+			best_marker = marker
+
+	if best_marker == null:
+		_hide_tooltip()
+		return
+
+	var entity_id = str(best_marker.get_meta("entity_id", best_marker.name))
+	var entity = _find_entity_in_game_state(entity_id, _last_game_state)
+	if entity.is_empty():
+		_hide_tooltip()
+		return
+
+	if _current_tooltip_entity_id != entity_id:
+		_current_tooltip_entity_id = entity_id
+		_tooltip_label.text = _tooltip_bbcode_for_entity(entity)
+
+	_tooltip_panel.visible = true
+	_tooltip_panel.position = _clamped_tooltip_position(mouse_pos + Vector2(18.0, 18.0))
+
+
+func _hide_tooltip() -> void:
+	_current_tooltip_entity_id = ""
+	if is_instance_valid(_tooltip_panel):
+		_tooltip_panel.visible = false
+
+
+func _clamped_tooltip_position(pos: Vector2) -> Vector2:
+	var panel_size = _tooltip_panel.size
+	var max_x = maxf(0.0, map_image.size.x - panel_size.x - 8.0)
+	var max_y = maxf(0.0, map_image.size.y - panel_size.y - 8.0)
+	return Vector2(clampf(pos.x, 8.0, max_x), clampf(pos.y, 8.0, max_y))
+
+
+func _tooltip_bbcode_for_entity(entity: Dictionary) -> String:
+	var name = str(entity.get("display_name", entity.get("name", entity.get("id", "Unknown"))))
+	var side = _entity_side(entity)
+	var lines: Array[String] = []
+	lines.append("[b]%s[/b]" % _escape_bbcode(name))
+	lines.append("[color=#d6ba73]%s[/color]" % _escape_bbcode(side))
+
+	if _is_character_entity(entity):
+		lines.append("HP: %d / %d" % [int(entity.get("hp", 0)), int(entity.get("max_hp", 1))])
+		lines.append("ATK %d  DEF %d  MAG %d  MDEF %d  SPD %d" % [
+			int(entity.get("physical_attack", 0)),
+			int(entity.get("physical_defence", 0)),
+			int(entity.get("magic_power", 0)),
+			int(entity.get("magic_defence", 0)),
+			int(entity.get("speed", 0)),
+		])
+		var elements = _array_from(entity.get("elements", []))
+		if not elements.is_empty():
+			lines.append("Elements: %s" % _escape_bbcode(", ".join(_string_array_typed(elements))))
+		var statuses = _array_from(entity.get("status_effects", []))
+		if not statuses.is_empty():
+			lines.append("Status: %s" % _escape_bbcode(", ".join(_string_array_typed(statuses))))
+		var notes = _array_from(entity.get("important_notes", []))
+		if not notes.is_empty():
+			lines.append("[i]%s[/i]" % _escape_bbcode(str(notes[0])))
+	else:
+		var state = _array_from(entity.get("state", []))
+		if not state.is_empty():
+			lines.append("State: %s" % _escape_bbcode(", ".join(_string_array_typed(state))))
+
+	return "\n".join(lines)
+
+
+func _escape_bbcode(text: String) -> String:
+	return text.replace("[", "[lb]").replace("]", "[rb]")
+
 # ─────────────────────────────────────────────────────────────
 # Helpers
 # ─────────────────────────────────────────────────────────────
@@ -603,6 +867,12 @@ func _find_entity_in_game_state(entity_id: String, game_state: Dictionary) -> Di
 
 func _is_character_entity(entity: Dictionary) -> bool:
 	return entity.has("hp") and entity.has("max_hp")
+
+
+func _entity_should_be_hidden(entity: Dictionary) -> bool:
+	if _is_character_entity(entity):
+		return int(entity.get("hp", 0)) <= 0
+	return false
 
 
 func _entity_side(entity: Dictionary) -> String:
