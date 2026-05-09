@@ -20,7 +20,8 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			var card: Node2D = raycast_check_for_card()
-			if card:
+			if card and card.holder.name == "Deck":
+				#print(card.holder.name)
 				start_drag(card)
 		else:
 			if card_being_dragged:
@@ -39,18 +40,22 @@ func start_drag(card: Node2D):
 func finish_drag():
 	card_being_dragged.scale = Vector2(1.05, 1.05)
 	var hand = raycast_check_for_hand()
-	#var card = raycast_check_for_card()
-	#if card:
-		## fuse
-		#var new_card = Card.new(Noun.new("dummy"))
-		#card.set_attribute(new_card)
-		#card_being_dragged.holder.cards.erase(card_being_dragged)
-		#self.remove_child(card_being_dragged)
-		#
-	if hand:
+	var card = raycast_check_for_another_card(card_being_dragged)
+	if card:
+		print(card)
+		var combined = await combine_card(card, card_being_dragged)
+		if combined:
+			card_being_dragged.holder.cards.erase(card_being_dragged)
+			self.remove_child(card_being_dragged)
+			if hand and hand.name == "Hand":
+				emit_signal("submit_turn")
+				return
+		
+	if hand and hand.name == "Hand":
 		card_being_dragged.scale = Vector2(1.0, 1.0)
 		hand.add_card(card_being_dragged)
 		card_being_dragged.holder.cards.erase(card_being_dragged)
+		card_being_dragged.holder = hand
 		emit_signal("submit_turn")
 	else:
 		card_being_dragged.holder.update()
@@ -102,6 +107,21 @@ func raycast_check_for_card():
 	else:
 		return null
 		
+func raycast_check_for_another_card(exclude: Node2D):
+	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
+	var parameters: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
+	parameters.position = get_global_mouse_position()
+	parameters.collide_with_areas = true
+	parameters.collision_mask = 1
+	var result: Array[Dictionary] = space_state.intersect_point(parameters)
+	if result.size() > 0:
+		for item in result:
+			if item.collider.get_parent() != exclude:
+				return item.collider.get_parent()
+		return null
+	else:
+		return null
+		
 func raycast_check_for_hand():
 	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
 	var parameters: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
@@ -121,3 +141,26 @@ func get_card_with_highest_z_index(arr: Array[Dictionary]):
 		if current_card.z_index > res.z_index:
 			res = current_card
 	return res
+	
+func combine_card(card: Node2D, card_dragged: Node2D) -> bool:
+	var type1 = 1 if card.the_card.get_noun_str() != "Effect" else 0
+	var type2 = 1 if card_dragged.the_card.get_noun_str() != "Effect" else 0
+	if type1 == type2:
+		# fuse
+		if card.holder.name == "Hand" or card.holder.name == "BotHand":
+			return false
+		if type1 == 1:
+			# fuse noun
+			var new_noun = await CardsManager.fuse_nouns(card.the_card.noun, card_dragged.the_card.noun)
+			var new_card = Card.new(new_noun)
+			card.set_attribute(new_card)
+		else:
+			# fuse adj
+			var new_adj = await CardsManager.fuse_adjectives(card.the_card.adjectives[0], card_dragged.the_card.adjectives[0])
+			var new_card = Card.new(Noun.new("Effect"), [new_adj])
+			card.set_attribute(new_card)
+	else:
+		for adj in card_dragged.the_card.adjectives:
+			card.the_card.add_adjective(adj)
+		card.set_attribute(card.the_card)
+	return true

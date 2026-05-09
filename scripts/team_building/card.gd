@@ -29,6 +29,7 @@ func set_attribute(card: Card):
 	magic_attack = card.get_magic_attack()
 	magic_defense = card.get_magic_defence()
 	speed = card.get_speed()
+	the_card = card
 	update_labels()
 	
 func update_labels():
