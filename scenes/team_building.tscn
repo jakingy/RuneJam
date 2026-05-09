@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://c1isifbere2g6" path="res://scripts/team_building/deck.gd" id="4_8jl1w"]
 [ext_resource type="Texture2D" uid="uid://pexp8ed5kjfp" path="res://assets/team_building/mykhailo-120.jpeg" id="5_ktq82"]
 [ext_resource type="Texture2D" uid="uid://ln0i1rntwujo" path="res://assets/team_building/medieval-paper.png" id="6_l1l0t"]
+[ext_resource type="Texture2D" uid="uid://da6rmnesrr55v" path="res://assets/team_building/milan-vasek-worldmap-wip.jpg" id="7_jiwfj"]
+[ext_resource type="FontFile" uid="uid://dos2mi3v2wsjw" path="res://fonts/Blackcraft-yw6zM.ttf" id="8_t4ld2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nq0av"]
 size = Vector2(1280, 360)
@@ -18,11 +20,11 @@ script = ExtResource("1_nq0av")
 
 [node name="Hand" parent="." unique_id=435524113 instance=ExtResource("3_nq0av")]
 z_index = -1
-position = Vector2(700, 500)
+position = Vector2(960, 500)
 
 [node name="Deck" type="Node2D" parent="." unique_id=308222994]
 z_index = -1
-position = Vector2(700, 900)
+position = Vector2(960, 850)
 script = ExtResource("4_8jl1w")
 
 [node name="Area2D" type="Area2D" parent="Deck" unique_id=2075668343]
@@ -43,24 +45,93 @@ color = Color(0.69411767, 1, 0.64705884, 1)
 
 [node name="BotHand" parent="." unique_id=814759873 instance=ExtResource("3_nq0av")]
 z_index = -1
-position = Vector2(700, 210)
+position = Vector2(960, 210)
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1897373429]
+visible = false
 z_index = -2
 position = Vector2(1269.3557, 541.5767)
 scale = Vector2(0.66291255, 0.4933242)
 texture = ExtResource("5_ktq82")
 
 [node name="HandHolder" type="Sprite2D" parent="." unique_id=353432862]
-position = Vector2(693, 355.00006)
-scale = Vector2(1.7243242, 1.1501013)
+position = Vector2(961.99994, 356.50003)
+scale = Vector2(1.7432431, 1.1582152)
 texture = ExtResource("6_l1l0t")
 
-[node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=1764178748]
-offset_left = 56.0
+[node name="HandHolderBorder" type="ReferenceRect" parent="." unique_id=1764178748]
+offset_left = 317.0
 offset_top = 71.0
-offset_right = 1328.0
+offset_right = 1606.0
 offset_bottom = 641.0
 border_color = Color(0.54509807, 0.3529412, 0.16862746, 1)
 border_width = 5.0
 editor_only = false
+
+[node name="MilanVasekWorldmapWip" type="Sprite2D" parent="." unique_id=1956130108]
+z_index = -2
+position = Vector2(965, 543)
+texture = ExtResource("7_jiwfj")
+
+[node name="DeckHolder" type="Sprite2D" parent="." unique_id=93760083]
+z_index = -1
+position = Vector2(960, 852.75)
+scale = Vector2(1.7418919, 0.7332657)
+texture = ExtResource("6_l1l0t")
+
+[node name="DeckHolderBorder" type="ReferenceRect" parent="." unique_id=1512872262]
+z_index = -1
+offset_left = 317.0
+offset_top = 672.0
+offset_right = 1606.0
+offset_bottom = 1037.0
+border_color = Color(0.40692255, 0.2576966, 0.1139018, 1)
+border_width = 5.0
+editor_only = false
+
+[node name="Divider" type="Line2D" parent="." unique_id=1992217984]
+points = PackedVector2Array(317, 356, 1606, 356)
+width = 1.0
+default_color = Color(0.54509807, 0.3529412, 0.16862746, 1)
+
+[node name="BotHandText" type="RichTextLabel" parent="." unique_id=921708351]
+offset_left = 359.0
+offset_top = 210.0
+offset_right = 611.0
+offset_bottom = 250.0
+theme_override_colors/default_color = Color(0.40784314, 0.25882354, 0.11372549, 1)
+theme_override_fonts/normal_font = ExtResource("8_t4ld2")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "Opponent's team"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HandText" type="RichTextLabel" parent="." unique_id=886652265]
+offset_left = 359.0
+offset_top = 490.0
+offset_right = 611.0
+offset_bottom = 530.0
+theme_override_colors/default_color = Color(0.40784314, 0.25882354, 0.11372549, 1)
+theme_override_fonts/normal_font = ExtResource("8_t4ld2")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "My team"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HandText2" type="RichTextLabel" parent="." unique_id=449941096]
+offset_left = 359.0
+offset_top = 852.75
+offset_right = 611.0
+offset_bottom = 892.75
+theme_override_colors/default_color = Color(0.40784314, 0.25882354, 0.11372549, 1)
+theme_override_fonts/normal_font = ExtResource("8_t4ld2")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
+text = "My hand"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
