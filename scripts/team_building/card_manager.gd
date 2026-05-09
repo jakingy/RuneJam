@@ -53,7 +53,7 @@ func finish_drag():
 				emit_signal("submit_turn")
 				return
 		
-	if hand and hand.name == "Hand":
+	if hand and hand.name == "Hand" and card_being_dragged.noun != "Effect":
 		card_being_dragged.scale = Vector2(1.0, 1.0)
 		hand.add_card(card_being_dragged)
 		card_being_dragged.holder.cards.erase(card_being_dragged)
