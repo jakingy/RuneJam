@@ -11,7 +11,7 @@ var cards: Array[Node2D] = []
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	card_scene = preload(CARD_SCENE_PATH)
-	spawn_test_cards()
+	#spawn_test_cards()
 
 func spawn_test_cards() -> void:
 	for i in range(5):
@@ -19,19 +19,30 @@ func spawn_test_cards() -> void:
 		$"../CardManager".add_child(card)
 		card.name = "card"
 		add_card(card)
+		
+func spawn_cards(cards: Array[Card]):
+	for i in range(cards.size()):
+		var card = card_scene.instantiate()
+		$"../CardManager".add_child(card)
+		card.set_attribute(cards[i])
+		card.name = "card"
+		card.holder = self
+		add_card(card)
+		
+func empty_deck():
+	for card in cards:
+		$"../CardManager".remove_child(card)
+	cards = []
+	update()
 	
 func add_card(card: Node2D) -> void:
 	if not card in cards:
-		#print('ok')
 		cards.insert(0, card)
-		print(cards)
 		update()
 	
 func update() -> void:
-	print(cards.size())
 	for i in range(cards.size()):
 		var new_pos = Vector2(calculate_card_position(i), $Area2D/CollisionShape2D.global_position.y)
-		print(new_pos)
 		var card = cards[i]
 		card.animate_to_position(new_pos)
 

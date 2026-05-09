@@ -1,5 +1,7 @@
 extends Node2D
 
+signal submit_turn
+
 var card_being_dragged: Node2D
 var is_hovering_on_card: bool = false
 
@@ -7,6 +9,7 @@ var hand_ref
 
 func _ready() -> void:
 	hand_ref = $"../Hand"
+	get_parent().connect_signal(self)
 
 func _process(delta: float) -> void:
 	if card_being_dragged:
@@ -36,9 +39,19 @@ func start_drag(card: Node2D):
 func finish_drag():
 	card_being_dragged.scale = Vector2(1.05, 1.05)
 	var hand = raycast_check_for_hand()
+	#var card = raycast_check_for_card()
+	#if card:
+		## fuse
+		#var new_card = Card.new(Noun.new("dummy"))
+		#card.set_attribute(new_card)
+		#card_being_dragged.holder.cards.erase(card_being_dragged)
+		#self.remove_child(card_being_dragged)
+		#
 	if hand:
 		card_being_dragged.scale = Vector2(1.0, 1.0)
 		hand.add_card(card_being_dragged)
+		card_being_dragged.holder.cards.erase(card_being_dragged)
+		emit_signal("submit_turn")
 	card_being_dragged = null
 	
 func flip_card(card: Node2D):
@@ -69,7 +82,7 @@ func on_hovered_off_card(card):
 	
 func highlight_card(card, hovered):
 	if hovered:
-		card.scale = Vector2(1.05, 1.05)
+		card.scale = Vector2(2.05, 2.05)
 		card.z_index = 2
 	else:
 		card.scale = Vector2(1.0, 1.0)
@@ -88,7 +101,6 @@ func raycast_check_for_card():
 		return null
 		
 func raycast_check_for_hand():
-	print('ok')
 	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
 	var parameters: PhysicsPointQueryParameters2D = PhysicsPointQueryParameters2D.new()
 	parameters.position = get_global_mouse_position()

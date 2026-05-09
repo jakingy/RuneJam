@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://63y6aphiivpe"]
+[gd_scene format=3 uid="uid://c5414duoa5amy"]
 
 [ext_resource type="Script" uid="uid://bmn308a77fytb" path="res://scripts/team_building/card.gd" id="1_m3pg1"]
 [ext_resource type="Texture2D" uid="uid://cmiy4mom2st1x" path="res://assets/team_building/card 2 front 2 bw.png" id="2_m3pg1"]
@@ -39,7 +39,80 @@ fit_content = true
 scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="Tier" type="RichTextLabel" parent="." unique_id=737272777]
+offset_left = -31.0
+offset_top = -61.0
+offset_right = 30.0
+offset_bottom = -43.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("4_m3pg1")
+theme_override_font_sizes/normal_font_size = 16
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MaxHealth" type="RichTextLabel" parent="." unique_id=874684860]
+offset_left = -57.0
+offset_top = 55.0
+offset_right = -1.0
+offset_bottom = 70.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("4_m3pg1")
+theme_override_font_sizes/normal_font_size = 15
+fit_content = true
+vertical_alignment = 2
+
+[node name="PhysicAttack" type="RichTextLabel" parent="." unique_id=2023796007]
+offset_left = -57.0
+offset_top = 70.0
+offset_bottom = 85.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("4_m3pg1")
+theme_override_font_sizes/normal_font_size = 15
+fit_content = true
+vertical_alignment = 2
+
+[node name="PhysicDefense" type="RichTextLabel" parent="." unique_id=224872668]
+offset_top = 70.0
+offset_right = 61.0
+offset_bottom = 85.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("4_m3pg1")
+theme_override_font_sizes/normal_font_size = 15
+fit_content = true
+vertical_alignment = 2
+
+[node name="MagicAttack" type="RichTextLabel" parent="." unique_id=1933412755]
+offset_left = -57.0
+offset_top = 85.0
+offset_right = -1.0
+offset_bottom = 99.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("4_m3pg1")
+theme_override_font_sizes/normal_font_size = 15
+fit_content = true
+vertical_alignment = 2
+
+[node name="MagicDefense" type="RichTextLabel" parent="." unique_id=276926017]
+offset_top = 85.0
+offset_right = 58.0
+offset_bottom = 99.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("4_m3pg1")
+theme_override_font_sizes/normal_font_size = 15
+fit_content = true
+vertical_alignment = 2
+
+[node name="Speed" type="RichTextLabel" parent="." unique_id=549464934]
+offset_top = 55.0
+offset_right = 58.0
+offset_bottom = 70.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("4_m3pg1")
+theme_override_font_sizes/normal_font_size = 15
+fit_content = true
+vertical_alignment = 2
 
 [connection signal="mouse_shape_entered" from="Area2D" to="." method="_on_area_2d_mouse_shape_entered"]
 [connection signal="mouse_shape_exited" from="Area2D" to="." method="_on_area_2d_mouse_shape_exited"]
