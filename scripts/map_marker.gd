@@ -1,3 +1,4 @@
+class_name MapMarker
 extends Node2D
 
 @onready var portrait = $Visual/Portrait
