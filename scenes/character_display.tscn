@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cv36o3y1ebw62"]
 
 [ext_resource type="Script" uid="uid://c1d3dixy6qsp0" path="res://scripts/character_display.gd" id="1_tqxk0"]
-[ext_resource type="FontFile" uid="uid://13s0ghrpxu8a" path="res://fonts/wildyrus.ttf" id="2_uhf6v"]
+[ext_resource type="FontFile" uid="uid://dp5pw7cr2j3gq" path="res://fonts/Wildyrus-E4gKe.ttf" id="2_uhf6v"]
 
 [sub_resource type="Theme" id="Theme_tqxk0"]
 default_font = ExtResource("2_uhf6v")

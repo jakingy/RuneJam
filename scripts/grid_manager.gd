@@ -51,6 +51,7 @@ func spawn_character(character: Dictionary) -> void:
 func spawn_object(object: Dictionary) -> void:
 	pass
 
+""" Testing function
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	var character: Dictionary = {
@@ -78,6 +79,7 @@ func _ready() -> void:
 	}
 	call_deferred("spawn_character", character)
 	call_deferred("spawn_character", character_b)
+"""
 
 """
 moves: Array of Character Objects
@@ -115,7 +117,7 @@ func move_character(character: Dictionary, target_x: int, target_y: int) -> void
 	var move_time: float = 0.5
 	move_tween.tween_property(marker, "position", target_pixel_pos, move_time)
 
-func do_elemental_attack(source_id: String, target_id: String, element: String) -> void:
+func do_elemental_attack_characters(source_id: String, target_id: String, element: String) -> void:
 	var attacker: MapMarker = marker_container.get_node_or_null(source_id)
 	var defender: MapMarker = marker_container.get_node_or_null(target_id)
 
@@ -132,7 +134,19 @@ func do_elemental_attack(source_id: String, target_id: String, element: String) 
 	projectile.launch_elemental_attack(start_pos, end_pos, element)
 	await get_tree().create_timer(0.4).timeout
 
+func do_elemental_attack_location(source_id: String, target_pos: Vector2, element: String) -> void:
+	var attacker: MapMarker = marker_container.get_node_or_null(source_id)
+
+	if attacker == null:
+		push_warning("Attack failed: Attacker '%s' is missing?!" % source_id)
+		return
+	var projectile = projectile_scene.instantiate()
+	get_parent().add_child(projectile)
+	var start_pos: Vector2 = attacker.visual.global_position
+	projectile.launch_elemental_attack(start_pos, target_pos, element)
+	await get_tree().create_timer(0.4).timeout
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept"):
-		do_elemental_attack("a", "b", "lightning")
+		do_elemental_attack_characters("a", "b", "plant")
