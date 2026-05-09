@@ -89,6 +89,23 @@ const ELEMENTAL_INTERACTION_MAP = {
 @export var starting_characters: Array[Dictionary] = []
 @export var initialization_constraints: Dictionary = {}
 
+@export_group("Initialiser TTS")
+@export var enable_initialiser_tts: bool = false
+# Leave voice_id empty to randomly use one of the old initializer narrator voices.
+@export var elevenlabs_voice_id: String = ""
+@export var elevenlabs_initializer_voice_ids: Array[String] = [
+	"UmQN7jS1Ee8B1czsUtQh",
+	"flHkNRp1BlvT73UL6gyz",
+]
+# Old battle-script live-streaming settings. Use PCM for AudioStreamGenerator playback.
+@export var elevenlabs_model_id: String = "eleven_flash_v2_5"
+@export var elevenlabs_output_format: String = "pcm_24000"
+@export var elevenlabs_voice_speed: float = 1.15
+@export var initialiser_tts_cache_dir: String = "user://generated_audio/initialiser"
+@export var initialiser_tts_volume_db: float = -6.0
+@export var initialiser_tts_mix_rate: float = 24000.0
+@export var initialiser_tts_buffer_length: float = 0.6
+
 @onready var manuscript: VBoxContainer = $UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript
 @onready var map_manager: Node = $UILayer/MainLayout/BattleLayout/MapColumn/Map/MapImage/GridManager
 
@@ -142,6 +159,13 @@ var TEAM_B_OUTPUT_SCHEMA: Dictionary
 var INITIALIZER_OUTPUT_SCHEMA: Dictionary
 var NARRATOR_OUTPUT_SCHEMA: Dictionary
 
+var _initialiser_tts_request_id = 0
+var _initialiser_tts_player: AudioStreamPlayer = null
+var _initialiser_tts_playback: AudioStreamGeneratorPlayback = null
+var _initialiser_tts_pending_frames: Array = []
+var _initialiser_tts_pcm_remainder: PackedByteArray = PackedByteArray()
+var _selected_initialiser_tts_voice_id: String = ""
+
 signal player_prob_changed(cur: int)
 signal opp_prob_changed(cur: int)
 
@@ -158,6 +182,10 @@ func _ready() -> void:
 	_build_schemas()
 	_connect_manuscript()
 	_start_new_game.call_deferred()
+
+
+func _process(_delta: float) -> void:
+	_drain_initialiser_tts_frames()
 
 
 func _connect_manuscript() -> void:
@@ -550,7 +578,9 @@ func _start_new_game() -> void:
 	game_state["phase"] = "round_planning"
 	_round_cost_verdict_cache = {}
 	_make_map_image_async(game_state)
-	manuscript.add_narrator_message(str(data.get("opening_scene", "The battle begins.")))
+	var opening_scene = str(data.get("opening_scene", "The battle begins."))
+	_start_initialiser_tts(opening_scene)
+	manuscript.add_narrator_message(opening_scene)
 	redraw_tokens()
 	_sync_token_attachments()
 	_start_round()
@@ -1154,6 +1184,8 @@ func _apply_single_story_fragment(fragment: Dictionary) -> void:
 	if fragment_data.is_empty():
 		return
 
+	fragment_data["_visual_events"] = []
+
 	_apply_created_entities(fragment_data)
 	_apply_removed_entities(fragment_data)
 
@@ -1351,6 +1383,7 @@ func _apply_character_change_entry(next_character: Dictionary, change_entry: Dic
 		return next_character
 
 	if current_value is int or current_value is float or _is_computed_numeric_character_field(field_name) or field_name in ["x", "y", "z", "size", "width", "height"]:
+		var before_hp = int(next_character.get("hp", 0))
 		var current_numeric_value = int(next_character.get(field_name, 0))
 		if value_source == "intent" and _is_computed_numeric_character_field(field_name) and mode in ["add", "subtract"]:
 			if _fragment_has_computable_character_source(base_state, fragment_data):
@@ -1362,6 +1395,14 @@ func _apply_character_change_entry(next_character: Dictionary, change_entry: Dic
 			next_character[field_name] = _manual_apply_numeric_mode(current_numeric_value, mode, change_entry)
 		if field_name == "hp":
 			next_character["hp"] = clampi(int(next_character.get("hp", 0)), 0, int(next_character.get("max_hp", 999)))
+			var after_hp = int(next_character.get("hp", 0))
+			var hp_delta = after_hp - before_hp
+			if hp_delta != 0 and fragment_data.has("_visual_events"):
+				fragment_data["_visual_events"].append({
+					"type": "hp_delta",
+					"target_id": str(next_character.get("id", "")),
+					"hp_delta": hp_delta,
+				})
 		return next_character
 
 	if _uses_bool_payload(field_name, current_value):
@@ -2146,9 +2187,223 @@ func _apply_fragment_visual_stubs(fragment_data: Dictionary) -> void:
 		effect = "hit"
 	var source_id = str(fragment_data.get("source_id", ""))
 	var target_ids: Array = fragment_data.get("target_ids", []) if fragment_data.get("target_ids", []) is Array else []
-	if not source_id.is_empty() and not target_ids.is_empty():
-		trigger_attack(source_id, target_ids, effect)
+	var hp_delta_by_target: Dictionary = {}
 
+	for event_variant in fragment_data.get("_visual_events", []):
+		if not (event_variant is Dictionary):
+			continue
+		var event: Dictionary = event_variant
+		if str(event.get("type", "")) != "hp_delta":
+			continue
+		var target_id = str(event.get("target_id", ""))
+		if target_id.is_empty():
+			continue
+		hp_delta_by_target[target_id] = int(hp_delta_by_target.get(target_id, 0)) + int(event.get("hp_delta", 0))
+
+	if not source_id.is_empty() and not target_ids.is_empty():
+		for target_id_variant in target_ids:
+			var target_id = str(target_id_variant)
+			var hp_delta = int(hp_delta_by_target.get(target_id, 0))
+			trigger_attack(source_id, [target_id], effect, hp_delta)
+
+
+
+
+# Initialiser TTS
+
+func _start_initialiser_tts(text: String) -> void:
+	if not enable_initialiser_tts:
+		return
+	var trimmed_text = text.strip_edges()
+	if trimmed_text.is_empty():
+		return
+	if not ElevenlabsClient.has_api_key():
+		push_warning("Initialiser TTS skipped: missing ElevenLabs API key. Create user://elevenlabs_api_key.txt")
+		return
+
+	_initialiser_tts_request_id += 1
+	var request_id = _initialiser_tts_request_id
+	_run_initialiser_tts(request_id, trimmed_text)
+
+
+func _run_initialiser_tts(request_id: int, text: String) -> void:
+	var voice_id = _ensure_selected_initialiser_tts_voice_id()
+	if voice_id.is_empty():
+		push_warning("Initialiser TTS skipped: missing ElevenLabs voice id.")
+		return
+
+	var cache_path = _initialiser_tts_cache_path(text, voice_id)
+	if FileAccess.file_exists(cache_path):
+		var cached_file = FileAccess.open(cache_path, FileAccess.READ)
+		if cached_file != null:
+			_start_initialiser_tts_pcm_stream()
+			_queue_initialiser_tts_pcm_bytes(cached_file.get_buffer(cached_file.get_length()))
+			cached_file.close()
+			return
+
+	_start_initialiser_tts_pcm_stream()
+	var result: Dictionary = await ElevenlabsClient.stream_speech(
+		text,
+		voice_id,
+		elevenlabs_model_id,
+		elevenlabs_output_format,
+		Callable(self, "_on_initialiser_tts_chunk").bind(request_id),
+		elevenlabs_voice_speed
+	)
+	if request_id != _initialiser_tts_request_id:
+		return
+	if result.has("error"):
+		push_warning("Initialiser TTS failed: %s" % str(result.get("error", "Unknown error")))
+		return
+	var bytes: PackedByteArray = result.get("bytes", PackedByteArray())
+	if not bytes.is_empty():
+		_save_initialiser_tts_cache_bytes(cache_path, bytes)
+
+
+func _stop_initialiser_tts() -> void:
+	_initialiser_tts_request_id += 1
+	if is_instance_valid(_initialiser_tts_player):
+		_initialiser_tts_player.stop()
+		_initialiser_tts_player.stream = null
+	_initialiser_tts_playback = null
+	_initialiser_tts_pending_frames.clear()
+	_initialiser_tts_pcm_remainder = PackedByteArray()
+
+
+func _ensure_initialiser_tts_player() -> void:
+	if is_instance_valid(_initialiser_tts_player):
+		return
+	var player = AudioStreamPlayer.new()
+	player.name = "InitialiserTtsPlayer"
+	player.bus = "Master"
+	player.volume_db = initialiser_tts_volume_db
+	add_child(player)
+	_initialiser_tts_player = player
+
+
+func _start_initialiser_tts_pcm_stream() -> void:
+	_ensure_initialiser_tts_player()
+	if not is_instance_valid(_initialiser_tts_player):
+		return
+	_initialiser_tts_pending_frames.clear()
+	_initialiser_tts_pcm_remainder = PackedByteArray()
+	var stream = AudioStreamGenerator.new()
+	stream.mix_rate = initialiser_tts_mix_rate
+	stream.buffer_length = initialiser_tts_buffer_length
+	_initialiser_tts_player.stream = stream
+	_initialiser_tts_player.volume_db = initialiser_tts_volume_db
+	_initialiser_tts_player.play()
+	var playback_variant: Variant = _initialiser_tts_player.get_stream_playback()
+	_initialiser_tts_playback = playback_variant as AudioStreamGeneratorPlayback
+
+
+func _on_initialiser_tts_chunk(chunk: PackedByteArray, request_id: int) -> void:
+	if request_id != _initialiser_tts_request_id:
+		return
+	_queue_initialiser_tts_pcm_bytes(chunk)
+
+
+func _queue_initialiser_tts_pcm_bytes(chunk: PackedByteArray) -> void:
+	if chunk.is_empty():
+		return
+	var combined = PackedByteArray()
+	if not _initialiser_tts_pcm_remainder.is_empty():
+		combined.append_array(_initialiser_tts_pcm_remainder)
+	combined.append_array(chunk)
+	var usable_size = combined.size() - (combined.size() % 2)
+	_initialiser_tts_pcm_remainder = PackedByteArray()
+	if usable_size < combined.size():
+		_initialiser_tts_pcm_remainder.append(combined[combined.size() - 1])
+	var offset = 0
+	while offset < usable_size:
+		var frame_count = mini(1024, int((usable_size - offset) / 2.0))
+		var frames = PackedVector2Array()
+		frames.resize(frame_count)
+		for frame_index in range(frame_count):
+			var lo = int(combined[offset])
+			var hi = int(combined[offset + 1])
+			var sample = lo | (hi << 8)
+			if sample >= 32768:
+				sample -= 65536
+			var amplitude = clampf(float(sample) / 32768.0, -1.0, 1.0)
+			frames[frame_index] = Vector2(amplitude, amplitude)
+			offset += 2
+		_initialiser_tts_pending_frames.append(frames)
+
+
+func _drain_initialiser_tts_frames() -> void:
+	if _initialiser_tts_playback == null:
+		return
+	while not _initialiser_tts_pending_frames.is_empty():
+		var frames_variant: Variant = _initialiser_tts_pending_frames[0]
+		if not (frames_variant is PackedVector2Array):
+			_initialiser_tts_pending_frames.remove_at(0)
+			continue
+		var frames = frames_variant as PackedVector2Array
+		if not _initialiser_tts_playback.can_push_buffer(frames.size()):
+			return
+		_initialiser_tts_playback.push_buffer(frames)
+		_initialiser_tts_pending_frames.remove_at(0)
+
+
+func _pick_random_initialiser_tts_voice_id() -> String:
+	if elevenlabs_initializer_voice_ids.is_empty():
+		return ""
+	return str(elevenlabs_initializer_voice_ids[randi() % elevenlabs_initializer_voice_ids.size()]).strip_edges()
+
+
+func _ensure_selected_initialiser_tts_voice_id() -> String:
+	if not elevenlabs_voice_id.strip_edges().is_empty():
+		return elevenlabs_voice_id.strip_edges()
+	if _selected_initialiser_tts_voice_id.is_empty():
+		_selected_initialiser_tts_voice_id = _pick_random_initialiser_tts_voice_id()
+	return _selected_initialiser_tts_voice_id
+
+
+func _initialiser_tts_cache_path(text: String, voice_id: String) -> String:
+	var cache_seed = "initialiser_tts:\nvoice:%s\nmodel:%s\nformat:%s\nspeed:%s\ntext:%s" % [
+		voice_id,
+		elevenlabs_model_id,
+		elevenlabs_output_format,
+		str(elevenlabs_voice_speed),
+		text,
+	]
+	return "%s/%s.%s" % [
+		initialiser_tts_cache_dir,
+		cache_seed.sha256_text(),
+		_elevenlabs_output_extension(elevenlabs_output_format),
+	]
+
+
+func _save_initialiser_tts_cache_bytes(cache_path: String, bytes: PackedByteArray) -> void:
+	if bytes.is_empty():
+		return
+	var absolute_path = ProjectSettings.globalize_path(cache_path)
+	var dir_path = absolute_path.get_base_dir()
+	if not DirAccess.dir_exists_absolute(dir_path):
+		var mkdir_err = DirAccess.make_dir_recursive_absolute(dir_path)
+		if mkdir_err != OK:
+			push_warning("Failed to create initialiser TTS cache dir: %s" % dir_path)
+			return
+	var file = FileAccess.open(cache_path, FileAccess.WRITE)
+	if file == null:
+		push_warning("Failed to open initialiser TTS cache file for writing: %s" % cache_path)
+		return
+	file.store_buffer(bytes)
+	file.close()
+
+
+func _elevenlabs_output_extension(output_format: String) -> String:
+	var fmt = output_format.to_lower()
+	if fmt.begins_with("pcm"):
+		return "pcm"
+	if fmt.begins_with("mp3"):
+		return "mp3"
+	if fmt.begins_with("ulaw"):
+		return "ulaw"
+	if fmt.begins_with("alaw"):
+		return "alaw"
+	return "pcm"
 
 
 # OpenAI calls

@@ -18,8 +18,6 @@ glow_hdr_scale = 1.16
 
 [node name="Battle" type="Node2D" unique_id=538913616]
 script = ExtResource("1_dn72j")
-enable_initialiser_tts = true
-elevenlabs_initializer_voice_ids = Array[String](["UmQN7jS1Ee8B1czsUtQh"])
 
 [node name="Glow" type="WorldEnvironment" parent="." unique_id=812866793]
 environment = SubResource("Environment_p1qf1")
