@@ -4,7 +4,7 @@ extends CanvasLayer
 @onready var opp_prob_label = $MarginContainer/HBoxContainer/OppStats/Score
 
 func upd_player_prob(cur: int):
-	player_prob_label.text = "Probability score: %d" % cur
+	player_prob_label.text = "probability score: %d" % cur
 	
 func upd_opp_prob(cur: int):
-	opp_prob_label.text = "Probability score: %d" % cur
+	opp_prob_label.text = "probability score: %d" % cur
