@@ -27,7 +27,7 @@ func get_name_str() -> String:
 	name += " " + noun.get_words()
 	return name
 	
-func get_total_tier() -> String:
+func get_total_tier() -> float:
 	var val = noun.get_tier()
 	for adj in adjectives:
 		val += adj.get_tier()

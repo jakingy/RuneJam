@@ -44,6 +44,7 @@ func fuse_nouns(noun1: Noun, noun2: Noun) -> Noun:
 	var new_noun: Noun = Noun.new (
 		await PromptAPI.fuse_nouns([noun1.get_words(), noun2.get_words()]),
 		(noun1.tier ** 2 + noun2.tier ** 2) ** 0.5,
+		noun1.element if randf() < 0.5 else noun2.element,
 		(noun1.max_health_weight + noun2.max_health_weight) / 2,
 		(noun1.physical_attack_weight + noun2.physical_attack_weight) / 2,
 		(noun1.physical_defence_weight + noun2.physical_defence_weight) / 2,
