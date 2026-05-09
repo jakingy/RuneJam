@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="FontLibrary" format=3 uid="uid://7brlw3k4jyod"]
+
+[ext_resource type="Script" uid="uid://bi1xdthuuj5pi" path="res://scripts/font_library.gd" id="1_pg5oq"]
+[ext_resource type="FontFile" uid="uid://dos2mi3v2wsjw" path="res://fonts/Blackcraft-yw6zM.ttf" id="1_senfc"]
+[ext_resource type="FontFile" uid="uid://cxt57kso8qnxi" path="res://fonts/squarecaps.medium.ttf" id="2_fwqns"]
+[ext_resource type="FontFile" uid="uid://cnlpir1gjurfe" path="res://fonts/SunDried.ttf" id="3_rx60a"]
+[ext_resource type="FontFile" uid="uid://dp5pw7cr2j3gq" path="res://fonts/Wildyrus-E4gKe.ttf" id="4_ru7kn"]
+[ext_resource type="FontFile" uid="uid://b8q4ckq6rk0e7" path="res://fonts/IceCaps-7rLD.ttf" id="5_btdja"]
+[ext_resource type="FontFile" uid="uid://dyvqes6uonpf2" path="res://fonts/DarkartsBb-joM.ttf" id="6_0opf1"]
+[ext_resource type="FontFile" uid="uid://dhqa2736ex8hw" path="res://fonts/SuperWater-PVoOm.ttf" id="8_jxcta"]
+
+[resource]
+script = ExtResource("1_pg5oq")
+fire_font = ExtResource("4_ru7kn")
+ice_font = ExtResource("5_btdja")
+water_font = ExtResource("8_jxcta")
+earth_font = ExtResource("3_rx60a")
+dark_font = ExtResource("1_senfc")
+runes_font = ExtResource("6_0opf1")
+dropcap_font = ExtResource("2_fwqns")
+metadata/_custom_type_script = "uid://bi1xdthuuj5pi"

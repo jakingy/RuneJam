@@ -3,10 +3,29 @@ Put asset links here.
 
 Fonts:
 Wildyrus for fire and placeholder text - https://www.fontspace.com/wildyrus-font-f145583 
+plant font "leafy font": https://www.fontspace.com/leafy-font-f10831
+"just leaves": https://www.fontspace.com/just-leafs-font-f72303
+
+ice font "ice caps": https://www.fontspace.com/ice-caps-font-f4827
+
+fire font "wildyrus": https://www.fontspace.com/wildyrus-font-f145583
+
+ground "sun dried": https://www.1001freefonts.com/sun-dried.font
+
+dark "blackcraft': https://www.fontspace.com/blackcraft-font-f104766
+darkarts runic font https://www.fontspace.com/darkarts-bb-font-f681
+
+water "super water": https://www.fontspace.com/super-water-font-f124327
+Square caps Initial letter: https://www.1001fonts.com/squarecaps-font.html#license
+
 For cards: font: https://www.1001fonts.com/users/RantauType/
 
 Cards:
 Frame: https://tornioduva.itch.io/tornioduva-card-template?download
 
+
 Effects:
 Exploding Effect: https://pimen.itch.io/fire-spell-effect-02
+
+
+Medieval paper: https://img.freepik.com/free-photo/wooden-floor-background_53876-88628.jpg?semt=ais_hybrid&w=740&q=80

@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://dtlplpwu7e7x5"]
 
 [ext_resource type="Script" uid="uid://di6yhbmfoxd26" path="res://scripts/battle.gd" id="1_dn72j"]
-[ext_resource type="Script" uid="uid://urfvcnflypte" path="res://scenes/manuscript.gd" id="2_th188"]
+[ext_resource type="Script" uid="uid://qyeybv35e5sj" path="res://scripts/manuscript.gd" id="2_th188"]
+[ext_resource type="Resource" uid="uid://7brlw3k4jyod" path="res://fonts/font_library.tres" id="3_p1qf1"]
 
 [node name="Battle" type="Node2D" unique_id=538913616]
 script = ExtResource("1_dn72j")
@@ -17,6 +18,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("2_th188")
+font_library = ExtResource("3_p1qf1")
 
 [node name="ManuscriptFrame" type="PanelContainer" parent="WritingColumn/Manuscript" unique_id=717618608]
 layout_mode = 2
@@ -46,16 +48,23 @@ size_flags_vertical = 3
 mouse_filter = 1
 
 [node name="ManuscriptPaperSegments" type="Control" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface" unique_id=616378295]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
 [node name="ManuscriptPaperTint" type="ColorRect" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface" unique_id=422772521]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
+color = Color(0.666667, 0.54902, 0.396078, 0.35)
 
 [node name="ManuscriptPaperPadding" type="MarginContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface" unique_id=1551183575]
 layout_mode = 1
@@ -81,13 +90,11 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 0
 horizontal_scroll_mode = 0
-vertical_scroll_mode = 1
 
 [node name="Writing" type="VBoxContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/ManuscriptScroll" unique_id=295474103]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-mouse_filter = 1
 
 [node name="InputPadding" type="MarginContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent" unique_id=1671314676]
 layout_mode = 2
@@ -112,11 +119,13 @@ layout_mode = 2
 disabled = true
 text = "Send"
 
-[node name="ManuscriptRuneLayer" type="Control" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin" unique_id=1100482026]
-layout_mode = 2
+[node name="ManuscriptRuneLayer" type="Control" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface" unique_id=1100482026]
+anchors_preset = 0
+offset_right = 400.0
+offset_bottom = 500.0
 mouse_filter = 2
 
-[node name="LeftRuneGutter" type="RichTextLabel" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptRuneLayer" unique_id=25067583]
+[node name="LeftRuneGutter" type="RichTextLabel" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptRuneLayer" unique_id=25067583]
 layout_mode = 0
 offset_right = 1.0
 mouse_filter = 2

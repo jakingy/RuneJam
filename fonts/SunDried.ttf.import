@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://13s0ghrpxu8a"
-path="res://.godot/imported/wildyrus.ttf-f79401178b3464d4b37eb38f8f3b2d65.fontdata"
+uid="uid://cnlpir1gjurfe"
+path="res://.godot/imported/SunDried.ttf-f478d6b72ed4c59edea130ee5968e867.fontdata"
 
 [deps]
 
-source_file="res://fonts/wildyrus.ttf"
-dest_files=["res://.godot/imported/wildyrus.ttf-f79401178b3464d4b37eb38f8f3b2d65.fontdata"]
+source_file="res://fonts/SunDried.ttf"
+dest_files=["res://.godot/imported/SunDried.ttf-f478d6b72ed4c59edea130ee5968e867.fontdata"]
 
 [params]
 

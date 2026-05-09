@@ -61,3 +61,18 @@ static func make_character_image(noun: String, adjectives: Array[String]) -> Ima
 		return null
 	var download_resp = await RunwareClient.download_image(url)
 	return download_resp.get("texture", null)
+
+static func make_map_image_gen_prompt() -> String:
+	# TODO get the input format
+	"""
+	var prompt_text := DataUtils.load_prompt_text("res://prompts/character-map-prompt-generator.txt")
+	var result: Dictionary = await OpenaiClient.call_text(
+		{},
+		prompt_input,
+		prompt_text,
+		"gpt-5.4-nano",
+		"low"
+	)
+	return result["text"] if result.has("text") else ""
+	"""
+	return ""
