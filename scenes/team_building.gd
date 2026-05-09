@@ -10,6 +10,7 @@ func _ready() -> void:
 	card_node_scene = preload(CARD_SCENE_PATH)
 	var cards: Array[Card] = []
 	var base_nouns: Array[Noun] = CardsManager.get_base_nouns()
+	CardsManager.init_deck()
 	for i in range(base_nouns.size()):
 		cards.append(Card.new(base_nouns[i]))
 	$Deck.spawn_cards(cards)

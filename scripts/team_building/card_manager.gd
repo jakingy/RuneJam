@@ -52,6 +52,8 @@ func finish_drag():
 		hand.add_card(card_being_dragged)
 		card_being_dragged.holder.cards.erase(card_being_dragged)
 		emit_signal("submit_turn")
+	else:
+		card_being_dragged.holder.update()
 	card_being_dragged = null
 	
 func flip_card(card: Node2D):
