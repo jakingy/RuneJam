@@ -89,8 +89,8 @@ const ELEMENTAL_INTERACTION_MAP = {
 @export var starting_characters: Array[Dictionary] = []
 @export var initialization_constraints: Dictionary = {}
 
-@onready var manuscript: VBoxContainer = $WritingColumn/Manuscript
-@onready var map_manager: Node = $Map/MapImage/GridManager
+@onready var manuscript: VBoxContainer = $UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript
+@onready var map_manager: Node = $UILayer/MainLayout/BattleLayout/MapColumn/Map/MapImage/GridManager
 
 var current_phase = "idle"
 var game_state: Dictionary = {}
@@ -147,7 +147,7 @@ signal opp_prob_changed(cur: int)
 
 var player_prob: int = 0
 var opp_prob: int = 0
-@onready var battle_ui = $BattleUI
+@onready var battle_ui = $UILayer/MainLayout/TopBar/BattleUI
 
 
 func _ready() -> void:

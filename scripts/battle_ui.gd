@@ -1,4 +1,4 @@
-extends CanvasLayer
+extends Control
 
 @onready var player_prob_label = $MarginContainer/HBoxContainer/PlayerStats/Score
 @onready var opp_prob_label = $MarginContainer/HBoxContainer/OppStats/Score
