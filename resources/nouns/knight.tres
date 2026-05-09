@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Noun" format=3 uid="uid://5o02vf8y5yi8"]
+
+[ext_resource type="Script" uid="uid://dm0487dyx88tq" path="res://scripts/cards/noun.gd" id="1_83k2q"]
+
+[resource]
+script = ExtResource("1_83k2q")
+word = "knight"
+tier = 2.0
+max_health_weight = 100.0
+physical_attack_weight = 50.0
+physical_defence_weight = 50.0
+magic_defence_weight = 10.0
+speed_weight = 30.0
+metadata/_custom_type_script = "uid://dm0487dyx88tq"
