@@ -1,14 +1,14 @@
 [gd_scene format=3 uid="uid://dtlplpwu7e7x5"]
 
-
 [ext_resource type="Script" uid="uid://dxp3t5ee0c4kt" path="res://scripts/battle.gd" id="1_dn72j"]
-[ext_resource type="PackedScene" uid="uid://pvaxjyjrscjx" path="res://scenes/map.tscn" id="2_a12nh"]
+[ext_resource type="PackedScene" uid="uid://ca6cvu2yx7w6j" path="res://scenes/map.tscn" id="2_a12nh"]
 [ext_resource type="PackedScene" uid="uid://bk5g0gqslmyuc" path="res://scenes/battle_ui.tscn" id="2_lpir7"]
 [ext_resource type="Script" uid="uid://byn3bpynbcday" path="res://scripts/manuscript.gd" id="2_th188"]
 [ext_resource type="Resource" uid="uid://7brlw3k4jyod" path="res://fonts/font_library.tres" id="3_p1qf1"]
 
 [sub_resource type="Environment" id="Environment_p1qf1"]
 background_mode = 3
+background_canvas_max_layer = 7
 glow_enabled = true
 glow_normalized = true
 glow_intensity = 0.72
@@ -37,6 +37,7 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
 [node name="BattleUI" parent="UILayer/MainLayout/TopBar" unique_id=1765747084 instance=ExtResource("2_lpir7")]
+layout_mode = 2
 
 [node name="BattleLayout" type="HBoxContainer" parent="UILayer/MainLayout" unique_id=1978090794]
 layout_mode = 2
@@ -144,8 +145,6 @@ size_flags_vertical = 0
 
 [node name="InputPadding" type="MarginContainer" parent="UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent" unique_id=1671314676]
 layout_mode = 2
-mouse_filter = 1
-
 theme_override_constants/margin_left = 18
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 18
@@ -154,26 +153,22 @@ theme_override_constants/margin_bottom = 16
 [node name="InputBar" type="HBoxContainer" parent="UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding" unique_id=959946410]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
-mouse_filter = 1
 theme_override_constants/separation = 8
 
 [node name="PlayerInput" type="LineEdit" parent="UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding/InputBar" unique_id=1543182552]
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-custom_minimum_size = Vector2(0, 42)
 placeholder_text = "Enter your action."
 caret_blink = true
 caret_blink_interval = 0.55
-mouse_filter = 0
 
 [node name="PlayBtn" type="Button" parent="UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding/InputBar" unique_id=156650495]
-layout_mode = 2
 custom_minimum_size = Vector2(54, 42)
-text = ""
-flat = true
-mouse_filter = 0
+layout_mode = 2
 focus_mode = 0
+flat = true
 
 [node name="ManuscriptRuneLayer" type="Control" parent="UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface" unique_id=1100482026]
 anchors_preset = 0
