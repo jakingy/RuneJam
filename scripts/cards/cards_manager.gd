@@ -15,7 +15,7 @@ func draw_nouns(num: int = 3, min_tier: float = 1) -> Array[Noun]:
 		var weights: Array[float] = []
 		var elems: Array[Noun] = []
 		for noun in nouns_deck:
-			if noun.get_tier() > min_tier:
+			if noun.get_tier() >= min_tier:
 				elems.append(noun)
 				weights.append(1 / (noun.tier ** 2))
 				
@@ -32,7 +32,7 @@ func draw_adjectives(num: int = 3, min_tier: float = 1) -> Array[Adjective]:
 		var weights: Array[float] = []
 		var elems: Array[Adjective] = []
 		for adj in adjectives_deck:
-			if adj.get_tier() > min_tier:
+			if adj.get_tier() >= min_tier:
 				elems.append(adj)
 				weights.append(1 / (adj.tier ** 2))
 				

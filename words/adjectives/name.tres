@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="Adjective" format=3 uid="uid://lp4tqhqq0x45"]
+
+[ext_resource type="Script" uid="uid://cw68bd2r41pjt" path="res://scripts/cards/adjective.gd" id="1_lyggj"]
+
+[resource]
+script = ExtResource("1_lyggj")
+metadata/_custom_type_script = "uid://cw68bd2r41pjt"
