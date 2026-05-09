@@ -5,12 +5,14 @@ const CARD_SCENE_PATH = "res://scenes/team_building/card.tscn"
 var card_node_scene
 var turn_count = 0
 var bot_hand_ref
+var usr_hand_ref
 var card_scene
 var bot_deck: Array[Card] = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	bot_hand_ref = $BotHand
+	usr_hand_ref = $Hand
 	card_scene = preload(CARD_SCENE_PATH)
 	card_node_scene = preload(CARD_SCENE_PATH)
 	CardsManager.init_deck()
@@ -77,6 +79,39 @@ func add_to_bot_hand(card: Card):
 	card_node.name = "card"
 	card_node.holder = self
 	bot_hand_ref.add_card(card_node)
+
+func get_user_team() -> Array[Dictionary]:
+	var res: Array[Dictionary] = []
+	for i in range(usr_hand_ref.cards.size()):
+		var card: Card = usr_hand_ref.cards[i].the_card
+		res.append(convert_card_to_llm_schema(card, "team_a", "Team A", i + 1))
+	return res
+	
+func get_bot_team() -> Array[Dictionary]:
+	var res: Array[Dictionary] = []
+	for i in range(bot_hand_ref.cards.size()):
+		var card: Card = bot_hand_ref.cards[i].the_card
+		res.append(convert_card_to_llm_schema(card, "team_b", "Team B", i + 1))
+	return res
+
+func convert_card_to_llm_schema(card: Card, team: String, team_name: String, id: int):
+	var res: Dictionary = {}
+	res["id"] = team + "_unit_" + str(id)
+	res["display_name"] = card.get_name_str()
+	res["nouns"] = [card.get_noun_str()]
+	res["adjectives"] = card.get_adjectives_str()
+	res["elements"] = [card.get_element()]
+	res["side"] = team_name
+	res["max hp"] = card.get_max_health()
+	res["hp"] = card.get_max_health()
+	res["physical_attack"] = card.get_physical_attack()
+	res["physical_defence"] = card.get_physical_defence()
+	res["magic_power"] = card.get_magic_attack()
+	res["magic_defence"] = card.get_magic_defence()
+	res["speed"] = card.get_speed()
+	res["size"] = card.get_total_tier()
+	return res
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

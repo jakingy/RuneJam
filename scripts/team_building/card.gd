@@ -5,7 +5,7 @@ signal hovered_off
 
 var noun
 var adjectives
-var tier
+var element
 var max_health
 var physical_attack
 var physical_defense
@@ -24,7 +24,7 @@ func _ready() -> void:
 	
 func set_attribute(card: Card):
 	noun = card.get_noun_str()
-	tier = card.get_total_tier()
+	element = card.get_element()
 	max_health = card.get_max_health()
 	physical_attack = card.get_physical_attack()
 	physical_defense = card.get_physical_defence()
@@ -42,7 +42,7 @@ func update_img():
 func update_labels():
 	$FrontName.text = noun
 	$Name.text = noun
-	$Tier.text = str(tier)
+	$Element.text = element
 	$MaxHealth.text = "H: " + str(max_health)
 	$PhysicAttack.text = "P.A: " + str(physical_attack)
 	$PhysicDefense.text = "P.D: " + str(physical_defense)
@@ -63,7 +63,7 @@ func to_front() -> void:
 	$FrontName.visible = true
 	$Name.visible = false
 	$Name.visible = false
-	$Tier.visible = false
+	$Element.visible = false
 	$MaxHealth.visible = false
 	$PhysicAttack.visible = false
 	$PhysicDefense.visible = false
@@ -79,7 +79,7 @@ func to_back() -> void:
 	$FrontName.visible = false
 	$Name.visible = true
 	$Name.visible = true
-	$Tier.visible = true
+	$Element.visible = true
 	$MaxHealth.visible = true
 	$PhysicAttack.visible = true
 	$PhysicDefense.visible = true
