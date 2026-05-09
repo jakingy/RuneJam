@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://cv36o3y1ebw62"]
+
+[ext_resource type="Script" uid="uid://c1d3dixy6qsp0" path="res://scripts/character_display.gd" id="1_tqxk0"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_uhf6v"]
+font_size = 32
+
+[node name="CharacterDisplay" type="PanelContainer" unique_id=938068062]
+offset_right = 357.0
+offset_bottom = 357.0
+script = ExtResource("1_tqxk0")
+
+[node name="Image" type="TextureRect" parent="." unique_id=1404857869]
+visible = false
+layout_mode = 2
+
+[node name="PlaceholderLabel" type="Label" parent="." unique_id=1366218417]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+text = "yo"
+label_settings = SubResource("LabelSettings_uhf6v")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2

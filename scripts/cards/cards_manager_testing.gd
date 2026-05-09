@@ -1,11 +1,12 @@
 extends Node2D
 
+var character_display_scene = preload("res://scenes/character_display.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	var adjs: Array[Adjective] = CardsManager.get_base_adjectives()
-	var nouns: Array[Noun] = CardsManager.get_base_nouns()
+	var c_display = character_display_scene.instantiate()
+	add_child(c_display)
 	
-	var c: Card = CardsManager.create_card(nouns[0], adjs)
+	var adjs: Array[String] = ["enchanted"]
 	
-	print(c.get_name_str())
+	c_display.display_character("knight", adjs)

@@ -3,7 +3,7 @@ extends Node
 func get_base_nouns() -> Array[Noun]:
 	var base_nouns: Array[Noun] = []
 	
-	var path = "res://resources/nouns/"
+	var path = "res://words/nouns/"
 	var dir = DirAccess.open(path)
 
 	dir.list_dir_begin()
@@ -23,7 +23,7 @@ func get_base_nouns() -> Array[Noun]:
 func get_base_adjectives() -> Array[Adjective]:
 	var base_adjs: Array[Adjective] = []
 	
-	var path = "res://resources/adjectives/"
+	var path = "res://words/adjectives/"
 	var dir = DirAccess.open(path)
 
 	dir.list_dir_begin()
