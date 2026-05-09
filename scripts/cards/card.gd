@@ -8,10 +8,23 @@ func _init(p_noun: Noun = null, p_adjectives: Array[Adjective] = []):
 	noun = p_noun
 	adjectives = p_adjectives
 
-func get_name_str() -> String:
-	var 	name: String = noun.get_word()
+func get_noun_str() -> String:
+	return noun.get_words()
+	
+func get_adjectives_str() -> Array[String]:
+	var adj_names : Array[String] = []
 	for adj in adjectives:
-		name += " " + adj.get_word()
+		adj_names.append(adj.get_words())
+	return adj_names
+	
+func add_adjective(adj: Adjective) -> void:
+	adjectives.append(adj)
+	
+func get_name_str() -> String:
+	var name: String = ""
+	for adj in adjectives:
+		name += " " + adj.get_words()
+	name += " " + noun.get_words()
 	return name
 	
 func get_total_tier() -> String:

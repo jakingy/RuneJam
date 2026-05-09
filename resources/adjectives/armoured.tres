@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_l6fcm")
-word = "armoured"
+words = "Armoured"
 tier = 2.0
 max_health_multiplier_weight = 20.0
 physical_attack_multiplier_weight = 1.0

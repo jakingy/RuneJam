@@ -3,7 +3,9 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	var a: Array[Adjective] = CardsManager.get_base_adjectives()
-	var ea: Adjective = await CardsManager.fuse_adjectives(a[0], a[1])
+	var adjs: Array[Adjective] = CardsManager.get_base_adjectives()
+	var nouns: Array[Noun] = CardsManager.get_base_nouns()
 	
-	print(ea.word, ea.tier, ea.max_health_multiplier_weight)
+	var c: Card = CardsManager.create_card(nouns[0], adjs)
+	
+	print(c.get_name_str())

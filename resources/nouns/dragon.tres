@@ -4,8 +4,7 @@
 
 [resource]
 script = ExtResource("1_ppdpj")
-word = "dragon"
-tier = 5
+words = "Dragon"
 max_health_weight = 500.0
 physical_attack_weight = 20.0
 physical_defence_weight = 50.0

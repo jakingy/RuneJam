@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_tvitm")
-word = "enchanted"
+words = "Enchanted"
 tier = 3.0
 max_health_multiplier_weight = 1.0
 physical_attack_multiplier_weight = 1.0

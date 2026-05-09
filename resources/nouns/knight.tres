@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_83k2q")
-word = "knight"
+words = "Knight"
 tier = 2.0
 max_health_weight = 100.0
 physical_attack_weight = 50.0
