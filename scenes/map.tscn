@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://pvaxjyjrscjx"]
+
+[ext_resource type="Script" uid="uid://on1qt80s6ugp" path="res://scripts/grid_manager.gd" id="1_4xfga"]
+
+[node name="Map" type="Control" unique_id=151688534]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MapImage" type="TextureRect" parent="." unique_id=1596677699]
+layout_mode = 0
+offset_right = 40.0
+stretch_mode = 6
+
+[node name="GridManager" type="Node2D" parent="MapImage" unique_id=369890628]
+script = ExtResource("1_4xfga")
+
+[node name="MarkerContainer" type="Node2D" parent="MapImage/GridManager" unique_id=263910457]
