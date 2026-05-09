@@ -11,6 +11,9 @@ func _init(p_noun: Noun = null, p_adjectives: Array[Adjective] = []):
 func get_noun_str() -> String:
 	return noun.get_words()
 	
+func get_element() -> String:
+	return noun.get_element()
+	
 func get_adjectives_str() -> Array[String]:
 	var adj_names : Array[String] = []
 	for adj in adjectives:

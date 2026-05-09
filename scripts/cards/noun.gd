@@ -39,6 +39,9 @@ func get_words() -> String:
 func get_tier() -> float:
 	return tier
 
+func get_element() -> String:
+	return element
+
 func get_max_health() -> float:
 	return 600 * tier * max_health_weight
 
