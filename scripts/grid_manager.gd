@@ -704,22 +704,34 @@ func _play_effect_sfx(effect: String, phase: String) -> void:
 
 
 func _spawn_hp_delta_label(marker: MapMarker, hp_delta: int) -> void:
+	if marker == null:
+		return
+
 	var label = Label.new()
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.text = "%+d" % hp_delta
-	label.z_index = 1000
-	label.add_theme_font_size_override("font_size", 20)
-	label.add_theme_color_override("font_color", Color(0.35, 1.0, 0.35, 1.0) if hp_delta > 0 else Color(1.0, 0.22, 0.16, 1.0))
-	label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.85))
-	label.add_theme_constant_override("shadow_offset_x", 2)
-	label.add_theme_constant_override("shadow_offset_y", 2)
-	marker_container.add_child(label)
-	label.position = marker.position + Vector2(-18.0, -46.0)
 
-	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(label, "position", label.position + Vector2(0.0, -34.0), hp_delta_float_time).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(label, "modulate:a", 0.0, hp_delta_float_time).set_delay(hp_delta_float_time * 0.35)
+	# MapMarker is a Node2D in this project, not a Control, so do not type-check it as Control.
+	# Use a stable visual marker size for the floating HP label.
+	var marker_size = Vector2(56.0, 56.0)
+	var circle_diameter = maxf(marker_size.x, marker_size.y)
+	if circle_diameter <= 0.0:
+		circle_diameter = 56.0
+
+	label.add_theme_font_size_override("font_size", int(clampf(circle_diameter * 0.32, 16.0, 26.0)))
+	label.add_theme_constant_override("outline_size", 3)
+	label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.85))
+	label.add_theme_color_override("font_color", Color(0.44, 1.0, 0.65) if hp_delta > 0 else Color(1.0, 0.56, 0.52))
+	label.position = Vector2((marker_size.x * 0.5) - 16.0, -6.0)
+	label.z_index = 20
+	label.scale = Vector2.ONE * 0.72
+	marker.add_child(label)
+
+	var tween = marker.create_tween()
+	tween.parallel().tween_property(label, "position:y", label.position.y - 22.0, 0.52).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(label, "modulate:a", 0.0, 0.52).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tween.tween_property(label, "scale", Vector2.ONE * 1.04, 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.finished.connect(func() -> void:
 		if is_instance_valid(label):
 			label.queue_free()
