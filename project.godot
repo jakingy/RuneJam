@@ -18,9 +18,9 @@ config/icon="res://icon.svg"
 [autoload]
 
 CardsManager="*uid://yhpwvu024g24"
-OpenaiClient="*uid://b6f3inq4fuvmr"
 RunwareClient="*res://scripts/runware_client.gd"
 TextEffects="*uid://ck05c5mn71ai4"
+OpenaiClient="*res://scripts/openai_client.gd"
 
 [display]
 
