@@ -142,8 +142,19 @@ var TEAM_B_OUTPUT_SCHEMA: Dictionary
 var INITIALIZER_OUTPUT_SCHEMA: Dictionary
 var NARRATOR_OUTPUT_SCHEMA: Dictionary
 
+signal player_prob_changed(cur: int)
+signal opp_prob_changed(cur: int)
+
+var player_prob: int = 0
+var opp_prob: int = 0
+@onready var battle_ui = $BattleUI
+
 
 func _ready() -> void:
+	player_prob_changed.connect(battle_ui.upd_player_prob)
+	opp_prob_changed.connect(battle_ui.upd_opp_prob)
+	player_prob_changed.emit(player_prob)
+	opp_prob_changed.emit(opp_prob)
 	_build_schemas()
 	_connect_manuscript()
 	_start_new_game.call_deferred()
@@ -2251,3 +2262,12 @@ func _team_b_cost_fallback(judged_cost: Dictionary, team_b_probability: int) -> 
 			"cheaper_alternative": "",
 		},
 	}
+
+
+func adjust_prob(amount: int, is_player: bool):
+	if is_player:
+		player_prob += amount
+		player_prob_changed.emit(player_prob)
+	else:
+		opp_prob += amount;
+		opp_prob_changed.emit(opp_prob)
