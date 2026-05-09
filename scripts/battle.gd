@@ -90,7 +90,8 @@ const ELEMENTAL_INTERACTION_MAP = {
 @export var initialization_constraints: Dictionary = {}
 
 @onready var manuscript: VBoxContainer = $WritingColumn/Manuscript
-@onready var map_view: Node = get_node_or_null("MapView")
+@onready var map_view: Node = $Map
+@onready var map_texture_rect: TextureRect = $Map/MapImage
 
 var current_phase = "idle"
 var game_state: Dictionary = {}
@@ -549,12 +550,15 @@ func _start_new_game() -> void:
 	game_state = _normalize_game_state(repaired_state)
 	game_state["phase"] = "round_planning"
 	_round_cost_verdict_cache = {}
-
+	_make_map_image_async(game_state)
 	manuscript.add_narrator_message(str(data.get("opening_scene", "The battle begins.")))
 	redraw_tokens()
 	_sync_token_attachments()
 	_start_round()
-
+	
+func _make_map_image_async(game_state: Dictionary) -> void:
+	var map_image := await PromptAPI.make_map_image(game_state) # TODO USE MAP IMAGE GENERATION FEED TO MAP
+	map_texture_rect.texture = map_image
 
 func _start_round() -> void:
 	current_phase = "awaiting_action"

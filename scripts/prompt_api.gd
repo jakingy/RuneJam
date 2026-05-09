@@ -35,6 +35,14 @@ static func fuse_nouns(nouns: Array[String]) -> String:
 	)
 	return result["text"] if result.has("text") else ""
 
+static func get_image_from_prompt(image_prompt: String, width=256, height=256) -> ImageTexture:
+	var runware_resp = await RunwareClient.generate_image(image_prompt, width, height)
+	var url := str(runware_resp.get("url", "")).strip_edges()
+	if url.is_empty():
+		return null
+	var download_resp = await RunwareClient.download_image(url)
+	return download_resp.get("texture", null)
+
 static func make_character_image_gen_prompt(noun: String, adjectives: Array[String]) -> String:
 	# For adjecitve cards, use noun = "magical sigil" and add the adjective to the adjectives list
 	var adjective_text := ", ".join(adjectives)
@@ -55,24 +63,19 @@ static func make_character_image(noun: String, adjectives: Array[String]) -> Ima
 	If API or HTTP fails in anyway, returns null
 	"""
 	var image_prompt := await make_character_image_gen_prompt(noun, adjectives)
-	var runware_resp = await RunwareClient.generate_image(image_prompt)
-	var url := str(runware_resp.get("url", "")).strip_edges()
-	if url.is_empty():
-		return null
-	var download_resp = await RunwareClient.download_image(url)
-	return download_resp.get("texture", null)
+	return await get_image_from_prompt(image_prompt)
 
-static func make_map_image_gen_prompt() -> String:
-	# TODO get the input format
-	"""
-	var prompt_text := DataUtils.load_prompt_text("res://prompts/character-map-prompt-generator.txt")
+static func make_map_image_gen_prompt(state: Dictionary) -> String:
+	var prompt_text := DataUtils.load_prompt_text("res://prompts/map-image-prompt-generator.txt")
 	var result: Dictionary = await OpenaiClient.call_text(
 		{},
-		prompt_input,
+		JSON.stringify(state),
 		prompt_text,
-		"gpt-5.4-nano",
+		"gpt-5.4-mini",
 		"low"
 	)
 	return result["text"] if result.has("text") else ""
-	"""
-	return ""
+	
+static func make_map_image(initial_state: Dictionary) -> ImageTexture:
+	var image_prompt := await make_map_image_gen_prompt(initial_state)
+	return await get_image_from_prompt(image_prompt, 1024, 1024)

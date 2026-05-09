@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://h3dyt5deriek" path="res://scenes/team_building.gd" id="1_8jl1w"]
 [ext_resource type="Script" uid="uid://dfgyl8v3eweei" path="res://scripts/team_building/card_manager.gd" id="1_nq0av"]
 [ext_resource type="PackedScene" uid="uid://uoc7fgrfx0c4" path="res://scenes/team_building/hand.tscn" id="3_nq0av"]
-[ext_resource type="Script" uid="uid://dr5r12f0qo8st" path="res://scripts/team_building/deck.gd" id="4_8jl1w"]
+[ext_resource type="Script" uid="uid://c1isifbere2g6" path="res://scripts/team_building/deck.gd" id="4_8jl1w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nq0av"]
 size = Vector2(1920, 360)

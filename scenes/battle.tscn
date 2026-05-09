@@ -29,7 +29,7 @@ offset_right = 1024.0
 offset_bottom = 1024.0
 
 [node name="WritingColumn" type="VBoxContainer" parent="." unique_id=338092889]
-custom_minimum_size = Vector2(420, 520)
+custom_minimum_size = Vector2(600, 760)
 offset_right = 420.0
 offset_bottom = 520.0
 size_flags_horizontal = 3
