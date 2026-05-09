@@ -17,7 +17,8 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			var card: Node2D = raycast_check_for_card()
-			start_drag(card)
+			if card:
+				start_drag(card)
 		else:
 			if card_being_dragged:
 				finish_drag()
@@ -25,7 +26,8 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if !event.pressed:
 			var card: Node2D = raycast_check_for_card()
-			flip_card(card)
+			if card:
+				flip_card(card)
 
 func start_drag(card: Node2D):
 	card_being_dragged = card
@@ -35,8 +37,8 @@ func finish_drag():
 	card_being_dragged.scale = Vector2(1.05, 1.05)
 	var hand = raycast_check_for_hand()
 	if hand:
-		hand.add_card(card_being_dragged)
 		card_being_dragged.scale = Vector2(1.0, 1.0)
+		hand.add_card(card_being_dragged)
 	card_being_dragged = null
 	
 func flip_card(card: Node2D):
