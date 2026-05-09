@@ -20,7 +20,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_paxxb")
-stretch_mode = 5
+expand_mode = 1
+stretch_mode = 6
 
 [node name="GridManager" type="Node2D" parent="MapImage" unique_id=369890628]
 script = ExtResource("1_4xfga")
