@@ -5,6 +5,7 @@ extends Node2D
 
 var marker_scene: PackedScene = preload("res://scenes/map_marker.tscn")
 var projectile_scene: PackedScene = preload("res://scenes/projectile.tscn")
+var physical_scene: PackedScene = preload("res://scenes/physical_hit.tscn")
 
 var grid_size_x: int = 16
 var grid_size_y: int = 16
@@ -63,6 +64,7 @@ func spawn_object(object: Dictionary) -> void:
 	var object_x: int = object["x"]
 	var object_y: int = object["y"]
 	var object_z: int = object["z"]
+
 	if object_marker == null:
 		push_error("Failed to instantiate MapMarker :(")
 		return
@@ -116,7 +118,8 @@ func _ready() -> void:
 		"y": 4,
 		"z": 0,
 	}
-	call_deferred("spawn_object", object)
+	call_deferred("spawn_character", character)
+	call_deferred("spawn_character", character_b)
 
 
 """
@@ -184,7 +187,24 @@ func do_elemental_attack_location(source_id: String, target_pos: Vector2, elemen
 	projectile.launch_elemental_attack(start_pos, target_pos, element)
 	await get_tree().create_timer(0.4).timeout
 
+func do_physical_attack_characters(source_id: String, target_id: String) -> void:
+	var attacker: MapMarker = marker_container.get_node_or_null(source_id)
+	var defender: MapMarker = marker_container.get_node_or_null(target_id)
+
+	if attacker == null:
+		push_warning("Attack failed: Attacker '%s' is missing?!" % source_id)
+		return
+	if defender == null:
+		push_warning("Defend failed: Defender '%s' is missing?!" % target_id)
+		return
+	var slash = physical_scene.instantiate()
+	get_parent().add_child(slash)
+	var start_pos: Vector2 = attacker.visual.global_position
+	var end_pos: Vector2 = defender.visual.global_position
+	slash.strike(start_pos, end_pos)
+	await get_tree().create_timer(0.4).timeout
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept"):
-		do_elemental_attack_characters("a", "b", "plant")
+		do_physical_attack_characters("a", "b")

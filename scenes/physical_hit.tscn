@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://cb7ukqu3h84v6"]
+
+[ext_resource type="Texture2D" uid="uid://dyun72rr1gggk" path="res://assets/effects/slashes_effect/64x64/Slash 1/color2/sprite-sheet.png" id="1_8bqvg"]
+[ext_resource type="Script" uid="uid://4sgxys6tik8a" path="res://scripts/physical_hit.gd" id="2_i1pa4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i1pa4"]
+atlas = ExtResource("1_8bqvg")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kjbp6"]
+atlas = ExtResource("1_8bqvg")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xymk2"]
+atlas = ExtResource("1_8bqvg")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h6k35"]
+atlas = ExtResource("1_8bqvg")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ayy6b"]
+atlas = ExtResource("1_8bqvg")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dhpay"]
+atlas = ExtResource("1_8bqvg")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f04tp"]
+atlas = ExtResource("1_8bqvg")
+region = Rect2(64, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s3wqs"]
+atlas = ExtResource("1_8bqvg")
+region = Rect2(128, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ifwhp"]
+atlas = ExtResource("1_8bqvg")
+region = Rect2(192, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_usrol"]
+atlas = ExtResource("1_8bqvg")
+region = Rect2(256, 64, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xxwrk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i1pa4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kjbp6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xymk2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h6k35")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ayy6b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dhpay")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f04tp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s3wqs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ifwhp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_usrol")
+}],
+"loop": false,
+"name": &"default",
+"speed": 24.0
+}]
+
+[node name="PhysicalHit" type="AnimatedSprite2D" unique_id=817562612]
+scale = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_xxwrk")
+script = ExtResource("2_i1pa4")
