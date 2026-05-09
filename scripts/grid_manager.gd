@@ -32,6 +32,7 @@ func spawn_character(character: Dictionary) -> void:
 
 	char_marker.name = character_id
 	marker_container.add_child(char_marker)
+	
 	if character["side"] == "Team A":
 		char_marker.set_ring_color(Color.BLUE)
 	elif character["side"] == "Team B":
@@ -40,6 +41,10 @@ func spawn_character(character: Dictionary) -> void:
 		char_marker.set_ring_color(Color.YELLOW)
 	char_marker.position = get_pixel_position_from_grid(character_x, character_y)
 	char_marker.set_health(character["hp"], character["max_hp"])
+	var char_noun: String = character["nouns"]
+	var char_adjs: Array[String] = []
+	char_adjs.assign(character["adjectives"])
+	char_marker.request_portrait(char_noun, char_adjs)
 	# char_marker.apply_elevation(character_z)
 
 func spawn_object(object: Dictionary) -> void:
@@ -51,10 +56,12 @@ func _ready() -> void:
 		"id": "a",
 		"max_hp": 100,
 		"hp": 67,
-		"side": "Team A",
+		"side": "Neutral",
 		"x": 8,
 		"y": 8,
 		"z": 9,
+		"nouns": "paladin",
+		"adjectives": ["holy", "ugly", "red armor"]
 	}
 	call_deferred("spawn_character", character)
 	await get_tree().create_timer(2.0).timeout

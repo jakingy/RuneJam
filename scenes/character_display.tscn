@@ -13,8 +13,9 @@ offset_bottom = 357.0
 script = ExtResource("1_tqxk0")
 
 [node name="Image" type="TextureRect" parent="." unique_id=1404857869]
-visible = false
 layout_mode = 2
+expand_mode = 1
+stretch_mode = 6
 
 [node name="PlaceholderLabel" type="RichTextLabel" parent="." unique_id=88809851]
 custom_minimum_size = Vector2(1, 1)

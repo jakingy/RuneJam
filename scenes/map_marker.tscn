@@ -1,51 +1,61 @@
 [gd_scene format=3 uid="uid://ch8on2xej3olr"]
 
-[ext_resource type="Shader" uid="uid://dyr4d25ogsa0w" path="res://shader/map_marker.gdshader" id="1_8qftl"]
 [ext_resource type="Script" uid="uid://dwx6h3qc76q6o" path="res://scripts/map_marker.gd" id="1_rbw48"]
 [ext_resource type="Texture2D" uid="uid://cx31cqts0mt4p" path="res://assets/marker/HealthRingEmpty.png" id="1_t8lt4"]
 [ext_resource type="Texture2D" uid="uid://cknvth8xdpbss" path="res://assets/marker/HealthRing.png" id="2_6kfhq"]
-[ext_resource type="Texture2D" uid="uid://bhvlk8cgleybv" path="res://assets/marker/placeholder_portrait.jpg" id="2_rbw48"]
+[ext_resource type="PackedScene" uid="uid://cv36o3y1ebw62" path="res://scenes/character_display.tscn" id="2_reat5"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reat5"]
-bg_color = Color(1, 0.64705884, 0, 1)
-corner_radius_top_left = 100
-corner_radius_top_right = 100
-corner_radius_bottom_right = 100
-corner_radius_bottom_left = 100
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rbw48"]
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 999
+corner_radius_top_right = 999
+corner_radius_bottom_right = 999
+corner_radius_bottom_left = 999
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_reat5"]
-shader = ExtResource("1_8qftl")
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qftl"]
+corner_radius_top_left = 999
+corner_radius_top_right = 999
+corner_radius_bottom_right = 999
+corner_radius_bottom_left = 999
 
 [node name="MapMarker" type="Node2D" unique_id=903501902]
 script = ExtResource("1_rbw48")
 
-[node name="Shadow" type="Sprite2D" parent="." unique_id=1707948991]
-
-[node name="Visual" type="Node2D" parent="." unique_id=1467533242]
-
-[node name="Placeholder" type="Label" parent="Visual" unique_id=1387693120]
-custom_minimum_size = Vector2(85, 85)
+[node name="Shadow" type="Panel" parent="." unique_id=506933323]
+custom_minimum_size = Vector2(64, 32)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
+offset_left = -32.0
+offset_top = -16.0
+offset_right = 32.0
+offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/outline_size = 2
-theme_override_font_sizes/font_size = 40
-theme_override_styles/normal = SubResource("StyleBoxFlat_reat5")
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_rbw48")
 
-[node name="Portrait" type="Sprite2D" parent="Visual" unique_id=864888150]
-material = SubResource("ShaderMaterial_reat5")
-scale = Vector2(0.35, 0.35)
-texture = ExtResource("2_rbw48")
+[node name="Visual" type="Node2D" parent="." unique_id=1467533242]
+scale = Vector2(1.2, 1.2)
+
+[node name="CharacterDisplay" parent="Visual" unique_id=938068062 instance=ExtResource("2_reat5")]
+clip_children = 2
+custom_minimum_size = Vector2(100, 100)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_8qftl")
 
 [node name="HealthRing" type="TextureProgressBar" parent="Visual" unique_id=1470271008]
 offset_left = -50.0

@@ -4,6 +4,7 @@ extends Node2D
 @onready var portrait: Sprite2D = $Visual/Portrait
 @onready var placeholder: Label = $Visual/Placeholder
 @onready var health_ring: TextureProgressBar = $Visual/HealthRing
+@onready var character_display: PanelContainer = $Visual/CharacterDisplay
 var health_tween: Tween
 
 var target_portrait_size: float = 85.0
@@ -37,3 +38,9 @@ func take_damage(damage_amount: int) -> void:
 
 func set_ring_color(new_color: Color) -> void:
 	health_ring.tint_progress = new_color
+
+func request_portrait(noun: String, adjs: Array[String]) -> void:
+	if character_display.has_method("display_character"):
+		character_display.display_character(noun, adjs)
+	else:
+		print("Character display is missing display character method!")
