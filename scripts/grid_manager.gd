@@ -4,7 +4,7 @@ extends Node2D
 @onready var marker_container: Node2D = $MarkerContainer
 
 var marker_scene: PackedScene = preload("res://scenes/map_marker.tscn")
-
+var projectile_scene: PackedScene = preload("res://scenes/projectile.tscn")
 
 var grid_size_x: int = 16
 var grid_size_y: int = 16
@@ -15,7 +15,7 @@ func get_pixel_position_from_grid(grid_x: int, grid_y: int) -> Vector2:
 
 	var cell_width: float = total_width / grid_size_x
 	var cell_height: float = total_width / grid_size_y
-	
+
 	var pixel_x: float = (float(grid_x) * cell_width) + (cell_width / 2.0)
 	var pixel_y: float = (float(grid_y) * cell_height) + (cell_height / 2.0)
 	
@@ -57,16 +57,27 @@ func _ready() -> void:
 		"id": "a",
 		"max_hp": 100,
 		"hp": 67,
-		"side": "Neutral",
+		"side": "Team A",
 		"x": 8,
 		"y": 8,
 		"z": 0,
 		"nouns": "paladin",
 		"adjectives": ["holy", "ugly", "red armor"]
 	}
+	
+	var character_b: Dictionary = {
+		"id": "b",
+		"max_hp": 100,
+		"hp": 100,
+		"side": "Team B",
+		"x": 3,
+		"y": 3,
+		"z": 0,
+		"nouns": "murloc",
+		"adjectives": ["powerful", "muscular", "tiny head"]
+	}
 	call_deferred("spawn_character", character)
-	await get_tree().create_timer(2.0).timeout
-	move_character(character, 5, 5)
+	call_deferred("spawn_character", character_b)
 
 """
 moves: Array of Character Objects
@@ -104,14 +115,24 @@ func move_character(character: Dictionary, target_x: int, target_y: int) -> void
 	var move_time: float = 0.5
 	move_tween.tween_property(marker, "position", target_pixel_pos, move_time)
 
+func do_elemental_attack(source_id: String, target_id: String, element: String) -> void:
+	var attacker: MapMarker = marker_container.get_node_or_null(source_id)
+	var defender: MapMarker = marker_container.get_node_or_null(target_id)
+
+	if attacker == null:
+		push_warning("Attack failed: Attacker '%s' is missing?!" % source_id)
+		return
+	if defender == null:
+		push_warning("Defend failed: Defender '%s' is missing?!" % target_id)
+		return
+	var projectile = projectile_scene.instantiate()
+	get_parent().add_child(projectile)
+	var start_pos: Vector2 = attacker.visual.global_position
+	var end_pos: Vector2 = defender.visual.global_position
+	projectile.launch_elemental_attack(start_pos, end_pos, element)
+	await get_tree().create_timer(0.4).timeout
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept"):
-		var target_marker: MapMarker = marker_container.get_node_or_null("a") as MapMarker
-		
-		if target_marker != null:
-			# If they are currently in the air, bring them down. Otherwise, launch them up!
-			if target_marker.current_z > 0:
-				target_marker.apply_elevation(0)
-			else:
-				target_marker.apply_elevation(25)
+		do_elemental_attack("a", "b", "lightning")
