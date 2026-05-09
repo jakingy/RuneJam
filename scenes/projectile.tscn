@@ -1,9 +1,11 @@
 [gd_scene format=3 uid="uid://1he2efbywemv"]
 
+[ext_resource type="Texture2D" uid="uid://cq8ah2xw0mx68" path="res://assets/effects/wind_effect/Wind Projectile.png" id="1_fooc5"]
 [ext_resource type="Texture2D" uid="uid://4fl3b81ixg3e" path="res://assets/effects/Earth Effect 01/Earth projectile Spritesheet .png" id="1_mxgir"]
 [ext_resource type="Texture2D" uid="uid://tf6h01qrgx5n" path="res://assets/effects/fire_effect_01/Firebolt SpriteSheet.png" id="1_q3m7n"]
 [ext_resource type="Texture2D" uid="uid://pbf7s2y7d5c0" path="res://assets/effects/dark_effect_01/Dark VFX 1 (40x32).png" id="1_rimnf"]
 [ext_resource type="Texture2D" uid="uid://d21sksl3a1kre" path="res://assets/effects/ice_effect/Ice VFX 1/IceVFX 1 Repeatable.png" id="2_6q2a6"]
+[ext_resource type="Texture2D" uid="uid://c7a0cab5v8nn7" path="res://assets/effects/wind_effect/Wind Hit Effect.png" id="2_sbbd4"]
 [ext_resource type="Script" uid="uid://dfbbpb4mkab0n" path="res://scripts/projectile.gd" id="2_softn"]
 [ext_resource type="Texture2D" uid="uid://bstq01nf4uy7v" path="res://assets/effects/ice_effect/Ice VFX 2/Ice VFX 2 Start.png" id="3_6q2a6"]
 [ext_resource type="Texture2D" uid="uid://cy6em6ap5uuhw" path="res://assets/effects/thunder_effect/Projectile 2/Projectile 2 wo blur.png" id="4_jxwu6"]
@@ -14,6 +16,54 @@
 [ext_resource type="Texture2D" uid="uid://cei3wdifd1gep" path="res://assets/effects/holy_effect_01/Holy VFX 01 Impact.png" id="6_l47rv"]
 [ext_resource type="Texture2D" uid="uid://cungv2q0segma" path="res://assets/effects/wood_effect/Wood VFX 01/Wood VFX 01 Hit.png" id="7_031o2"]
 [ext_resource type="Texture2D" uid="uid://cgk71k178y7vt" path="res://assets/effects/water_effect/Water Ball - Spritesheet/WaterBall - Impact.png" id="7_pl1gp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_276c6"]
+atlas = ExtResource("1_fooc5")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fxyft"]
+atlas = ExtResource("1_fooc5")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wh5vw"]
+atlas = ExtResource("1_fooc5")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p4rus"]
+atlas = ExtResource("1_fooc5")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wq3b0"]
+atlas = ExtResource("1_fooc5")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_au1ko"]
+atlas = ExtResource("1_fooc5")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_flmyr"]
+atlas = ExtResource("2_sbbd4")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cc5r8"]
+atlas = ExtResource("2_sbbd4")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mxq2d"]
+atlas = ExtResource("2_sbbd4")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fhrr7"]
+atlas = ExtResource("2_sbbd4")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ovlsa"]
+atlas = ExtResource("2_sbbd4")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j0vgp"]
+atlas = ExtResource("2_sbbd4")
+region = Rect2(64, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_67tdq"]
 atlas = ExtResource("1_rimnf")
@@ -599,6 +649,52 @@ region = Rect2(192, 192, 64, 64)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_276c6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fxyft")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wh5vw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p4rus")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wq3b0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_au1ko")
+}],
+"loop": true,
+"name": &"air_flight",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_flmyr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cc5r8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mxq2d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fhrr7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ovlsa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j0vgp")
+}],
+"loop": false,
+"name": &"air_impact",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_67tdq")
 }, {
 "duration": 1.0,
@@ -1116,5 +1212,5 @@ animations = [{
 [node name="Projectile" type="AnimatedSprite2D" unique_id=192778102]
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_rimnf")
-animation = &"dark_impact"
+animation = &"air_impact"
 script = ExtResource("2_softn")
