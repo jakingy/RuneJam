@@ -21,7 +21,7 @@ CardsManager="*uid://yhpwvu024g24"
 RunwareClient="*res://scripts/runware_client.gd"
 TextEffects="*uid://ck05c5mn71ai4"
 OpenaiClient="*res://scripts/openai_client.gd"
-ElevenlabsClient="*uid://byq0bkxtyydlt"
+ElevenlabsClient="*res://scripts/elevenlabs_client.gd"
 
 [display]
 
