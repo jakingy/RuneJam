@@ -23,7 +23,7 @@ func update() -> void:
 
 func calculate_card_position(idx: int):
 	var total_width = (cards.size() - 1) * CARD_WIDTH
-	var center_screen_x = SCREEN_WIDTH / 2
+	var center_screen_x = self.global_position.x
 	var x = center_screen_x + idx * CARD_WIDTH - total_width / 2
 	return x
 	

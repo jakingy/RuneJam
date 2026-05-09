@@ -3,10 +3,12 @@
 [ext_resource type="Script" uid="uid://h3dyt5deriek" path="res://scenes/team_building.gd" id="1_8jl1w"]
 [ext_resource type="Script" uid="uid://dfgyl8v3eweei" path="res://scripts/team_building/card_manager.gd" id="1_nq0av"]
 [ext_resource type="PackedScene" uid="uid://uoc7fgrfx0c4" path="res://scenes/team_building/hand.tscn" id="3_nq0av"]
-[ext_resource type="Script" uid="uid://dr5r12f0qo8st" path="res://scripts/team_building/deck.gd" id="4_8jl1w"]
+[ext_resource type="Script" uid="uid://c1isifbere2g6" path="res://scripts/team_building/deck.gd" id="4_8jl1w"]
+[ext_resource type="Texture2D" uid="uid://pexp8ed5kjfp" path="res://assets/team_building/mykhailo-120.jpeg" id="5_ktq82"]
+[ext_resource type="Texture2D" uid="uid://ln0i1rntwujo" path="res://assets/team_building/medieval-paper.png" id="6_l1l0t"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nq0av"]
-size = Vector2(1920, 360)
+size = Vector2(1280, 360)
 
 [node name="TeamBuilding" type="Node2D" unique_id=941263556]
 script = ExtResource("1_8jl1w")
@@ -16,11 +18,11 @@ script = ExtResource("1_nq0av")
 
 [node name="Hand" parent="." unique_id=435524113 instance=ExtResource("3_nq0av")]
 z_index = -1
-position = Vector2(960, 540)
+position = Vector2(700, 500)
 
 [node name="Deck" type="Node2D" parent="." unique_id=308222994]
 z_index = -1
-position = Vector2(960, 900)
+position = Vector2(700, 900)
 script = ExtResource("4_8jl1w")
 
 [node name="Area2D" type="Area2D" parent="Deck" unique_id=2075668343]
@@ -31,6 +33,7 @@ collision_mask = 2
 shape = SubResource("RectangleShape2D_nq0av")
 
 [node name="ColorRect" type="ColorRect" parent="Deck" unique_id=502895919]
+visible = false
 custom_minimum_size = Vector2(1920, 360)
 offset_left = -960.0
 offset_top = -180.0
@@ -40,4 +43,24 @@ color = Color(0.69411767, 1, 0.64705884, 1)
 
 [node name="BotHand" parent="." unique_id=814759873 instance=ExtResource("3_nq0av")]
 z_index = -1
-position = Vector2(960, 180)
+position = Vector2(700, 210)
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1897373429]
+z_index = -2
+position = Vector2(1269.3557, 541.5767)
+scale = Vector2(0.66291255, 0.4933242)
+texture = ExtResource("5_ktq82")
+
+[node name="HandHolder" type="Sprite2D" parent="." unique_id=353432862]
+position = Vector2(693, 355.00006)
+scale = Vector2(1.7243242, 1.1501013)
+texture = ExtResource("6_l1l0t")
+
+[node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=1764178748]
+offset_left = 56.0
+offset_top = 71.0
+offset_right = 1328.0
+offset_bottom = 641.0
+border_color = Color(0.54509807, 0.3529412, 0.16862746, 1)
+border_width = 5.0
+editor_only = false

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_noun"]
+
+[resource]
+script = ExtResource("1_noun")
+words = "page"
+tier = 0.95
+max_health_weight = 0.42
+physical_attack_weight = 0.34
+physical_defence_weight = 0.2
+magic_attack_weight = 0.2
+magic_defence_weight = 0.32
+speed_weight = 0.5

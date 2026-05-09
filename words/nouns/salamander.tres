@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_noun"]
+
+[resource]
+script = ExtResource("1_noun")
+words = "salamander"
+tier = 2.15
+max_health_weight = 0.44
+physical_attack_weight = 0.56
+physical_defence_weight = 0.34
+magic_attack_weight = 0.64
+magic_defence_weight = 0.52
+speed_weight = 0.68

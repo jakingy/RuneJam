@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://uoc7fgrfx0c4"]
 
-[ext_resource type="Script" uid="uid://f5nyk0onahjf" path="res://scripts/team_building/hand.gd" id="1_e0gf6"]
+[ext_resource type="Script" uid="uid://cmo7iqa2gkswd" path="res://scripts/team_building/hand.gd" id="1_e0gf6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fe1nd"]
-size = Vector2(1920, 360)
+size = Vector2(1280, 285)
 
 [node name="Hand" type="Node2D" unique_id=435524113]
 script = ExtResource("1_e0gf6")
@@ -19,8 +19,9 @@ collision_mask = 2
 shape = SubResource("RectangleShape2D_fe1nd")
 
 [node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=932976553]
-offset_left = -960.0
-offset_top = -180.0
-offset_right = 959.0
-offset_bottom = 180.0
+visible = false
+offset_left = -642.0
+offset_top = -142.0
+offset_right = 638.0
+offset_bottom = 143.0
 editor_only = false

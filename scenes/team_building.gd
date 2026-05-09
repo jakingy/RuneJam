@@ -72,6 +72,7 @@ func bot_move():
 func add_to_bot_hand(card: Card):
 	var card_node = card_scene.instantiate()
 	$CardManager.add_child(card_node)
+	card_node.z_index = 3
 	card_node.set_attribute(card)
 	card_node.name = "card"
 	card_node.holder = self

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Adjective" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/adjective.gd" id="1_adjective"]
+
+[resource]
+script = ExtResource("1_adjective")
+words = "agile"
+tier = 2
+max_health_multiplier_weight = 0
+physical_attack_multiplier_weight = 0.46
+physical_defence_multiplier_weight = -0.6
+magic_attack_multiplier_weight = 0
+magic_defence_multiplier_weight = -0.2
+speed_multiplier_weight = 0.66
+metadata/_custom_type_script = "uid://cw68bd2r41pjt"

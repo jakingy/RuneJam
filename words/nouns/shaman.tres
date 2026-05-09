@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_noun"]
+
+[resource]
+script = ExtResource("1_noun")
+words = "shaman"
+tier = 2.35
+max_health_weight = 0.44
+physical_attack_weight = 0.34
+physical_defence_weight = 0.28
+magic_attack_weight = 0.82
+magic_defence_weight = 0.84
+speed_weight = 0.36
