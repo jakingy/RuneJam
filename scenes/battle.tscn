@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://dtlplpwu7e7x5"]
 
-[ext_resource type="Script" uid="uid://di6yhbmfoxd26" path="res://scripts/battle.gd" id="1_dn72j"]
+[ext_resource type="Script" uid="uid://dxp3t5ee0c4kt" path="res://scripts/battle.gd" id="1_dn72j"]
 [ext_resource type="PackedScene" uid="uid://pvaxjyjrscjx" path="res://scenes/map.tscn" id="2_a12nh"]
+[ext_resource type="PackedScene" uid="uid://bk5g0gqslmyuc" path="res://scenes/battle_ui.tscn" id="2_lpir7"]
 [ext_resource type="Script" uid="uid://byn3bpynbcday" path="res://scripts/manuscript.gd" id="2_th188"]
 [ext_resource type="Resource" uid="uid://7brlw3k4jyod" path="res://fonts/font_library.tres" id="3_p1qf1"]
 
@@ -9,13 +10,16 @@
 background_mode = 3
 glow_enabled = true
 glow_normalized = true
-glow_intensity = 0.4
-glow_strength = 0.7
-glow_bloom = 0.05
+glow_intensity = 0.72
+glow_strength = 0.8
+glow_bloom = 0.08
 glow_blend_mode = 0
+glow_hdr_scale = 1.2
 
 [node name="Battle" type="Node2D" unique_id=538913616]
 script = ExtResource("1_dn72j")
+
+[node name="BattleUI" parent="." unique_id=1765747084 instance=ExtResource("2_lpir7")]
 
 [node name="Glow" type="WorldEnvironment" parent="." unique_id=812866793]
 environment = SubResource("Environment_p1qf1")
@@ -26,6 +30,8 @@ offset_bottom = 1024.0
 
 [node name="WritingColumn" type="VBoxContainer" parent="." unique_id=338092889]
 custom_minimum_size = Vector2(420, 520)
+offset_right = 420.0
+offset_bottom = 520.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 1.3
