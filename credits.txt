@@ -3,6 +3,7 @@ Put asset links here.
 
 Fonts:
 Wildyrus for fire and placeholder text - https://www.fontspace.com/wildyrus-font-f145583 
+
 plant font "leafy font": https://www.fontspace.com/leafy-font-f10831
 "just leaves": https://www.fontspace.com/just-leafs-font-f72303
 
