@@ -1,10 +1,5 @@
 extends Node
 
-# Add this script as an Autoload named `ElevenLabsClient`.
-# It loads its API key from: user://elevenlabs_api_key.txt
-# Then call it like:
-#   await ElevenLabsClient.stream_speech(text, voice_id, "eleven_flash_v2_5", "pcm_24000", on_chunk, 1.15)
-
 const API_KEY_PATH: String = "user://elevenlabs_api_key.txt"
 const DEFAULT_OUTPUT_FORMAT: String = "pcm_24000"
 const DEFAULT_STREAMING_LATENCY: int = 3

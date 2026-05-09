@@ -45,6 +45,13 @@ const TYPEWRITER_DELAY_FAST := 0.0014
 const TYPEWRITER_DELAY_ACTION := 0.0023
 const TYPEWRITER_DELAY_WAITING := 0.0058
 
+const MANUSCRIPT_TEXT_SIZE := 25
+const MANUSCRIPT_SMALL_TEXT_SIZE := 16
+const MANUSCRIPT_TITLE_SIZE := 17
+const MANUSCRIPT_INPUT_TEXT_SIZE := 22
+const MANUSCRIPT_DROPCAP_SIZE := 100
+const MANUSCRIPT_RUNE_SIZE := 20
+
 const ACTION_STAMP_SFX_PATH := "res://assets/sfx/writing-stamp.mp3"
 const NARRATOR_RING_SFX_PATHS := [
 	"res://assets/sfx/magic_crystal/SFX_Crystal_Stone_Ring-01.wav",
@@ -258,15 +265,15 @@ func _apply_basic_theme() -> void:
 
 	if is_instance_valid(manuscript_left_rune_label):
 		manuscript_left_rune_label.add_theme_color_override("default_color", Color(0.3, 0.9, 5.8, 1.0))
-		manuscript_left_rune_label.add_theme_font_size_override("normal_font_size", 20)
+		manuscript_left_rune_label.add_theme_font_size_override("normal_font_size", MANUSCRIPT_RUNE_SIZE)
 		manuscript_left_rune_label.self_modulate = Color(1.0, 1.0, 1.0, 0.45)
 		apply_font_to_rich_text(manuscript_left_rune_label, "runes")
 
 	if is_instance_valid(writing):
-		writing.add_theme_constant_override("separation", 10)
+		writing.add_theme_constant_override("separation", 14)
 
 	if is_instance_valid(input_bar):
-		input_bar.add_theme_constant_override("separation", 8)
+		input_bar.add_theme_constant_override("separation", 10)
 
 
 func _apply_original_input_theme() -> void:
@@ -274,7 +281,7 @@ func _apply_original_input_theme() -> void:
 		return
 
 	apply_font_to_line_edit(player_input, "narrator")
-	player_input.add_theme_font_size_override("font_size", 18)
+	player_input.add_theme_font_size_override("font_size", MANUSCRIPT_INPUT_TEXT_SIZE)
 	player_input.add_theme_color_override("font_color", Color(0.23, 0.18, 0.1, 1.0))
 	player_input.add_theme_color_override("font_placeholder_color", Color(0.42, 0.33, 0.21, 0.82))
 
@@ -822,7 +829,7 @@ func create_narrator_rich_text() -> RichTextLabel:
 	rtl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rtl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rtl.add_theme_color_override("default_color", COLOR_TEXT)
-	rtl.add_theme_font_size_override("normal_font_size", 18)
+	rtl.add_theme_font_size_override("normal_font_size", MANUSCRIPT_TEXT_SIZE)
 	rtl.text = ""
 	make_rich_text_selectable(rtl)
 	apply_font_to_rich_text(rtl, "narrator")
@@ -847,7 +854,7 @@ func create_narrator_dropcap_layout() -> Dictionary:
 	dropcap.visible = false
 	dropcap.custom_minimum_size = Vector2(60, 0)
 	dropcap.add_theme_color_override("default_color", COLOR_TEXT)
-	dropcap.add_theme_font_size_override("normal_font_size", 80)
+	dropcap.add_theme_font_size_override("normal_font_size", MANUSCRIPT_DROPCAP_SIZE)
 	make_rich_text_selectable(dropcap)
 	ensure_text_effects(dropcap)
 	apply_font_to_rich_text(dropcap, "dropcap")
@@ -970,7 +977,7 @@ func add_stamp_msg(sections: Array, bg: Color, border: Color, title: String = ""
 	content.scroll_active = false
 	content.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	content.add_theme_color_override("default_color", COLOR_TEXT)
-	content.add_theme_font_size_override("normal_font_size", 18)
+	content.add_theme_font_size_override("normal_font_size", MANUSCRIPT_TEXT_SIZE)
 	content.text = ""
 	content.visible_characters = -1
 	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1044,7 +1051,7 @@ func add_narrate_msg(
 	content.scroll_active = false
 	content.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	content.add_theme_color_override("default_color", COLOR_TEXT)
-	content.add_theme_font_size_override("normal_font_size", 18)
+	content.add_theme_font_size_override("normal_font_size", MANUSCRIPT_TEXT_SIZE)
 	content.text = ""
 	content.visible_characters = 0
 	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1068,7 +1075,7 @@ func create_glow_title(title: String, color: Color) -> RichTextLabel:
 	rtl.fit_content = true
 	rtl.scroll_active = false
 	rtl.add_theme_color_override("default_color", COLOR_TEXT)
-	rtl.add_theme_font_size_override("normal_font_size", 13)
+	rtl.add_theme_font_size_override("normal_font_size", MANUSCRIPT_TITLE_SIZE)
 	rtl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	make_rich_text_selectable(rtl)
 	ensure_text_effects(rtl)
@@ -1209,7 +1216,7 @@ func build_rich_message(
 	content.scroll_active = false
 	content.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	content.add_theme_color_override("default_color", COLOR_TEXT)
-	content.add_theme_font_size_override("normal_font_size", 18)
+	content.add_theme_font_size_override("normal_font_size", MANUSCRIPT_TEXT_SIZE)
 	content.text = ""
 	content.visible = true
 	content.visible_characters = 0
@@ -1244,7 +1251,7 @@ func add_thinking_message(category: String) -> PanelContainer:
 	content.fit_content = true
 	content.scroll_active = false
 	content.add_theme_color_override("default_color", COLOR_TEXT_DIM)
-	content.add_theme_font_size_override("normal_font_size", 13)
+	content.add_theme_font_size_override("normal_font_size", MANUSCRIPT_SMALL_TEXT_SIZE )
 	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	make_rich_text_selectable(content)
 	ensure_text_effects(content)
