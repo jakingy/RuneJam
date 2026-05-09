@@ -54,7 +54,7 @@ func _ready() -> void:
 		push_error("GridManager requires a child MarkerContainer node.")
 		return
 
-	_ensure_tooltip_nodes()
+	_ensure_tooltip_nodes.call_deferred()
 
 	if spawn_debug_markers:
 		_spawn_debug_markers()
@@ -736,7 +736,8 @@ func _ensure_tooltip_nodes() -> void:
 	_tooltip_panel.name = "CharacterTooltip"
 	_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_tooltip_panel.visible = false
-	_tooltip_panel.z_index = 5000
+	_tooltip_panel.z_as_relative = false
+	_tooltip_panel.z_index = 4095
 	var style = StyleBoxFlat.new()
 	style.bg_color = Color(0.055, 0.04, 0.025, 0.92)
 	style.border_color = Color(0.85, 0.66, 0.28, 0.92)
