@@ -20,7 +20,7 @@ config/icon="res://icon.svg"
 CardsManager="*uid://d02te4igabuwa"
 OpenaiClient="*uid://oq5h2y1ie7in"
 RunwareClient="*res://scripts/runware_client.gd"
-TextEffects="*uid://bhqa6uvnbm8pg"
+TextEffects="*uid://ck05c5mn71ai4"
 
 [display]
 
