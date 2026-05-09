@@ -14,8 +14,7 @@ glow_normalized = true
 glow_intensity = 0.72
 glow_strength = 0.8
 glow_bloom = 0.08
-glow_blend_mode = 0
-glow_hdr_scale = 1.2
+glow_hdr_scale = 1.16
 
 [node name="Battle" type="Node2D" unique_id=538913616]
 script = ExtResource("1_dn72j")
