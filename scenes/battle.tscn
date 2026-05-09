@@ -1,6 +1,122 @@
 [gd_scene format=3 uid="uid://dtlplpwu7e7x5"]
 
 [ext_resource type="Script" uid="uid://di6yhbmfoxd26" path="res://scripts/battle.gd" id="1_dn72j"]
+[ext_resource type="Script" uid="uid://urfvcnflypte" path="res://scenes/manuscript.gd" id="2_th188"]
 
 [node name="Battle" type="Node2D" unique_id=538913616]
 script = ExtResource("1_dn72j")
+
+[node name="WritingColumn" type="VBoxContainer" parent="." unique_id=338092889]
+custom_minimum_size = Vector2(420, 520)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.3
+
+[node name="Manuscript" type="VBoxContainer" parent="WritingColumn" unique_id=1915195036]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("2_th188")
+
+[node name="ManuscriptFrame" type="PanelContainer" parent="WritingColumn/Manuscript" unique_id=717618608]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ManuscriptShell" type="HBoxContainer" parent="WritingColumn/Manuscript/ManuscriptFrame" unique_id=1186271730]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="PaperMargin" type="MarginContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell" unique_id=1141148426]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 10
+
+[node name="ManuscriptPaperSurface" type="Control" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin" unique_id=1714923217]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
+
+[node name="ManuscriptPaperSegments" type="Control" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface" unique_id=616378295]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="ManuscriptPaperTint" type="ColorRect" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface" unique_id=422772521]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="ManuscriptPaperPadding" type="MarginContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface" unique_id=1551183575]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 52
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 52
+theme_override_constants/margin_bottom = 14
+
+[node name="ManuscriptPaperContent" type="VBoxContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding" unique_id=195795386]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="ManuscriptScroll" type="ScrollContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent" unique_id=429111988]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="Writing" type="VBoxContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/ManuscriptScroll" unique_id=295474103]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+mouse_filter = 1
+
+[node name="InputPadding" type="MarginContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent" unique_id=1671314676]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="InputBar" type="HBoxContainer" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding" unique_id=959946410]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlayerInput" type="LineEdit" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding/InputBar" unique_id=1543182552]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Enter your action..."
+editable = false
+
+[node name="PlayBtn" type="Button" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding/InputBar" unique_id=156650495]
+layout_mode = 2
+disabled = true
+text = "Send"
+
+[node name="ManuscriptRuneLayer" type="Control" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin" unique_id=1100482026]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="LeftRuneGutter" type="RichTextLabel" parent="WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptRuneLayer" unique_id=25067583]
+layout_mode = 0
+offset_right = 1.0
+mouse_filter = 2
