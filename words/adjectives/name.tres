@@ -4,4 +4,12 @@
 
 [resource]
 script = ExtResource("1_lyggj")
+words = "good"
+tier = 1.0
+max_health_multiplier_weight = 1.0
+physical_attack_multiplier_weight = 1.0
+physical_defence_multiplier_weight = 1.0
+magic_attack_multiplier_weight = 1.0
+magic_defence_multiplier_weight = 1.0
+speed_multiplier_weight = 1.0
 metadata/_custom_type_script = "uid://cw68bd2r41pjt"

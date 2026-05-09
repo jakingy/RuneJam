@@ -9,8 +9,9 @@ var turn_count = 0
 func _ready() -> void:
 	card_node_scene = preload(CARD_SCENE_PATH)
 	var cards: Array[Card] = []
-	var base_nouns: Array[Noun] = CardsManager.get_base_nouns()
 	CardsManager.init_deck()
+	var base_nouns: Array[Noun] = CardsManager.draw_nouns()
+	#print(base_nouns)
 	for i in range(base_nouns.size()):
 		cards.append(Card.new(base_nouns[i]))
 	$Deck.spawn_cards(cards)
@@ -28,7 +29,8 @@ func on_user_submit_turn():
 		return
 	$Deck.empty_deck()
 	var cards: Array[Card] = []
-	var base_adjs: Array[Adjective] = CardsManager.get_base_adjectives()
+	var base_adjs: Array[Adjective] = CardsManager.draw_adjectives()
+	print(base_adjs)
 	for i in range(base_adjs.size()):
 		cards.append(Card.new(Noun.new('Effect'), [base_adjs[i]]))
 	$Deck.spawn_cards(cards)

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dtuy26ia4onho" path="res://scenes/team_building.gd" id="1_8jl1w"]
 [ext_resource type="Script" uid="uid://dm572npf00xbh" path="res://scripts/team_building/card_manager.gd" id="1_nq0av"]
+[ext_resource type="PackedScene" uid="uid://c5414duoa5amy" path="res://scenes/team_building/card.tscn" id="2_fe1nd"]
 [ext_resource type="PackedScene" uid="uid://uoc7fgrfx0c4" path="res://scenes/team_building/hand.tscn" id="3_nq0av"]
 [ext_resource type="Script" uid="uid://dr5r12f0qo8st" path="res://scripts/team_building/deck.gd" id="4_8jl1w"]
 
@@ -13,6 +14,8 @@ script = ExtResource("1_8jl1w")
 
 [node name="CardManager" type="Node2D" parent="." unique_id=839259016]
 script = ExtResource("1_nq0av")
+
+[node name="Card" parent="CardManager" unique_id=1945146015 instance=ExtResource("2_fe1nd")]
 
 [node name="Hand" parent="." unique_id=435524113 instance=ExtResource("3_nq0av")]
 z_index = -1

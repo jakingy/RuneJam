@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Noun" format=3 uid="uid://cmndgbxbtovea"]
+
+[ext_resource type="Script" uid="uid://dm0487dyx88tq" path="res://scripts/cards/noun.gd" id="1_7867q"]
+
+[resource]
+script = ExtResource("1_7867q")
+words = "wizard"
+tier = 1.0
+max_health_weight = 3.0
+magic_attack_weight = 5.0
+magic_defence_weight = 3.0
+speed_weight = 1.0
+metadata/_custom_type_script = "uid://dm0487dyx88tq"

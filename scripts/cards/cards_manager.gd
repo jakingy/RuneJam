@@ -35,6 +35,7 @@ func get_player_cards() -> Array[Card]:
 func init_deck() -> void:
 	"""Draws all base nouns and adjectives to their respective decks"""
 	nouns_deck = get_base_nouns()
+	print(get_base_nouns())
 	adjectives_deck = get_base_adjectives()
 
 func draw_nouns(num: int = 3, min_tier: float = 1) -> Array[Noun]:

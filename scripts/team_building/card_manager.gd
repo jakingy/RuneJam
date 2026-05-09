@@ -34,11 +34,13 @@ func _input(event: InputEvent) -> void:
 				flip_card(card)
 
 func start_drag(card: Node2D):
+	card.z_index = 3
 	card_being_dragged = card
 	card.scale = Vector2(1.0, 1.0)
 	
 func finish_drag():
 	card_being_dragged.scale = Vector2(1.05, 1.05)
+	card_being_dragged.z_index = 1
 	var hand = raycast_check_for_hand()
 	var card = raycast_check_for_another_card(card_being_dragged)
 	if card:
@@ -160,6 +162,7 @@ func combine_card(card: Node2D, card_dragged: Node2D) -> bool:
 			var new_card = Card.new(Noun.new("Effect"), [new_adj])
 			card.set_attribute(new_card)
 	else:
+		print("debug " + card_dragged.the_card.adjectives[0].get_words())
 		for adj in card_dragged.the_card.adjectives:
 			card.the_card.add_adjective(adj)
 		card.set_attribute(card.the_card)

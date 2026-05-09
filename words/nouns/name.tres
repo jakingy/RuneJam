@@ -4,4 +4,10 @@
 
 [resource]
 script = ExtResource("1_i07mf")
+words = "Knight"
+tier = 1.0
+max_health_weight = 3.0
+physical_attack_weight = 3.0
+physical_defence_weight = 3.0
+speed_weight = 1.0
 metadata/_custom_type_script = "uid://dm0487dyx88tq"

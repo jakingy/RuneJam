@@ -13,10 +13,12 @@ var magic_attack
 var magic_defense
 var speed
 var holder
+var display
 
 var the_card: Card
 
 func _ready() -> void:
+	display = $CharacterDisplay
 	get_parent().connect_card_signal(self)
 	to_front()
 	
@@ -31,8 +33,14 @@ func set_attribute(card: Card):
 	speed = card.get_speed()
 	the_card = card
 	update_labels()
+	update_img()
+	
+func update_img():
+	#print(the_card.get_noun_str())
+	display.display_character(the_card.get_noun_str(), the_card.get_adjectives_str())
 	
 func update_labels():
+	$FrontName.text = noun
 	$Name.text = noun
 	$Tier.text = str(tier)
 	$MaxHealth.text = "H: " + str(max_health)
@@ -41,6 +49,7 @@ func update_labels():
 	$MagicAttack.text = "M.A: " + str(magic_attack)
 	$MagicDefense.text = "M.D: " + str(magic_defense)
 	$Speed.text = "S: " + str(speed)
+	$Adjectives.text = "\n".join(the_card.get_adjectives_str())
 
 func flip() -> void:
 	if self.get_node("CardImageFront").visible:
@@ -51,6 +60,7 @@ func flip() -> void:
 func to_front() -> void:
 	self.get_node("CardImageFront").visible = true
 	self.get_node("CardImageBack").visible = false
+	$FrontName.visible = true
 	$Name.visible = false
 	$Name.visible = false
 	$Tier.visible = false
@@ -60,10 +70,13 @@ func to_front() -> void:
 	$MagicAttack.visible = false
 	$MagicDefense.visible = false
 	$Speed.visible = false
+	$Adjectives.visible = false
+	display.visible = true
 	
 func to_back() -> void:
 	self.get_node("CardImageFront").visible = false
 	self.get_node("CardImageBack").visible = true
+	$FrontName.visible = false
 	$Name.visible = true
 	$Name.visible = true
 	$Tier.visible = true
@@ -73,6 +86,8 @@ func to_back() -> void:
 	$MagicAttack.visible = true
 	$MagicDefense.visible = true
 	$Speed.visible = true
+	$Adjectives.visible = true
+	display.visible = false
 	
 func animate_to_position(pos: Vector2) -> void:
 	var tween: Tween = get_tree().create_tween()
