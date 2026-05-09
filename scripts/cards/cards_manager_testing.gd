@@ -7,6 +7,6 @@ func _ready() -> void:
 	var c_display = character_display_scene.instantiate()
 	add_child(c_display)
 	
-	var adjs: Array[String] = ["enchanted"]
+	var adjs: Array[String] = ["armoured", "infernal"]
 	
-	c_display.display_character("knight", adjs)
+	c_display.display_character("dragon", adjs)

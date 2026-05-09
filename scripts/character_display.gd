@@ -1,10 +1,11 @@
 extends PanelContainer
 
 @onready var image: TextureRect = $Image
-@onready var placeholder_label: Label = $PlaceholderLabel
+@onready var placeholder_label: RichTextLabel = $PlaceholderLabel
 
 
 func create_placeholder_text(noun: String, adjs: Array[String]):
+	return noun[0].to_upper()
 	var placeholder_text: String = ""
 	
 	placeholder_text += [
@@ -24,8 +25,12 @@ func create_placeholder_text(noun: String, adjs: Array[String]):
 	else:
 		placeholder_text += " a "
 		
-	for adj in adjs:
-		placeholder_text += adj + " "
+	for i in range(len(adjs)):
+		placeholder_text += adjs[i]
+		if i != len(adjs) - 1:
+			placeholder_text += ","
+		placeholder_text += " "
+			
 	placeholder_text += noun + "..."
 	
 	return placeholder_text
