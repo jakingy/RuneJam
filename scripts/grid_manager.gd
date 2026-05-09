@@ -5,6 +5,7 @@ extends Node2D
 
 var marker_scene: PackedScene = preload("res://scenes/map_marker.tscn")
 
+
 var grid_size_x: int = 16
 var grid_size_y: int = 16
 
@@ -45,7 +46,7 @@ func spawn_character(character: Dictionary) -> void:
 	var char_adjs: Array[String] = []
 	char_adjs.assign(character["adjectives"])
 	char_marker.request_portrait(char_noun, char_adjs)
-	# char_marker.apply_elevation(character_z)
+	char_marker.apply_elevation(character_z)
 
 func spawn_object(object: Dictionary) -> void:
 	pass
@@ -59,7 +60,7 @@ func _ready() -> void:
 		"side": "Neutral",
 		"x": 8,
 		"y": 8,
-		"z": 9,
+		"z": 0,
 		"nouns": "paladin",
 		"adjectives": ["holy", "ugly", "red armor"]
 	}

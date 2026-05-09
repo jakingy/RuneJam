@@ -22,7 +22,7 @@ corner_radius_bottom_left = 999
 script = ExtResource("1_rbw48")
 
 [node name="Shadow" type="Panel" parent="." unique_id=506933323]
-custom_minimum_size = Vector2(64, 32)
+custom_minimum_size = Vector2(128, 64)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5

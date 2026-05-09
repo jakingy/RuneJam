@@ -5,7 +5,12 @@ extends Node2D
 @onready var placeholder: Label = $Visual/Placeholder
 @onready var health_ring: TextureProgressBar = $Visual/HealthRing
 @onready var character_display: PanelContainer = $Visual/CharacterDisplay
+@onready var visual: Node2D = $Visual
+@onready var shadow: Panel = $Shadow
 var health_tween: Tween
+
+var elevation_tween: Tween
+var pixels_per_elevation_level: float = 10.0
 
 var target_portrait_size: float = 85.0
 # Called when the node enters the scene tree for the first time.
@@ -35,6 +40,22 @@ func take_damage(damage_amount: int) -> void:
 	health_tween = create_tween()
 	health_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	health_tween.tween_property(health_ring, "value", target_health, 0.4)
+
+
+func apply_elevation(target_z: int) -> void:
+	var target_y_offset: float = float(target_z) * -pixels_per_elevation_level
+	if elevation_tween and elevation_tween.is_valid():
+		elevation_tween.kill()
+	
+	elevation_tween = create_tween()
+	elevation_tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	elevation_tween.tween_property(visual, "position:y", target_y_offset, 0.4)
+	
+	var target_shadow_scale: float = clampf(1.0 - (float(target_z) * 0.1), 0.7, 1.0)
+	var target_shadow_alpha: float = clampf(0.5 - (float(target_z) * 0.05), 0.3, 0.8)
+	elevation_tween.parallel().tween_property(shadow, "scale", Vector2(target_shadow_scale, target_shadow_scale), 0.4)
+	elevation_tween.parallel().tween_property(shadow, "modulate:a", target_shadow_alpha, 0.4)
+
 
 func set_ring_color(new_color: Color) -> void:
 	health_ring.tint_progress = new_color
