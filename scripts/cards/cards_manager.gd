@@ -43,8 +43,8 @@ func get_base_adjectives() -> Array[Adjective]:
 func fuse_nouns(noun1: Noun, noun2: Noun) -> Noun:
 	var new_noun: Noun = Noun.new (
 		await PromptAPI.fuse_nouns([noun1.get_words(), noun2.get_words()]),
-		(noun1.tier ** 2 + noun2.tier ** 2) ** 0.5,
-		noun1.element if randf() < 0.5 else noun2.element,
+		max(noun1.tier, noun2.tier),
+		noun1.get_element() if noun1.get_tier() > noun2.get_tier() else noun2.get_element(),
 		(noun1.max_health_weight + noun2.max_health_weight) / 2,
 		(noun1.physical_attack_weight + noun2.physical_attack_weight) / 2,
 		(noun1.physical_defence_weight + noun2.physical_defence_weight) / 2,
@@ -58,7 +58,7 @@ func fuse_nouns(noun1: Noun, noun2: Noun) -> Noun:
 func fuse_adjectives(adj1: Adjective, adj2: Adjective) -> Adjective:
 	var new_adj: Adjective = Adjective.new (
 		await PromptAPI.fuse_adjectives([adj1.get_words(), adj2.get_words()]),
-		(adj1.tier ** 2 + adj2.tier ** 2) ** 0.5,
+		max(adj1.tier, adj2.tier),
 		(adj1.max_health_multiplier_weight + adj2.max_health_multiplier_weight) / 2,
 		(adj1.physical_attack_multiplier_weight + adj2.physical_attack_multiplier_weight) / 2,
 		(adj1.physical_defence_multiplier_weight + adj2.physical_defence_multiplier_weight) / 2,
