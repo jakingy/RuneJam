@@ -27,6 +27,18 @@ Frame: https://tornioduva.itch.io/tornioduva-card-template?download
 
 Effects:
 Exploding Effect: https://pimen.itch.io/fire-spell-effect-02
+Fire Effect: https://pimen.itch.io/fire-spell
+Ice Effect: https://pimen.itch.io/ice-spell-effect-01
+Lightning Effect: https://pimen.itch.io/thunder-spell-effect-01
+Water Effect: https://pimen.itch.io/water-spell-effect-02
+Plant Effect: https://pimen.itch.io/wood-spell-effect
+Earth Effect: https://pimen.itch.io/earth-spell-effect-01
+Light Effect: https://pimen.itch.io/holy-spell-effect
+Dark Effect: https://pimen.itch.io/dark-spell-effect
+Wind Effect: https://pimen.itch.io/wind
+Slash Effect: https://frostwindz.itch.io/pixel-art-slashes
+Move Effect: https://frostwindz.itch.io/pixel-art-vfx-smoke-dust-free-version
+
 
 
 Medieval paper: https://img.freepik.com/free-photo/wooden-floor-background_53876-88628.jpg?semt=ais_hybrid&w=740&q=80
