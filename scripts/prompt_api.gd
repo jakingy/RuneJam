@@ -1,6 +1,10 @@
 class_name PromptAPI
 extends Node
 
+const CHARACTER_IMAGE_CACHE_DIR := "user://generated_images/characters"
+const CHARACTER_IMAGE_WIDTH := 256
+const CHARACTER_IMAGE_HEIGHT := 256
+
 static func fuse_adjectives(adjectives: Array[String]) -> String:
 	"""
 	Takes list of adjectives, returns string which is resulting adjective. 
@@ -61,9 +65,32 @@ static func make_character_image(noun: String, adjectives: Array[String]) -> Ima
 	"""
 	Returns an ImageTexture for a given noun and adjective combo character.
 	If API or HTTP fails in anyway, returns null
+
+	Caches images so they can be shared across scenes and game runs. Also speed ups.
 	"""
+	var cache_seed := GeneratedImageCacheUtils.shared_character_art_cache_seed(noun, adjectives)
+	var cache_path := GeneratedImageCacheUtils.generated_image_cache_path(
+		CHARACTER_IMAGE_CACHE_DIR,
+		cache_seed,
+		CHARACTER_IMAGE_WIDTH,
+		CHARACTER_IMAGE_HEIGHT
+	)
+
+	var cached_texture := GeneratedImageCacheUtils.load_texture_from_user_image(cache_path)
+	if cached_texture != null:
+		return cached_texture as ImageTexture
+
 	var image_prompt := await make_character_image_gen_prompt(noun, adjectives)
-	return await get_image_from_prompt(image_prompt)
+	if image_prompt.is_empty():
+		return null
+
+	var texture := await get_image_from_prompt(image_prompt, CHARACTER_IMAGE_WIDTH, CHARACTER_IMAGE_HEIGHT)
+	if texture == null:
+		return null
+
+	GeneratedImageCacheUtils.save_texture_to_user_png(texture, cache_path)
+
+	return texture
 
 static func make_map_image_gen_prompt(state: Dictionary) -> String:
 	var prompt_text := DataUtils.load_prompt_text("res://prompts/map-image-prompt-generator.txt")
