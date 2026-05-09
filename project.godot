@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="RuneJam"
+run/main_scene="uid://b84s6xaupclk4"
 config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
 
@@ -24,7 +25,8 @@ RunwareClient="*res://scripts/runware_client.gd"
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/stretch/mode="viewport"
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [physics]
 

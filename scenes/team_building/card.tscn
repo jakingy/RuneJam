@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://63y6aphiivpe"]
+
+[ext_resource type="Script" uid="uid://bmn308a77fytb" path="res://scripts/team_building/card.gd" id="1_m3pg1"]
+[ext_resource type="Texture2D" uid="uid://cmiy4mom2st1x" path="res://assets/team_building/card 2 front 2 bw.png" id="2_m3pg1"]
+[ext_resource type="Texture2D" uid="uid://bnptyprnikpe4" path="res://assets/team_building/card 2 back bw.png" id="3_y1xvm"]
+[ext_resource type="FontFile" uid="uid://cgd5ur2hhq0qc" path="res://assets/team_building/Firlest-Regular.otf" id="4_m3pg1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8jl1w"]
+size = Vector2(249, 372)
+
+[node name="Card" type="Node2D" unique_id=1945146015]
+script = ExtResource("1_m3pg1")
+
+[node name="CardImageFront" type="Sprite2D" parent="." unique_id=1013422075]
+visible = false
+position = Vector2(0, -6.103515e-05)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("2_m3pg1")
+
+[node name="CardImageBack" type="Sprite2D" parent="." unique_id=984327392]
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("3_y1xvm")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1820920781]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=89443609]
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_8jl1w")
+
+[node name="Name" type="RichTextLabel" parent="." unique_id=947381585]
+offset_left = -51.0
+offset_top = -163.0
+offset_right = 53.0
+offset_bottom = -154.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("4_m3pg1")
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[connection signal="mouse_shape_entered" from="Area2D" to="." method="_on_area_2d_mouse_shape_entered"]
+[connection signal="mouse_shape_exited" from="Area2D" to="." method="_on_area_2d_mouse_shape_exited"]
