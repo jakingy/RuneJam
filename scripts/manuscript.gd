@@ -44,7 +44,7 @@ const TYPEWRITER_DELAY_FAST := 0.0014
 const TYPEWRITER_DELAY_ACTION := 0.0023
 const TYPEWRITER_DELAY_WAITING := 0.0058
 
-const ACTION_STAMP_SFX_PATH := "res://audio/sfx/writing-stamp.mp3"
+const ACTION_STAMP_SFX_PATH := "res://assets/sfx/writing-stamp.mp3"
 
 const THINKING_MESSAGES := {
 	"cost": ["The referee deliberates", "Weighing the odds", "Consulting the probability scrolls", "The judge considers your gambit"],
@@ -617,9 +617,6 @@ func apply_font_to_rich_text(rtl: RichTextLabel, key: String) -> void:
 		print("Invalid RichTextLabel for font key: ", key)
 		return
 
-	var font := font_library.get_font(key)
-	print("Applying font key=", key, " font=", font, " path=", font.resource_path if font != null else "<null>")
-
 	font_library.apply_to_rich_text(rtl, key)
 
 func apply_font_to_label(label_node: Label, key: String) -> void:
@@ -757,7 +754,7 @@ func extract_dropcap_text(rtl: RichTextLabel, full_text: String) -> String:
 		if dropcap_variant is RichTextLabel:
 			var dropcap_label := dropcap_variant as RichTextLabel
 			if is_instance_valid(dropcap_label):
-				var effect_params := TextEffects.effect_params_from_preset(TextEffects.writing_narrator())
+				var effect_params = TextEffects.effect_params_from_preset(TextEffects.writing_narrator())
 				dropcap_label.visible_characters = -1
 				dropcap_label.text = build_effect_bbcode_char(full_text.substr(0, 1), "writing", effect_params)
 				dropcap_label.visible = true
@@ -846,9 +843,9 @@ func add_stamp_msg(sections: Array, bg: Color, border: Color, title: String = ""
 	apply_font_to_rich_text(content, "narrator")
 	ensure_text_effects(content)
 
-	var preset := TextEffects.writing_stamp()
-	var effect_name := TextEffects.effect_name_from_preset(preset)
-	var effect_params := TextEffects.effect_params_from_preset(preset)
+	var preset = TextEffects.writing_stamp()
+	var effect_name = TextEffects.effect_name_from_preset(preset)
+	var effect_params = TextEffects.effect_params_from_preset(preset)
 
 	var parts: Array[String] = []
 	if not title.is_empty():
@@ -924,7 +921,7 @@ func add_narrate_msg(
 	panel.add_child(vbox)
 	add_msg_to_chat(panel)
 
-	var active_preset := preset if not preset.is_empty() else TextEffects.writing_narrator()
+	var active_preset = preset if not preset.is_empty() else TextEffects.writing_narrator()
 	start_typewriter_preset(content, text, active_preset, false, TYPEWRITER_DELAY_ACTION)
 
 	return panel
@@ -1249,7 +1246,7 @@ func start_typewriter_preset(
 	on_complete: Callable = Callable()
 ) -> void:
 	var resolved_preset := preset.duplicate(true)
-	var effect_name := TextEffects.effect_name_from_preset(resolved_preset)
+	var effect_name = TextEffects.effect_name_from_preset(resolved_preset)
 
 	if not effect_name.is_empty():
 		var params_variant: Variant = resolved_preset.get("params", {})
@@ -1277,7 +1274,7 @@ func append_typewriter_preset(
 	on_complete: Callable = Callable()
 ) -> void:
 	var resolved_preset := preset.duplicate(true)
-	var effect_name := TextEffects.effect_name_from_preset(resolved_preset)
+	var effect_name = TextEffects.effect_name_from_preset(resolved_preset)
 
 	if not effect_name.is_empty():
 		var params_variant: Variant = resolved_preset.get("params", {})
@@ -1326,7 +1323,7 @@ func set_stamped_text_preset(rtl: RichTextLabel, text: String, preset: Dictionar
 	text = extract_dropcap_text(rtl, text)
 
 	var resolved_preset := preset.duplicate(true)
-	var effect_name := TextEffects.effect_name_from_preset(resolved_preset)
+	var effect_name = TextEffects.effect_name_from_preset(resolved_preset)
 
 	if not effect_name.is_empty():
 		var params_variant: Variant = resolved_preset.get("params", {})
@@ -1334,7 +1331,7 @@ func set_stamped_text_preset(rtl: RichTextLabel, text: String, preset: Dictionar
 		params["len"] = text.length()
 		resolved_preset["params"] = params
 
-	var effect_params := TextEffects.effect_params_from_preset(resolved_preset)
+	var effect_params = TextEffects.effect_params_from_preset(resolved_preset)
 
 	var stamped_parts: Array[String] = []
 	for idx in range(text.length()):

@@ -180,40 +180,49 @@ func call_structured_streaming(
 
 	var response_code := http.get_response_code()
 	var line_buffer := ""
-var pending_stream_text := ""
+	var pending_stream_text := ""
 
-var stream_process_interval_ms := 75
-var last_stream_process_ms := Time.get_ticks_msec()
+	var stream_process_interval_ms := 75
+	var last_stream_process_ms := Time.get_ticks_msec()
+	
+	var stream_state := {
+		"accumulated": "",
+		"active_field": "",
+		"printed_len": 0,
+		"done_fields": {},
+		"array_item_counts": {},
+		"error": "",
+	}
 
-while http.get_status() == HTTPClient.STATUS_BODY:
-	http.poll()
-	var chunk := http.read_response_body_chunk()
-	if chunk.size() == 0:
-		await Engine.get_main_loop().process_frame
-		continue
+	while http.get_status() == HTTPClient.STATUS_BODY:
+		http.poll()
+		var chunk := http.read_response_body_chunk()
+		if chunk.size() == 0:
+			await Engine.get_main_loop().process_frame
+			continue
 
-	var chunk_text := chunk.get_string_from_utf8()
+		var chunk_text := chunk.get_string_from_utf8()
 
-	if response_code == 200:
-		pending_stream_text += chunk_text
+		if response_code == 200:
+			pending_stream_text += chunk_text
 
-		var now := Time.get_ticks_msec()
-		if now - last_stream_process_ms >= stream_process_interval_ms:
-			line_buffer = _process_sse_chunk(
-				line_buffer + pending_stream_text,
-				stream_fields,
-				stream_array_item_fields,
-				stream_state,
-				on_field,
-				on_field_done
-			)
+			var now := Time.get_ticks_msec()
+			if now - last_stream_process_ms >= stream_process_interval_ms:
+				line_buffer = _process_sse_chunk(
+					line_buffer + pending_stream_text,
+					stream_fields,
+					stream_array_item_fields,
+					stream_state,
+					on_field,
+					on_field_done
+				)
 
-			pending_stream_text = ""
+				pending_stream_text = ""
 
-			if not stream_state["error"].is_empty():
-				return {"error": stream_state["error"]}
+				if not stream_state["error"].is_empty():
+					return {"error": stream_state["error"]}
 
-			last_stream_process_ms = now
+				last_stream_process_ms = now
 
 	if response_code != 200:
 		return {"error": "HTTP %d" % [response_code]}
