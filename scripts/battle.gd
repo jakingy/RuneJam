@@ -89,8 +89,8 @@ const ELEMENTAL_INTERACTION_MAP = {
 @export var starting_characters: Array[Dictionary] = []
 @export var initialization_constraints: Dictionary = {}
 
-@onready var manuscript: VBoxContainer = $WritingColumn/Manuscript
-@onready var map_view: Node = get_node_or_null("MapView")
+@onready var manuscript: VBoxContainer = $UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript
+@onready var map_manager: Node = $UILayer/MainLayout/BattleLayout/MapColumn/Map/MapImage/GridManager
 
 var current_phase = "idle"
 var game_state: Dictionary = {}
@@ -147,7 +147,7 @@ signal opp_prob_changed(cur: int)
 
 var player_prob: int = 0
 var opp_prob: int = 0
-@onready var battle_ui = $BattleUI
+@onready var battle_ui = $UILayer/MainLayout/TopBar/BattleUI
 
 
 func _ready() -> void:
@@ -549,12 +549,15 @@ func _start_new_game() -> void:
 	game_state = _normalize_game_state(repaired_state)
 	game_state["phase"] = "round_planning"
 	_round_cost_verdict_cache = {}
-
+	_make_map_image_async(game_state)
 	manuscript.add_narrator_message(str(data.get("opening_scene", "The battle begins.")))
 	redraw_tokens()
 	_sync_token_attachments()
 	_start_round()
-
+	
+func _make_map_image_async(game_state: Dictionary) -> void:
+	var map_image := await PromptAPI.make_map_image(game_state) # TODO USE MAP IMAGE GENERATION FEED TO MAP
+	map_manager.set_map_texture(map_image)
 
 func _start_round() -> void:
 	current_phase = "awaiting_action"
@@ -2025,85 +2028,85 @@ func _filtered_elements(value: Variant) -> Array:
 
 
 func redraw_tokens() -> void:
-	if map_view != null and map_view.has_method("redraw_tokens"):
-		map_view.redraw_tokens(game_state)
+	if map_manager != null and map_manager.has_method("redraw_tokens"):
+		map_manager.redraw_tokens(game_state)
 		return
 	print("TODO map.redraw_tokens(game_state)")
 
 
 func spawn_token(entity: Dictionary) -> void:
-	if map_view != null and map_view.has_method("spawn_token"):
-		map_view.spawn_token(entity)
+	if map_manager != null and map_manager.has_method("spawn_token"):
+		map_manager.spawn_token(entity)
 		return
 	print("TODO map.spawn_token: ", entity.get("id", ""))
 
 
 func remove_token(entity_id: String) -> void:
-	if map_view != null and map_view.has_method("remove_token"):
-		map_view.remove_token(entity_id)
+	if map_manager != null and map_manager.has_method("remove_token"):
+		map_manager.remove_token(entity_id)
 		return
 	print("TODO map.remove_token: ", entity_id)
 
 
 func redraw_token(entity_id: String) -> void:
-	if map_view != null and map_view.has_method("redraw_token"):
-		map_view.redraw_token(entity_id, game_state)
+	if map_manager != null and map_manager.has_method("redraw_token"):
+		map_manager.redraw_token(entity_id, game_state)
 		return
 	print("TODO map.redraw_token: ", entity_id)
 
 
 func move_token(entity_id: String, x: int, y: int, z: int = 0) -> void:
-	if map_view != null and map_view.has_method("move_token"):
-		map_view.move_token(entity_id, x, y, z)
+	if map_manager != null and map_manager.has_method("move_token"):
+		map_manager.move_token(entity_id, x, y, z)
 		return
 	print("TODO map.move_token: %s -> (%d, %d, %d)" % [entity_id, x, y, z])
 
 
 func attach_tokens(child_id: String, parent_id: String, attachment_mode: String) -> void:
-	if map_view != null and map_view.has_method("attach_tokens"):
-		map_view.attach_tokens(child_id, parent_id, attachment_mode)
+	if map_manager != null and map_manager.has_method("attach_tokens"):
+		map_manager.attach_tokens(child_id, parent_id, attachment_mode)
 		return
 	print("TODO map.attach_tokens: %s -> %s mode=%s" % [child_id, parent_id, attachment_mode])
 
 
 func detach_token(child_id: String) -> void:
-	if map_view != null and map_view.has_method("detach_token"):
-		map_view.detach_token(child_id)
+	if map_manager != null and map_manager.has_method("detach_token"):
+		map_manager.detach_token(child_id)
 		return
 	print("TODO map.detach_token: ", child_id)
 
 
-func trigger_attack(source_id: String, target_ids: Array, effect: String = "hit") -> void:
-	if map_view != null and map_view.has_method("trigger_attack"):
-		map_view.trigger_attack(source_id, target_ids, effect)
+func trigger_attack(source_id: String, target_ids: Array, effect: String = "hit", hp_delta: int = 0) -> void:
+	if map_manager != null and map_manager.has_method("trigger_attack"):
+		map_manager.trigger_attack(source_id, target_ids, effect, hp_delta)
 		return
-	print("TODO map.trigger_attack: ", source_id, " -> ", target_ids, " effect=", effect)
 
+	print("TODO map.trigger_attack: ", source_id, " -> ", target_ids, " effect=", effect, " hp_delta=", hp_delta)
 
 func trigger_effect_at(x: int, y: int, z: int, effect: String) -> void:
-	if map_view != null and map_view.has_method("trigger_effect_at"):
-		map_view.trigger_effect_at(x, y, z, effect)
+	if map_manager != null and map_manager.has_method("trigger_effect_at"):
+		map_manager.trigger_effect_at(x, y, z, effect)
 		return
 	print("TODO map.trigger_effect_at: (%d, %d, %d) %s" % [x, y, z, effect])
 
 
 func spawn_battlefield_feature(feature: Dictionary) -> void:
-	if map_view != null and map_view.has_method("spawn_battlefield_feature"):
-		map_view.spawn_battlefield_feature(feature)
+	if map_manager != null and map_manager.has_method("spawn_battlefield_feature"):
+		map_manager.spawn_battlefield_feature(feature)
 		return
 	print("TODO map.spawn_battlefield_feature: ", feature.get("id", ""))
 
 
 func remove_battlefield_feature(feature_id: String) -> void:
-	if map_view != null and map_view.has_method("remove_battlefield_feature"):
-		map_view.remove_battlefield_feature(feature_id)
+	if map_manager != null and map_manager.has_method("remove_battlefield_feature"):
+		map_manager.remove_battlefield_feature(feature_id)
 		return
 	print("TODO map.remove_battlefield_feature: ", feature_id)
 
 
 func redraw_battlefield_features() -> void:
-	if map_view != null and map_view.has_method("redraw_battlefield_features"):
-		map_view.redraw_battlefield_features(game_state)
+	if map_manager != null and map_manager.has_method("redraw_battlefield_features"):
+		map_manager.redraw_battlefield_features(game_state)
 		return
 	print("TODO map.redraw_battlefield_features")
 

@@ -2,10 +2,52 @@
 
 [ext_resource type="Script" uid="uid://ckgmvq6klvelc" path="res://scripts/battle_ui.gd" id="1_qyamm"]
 
-[node name="BattleUI" type="CanvasLayer" unique_id=1765747084]
+[sub_resource type="SystemFont" id="SystemFont_p4gof"]
+font_names = PackedStringArray("Palatino")
+
+[sub_resource type="LabelSettings" id="LabelSettings_gvrrm"]
+font = SubResource("SystemFont_p4gof")
+font_size = 19
+
+[sub_resource type="SystemFont" id="SystemFont_gvrrm"]
+font_names = PackedStringArray("Palatino")
+
+[sub_resource type="LabelSettings" id="LabelSettings_wvifm"]
+font = SubResource("SystemFont_gvrrm")
+font_size = 19
+
+[sub_resource type="SystemFont" id="SystemFont_sp7ij"]
+font_names = PackedStringArray("Palatino")
+
+[sub_resource type="LabelSettings" id="LabelSettings_sp7ij"]
+font = SubResource("SystemFont_sp7ij")
+font_size = 21
+
+[sub_resource type="SystemFont" id="SystemFont_wvifm"]
+font_names = PackedStringArray("Palatino")
+
+[sub_resource type="LabelSettings" id="LabelSettings_lgetq"]
+font = SubResource("SystemFont_wvifm")
+font_size = 19
+
+[sub_resource type="SystemFont" id="SystemFont_lgetq"]
+font_names = PackedStringArray("Palatino")
+
+[sub_resource type="LabelSettings" id="LabelSettings_fascv"]
+font = SubResource("SystemFont_lgetq")
+font_size = 19
+
+[node name="BattleUI" type="Control" unique_id=1318991731]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_qyamm")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=750836178]
+layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
@@ -15,29 +57,38 @@ theme_override_constants/margin_right = 20
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=1385832402]
 layout_mode = 2
+theme_override_constants/separation = 325
+alignment = 1
 
-[node name="OppStats" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=771107899]
+[node name="OppStats" type="HBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=1626097804]
 layout_mode = 2
+theme_override_constants/separation = 5
 
 [node name="NameLabel" type="Label" parent="MarginContainer/HBoxContainer/OppStats" unique_id=1892861383]
 layout_mode = 2
 text = "Opponent"
+label_settings = SubResource("LabelSettings_gvrrm")
 
 [node name="Score" type="Label" parent="MarginContainer/HBoxContainer/OppStats" unique_id=2090307260]
 layout_mode = 2
-text = "Probability score: 0"
+text = "probability score: 0"
+label_settings = SubResource("LabelSettings_wvifm")
 
-[node name="Spacer" type="Control" parent="MarginContainer/HBoxContainer" unique_id=64750263]
+[node name="TitleLabel" type="Label" parent="MarginContainer/HBoxContainer" unique_id=2063614596]
 layout_mode = 2
-size_flags_horizontal = 3
+text = "UQCS GameJam 2026 - RuneJam"
+label_settings = SubResource("LabelSettings_sp7ij")
 
-[node name="PlayerStats" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=920037215]
+[node name="PlayerStats" type="HBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=482314531]
 layout_mode = 2
+theme_override_constants/separation = 5
 
 [node name="NameLabel" type="Label" parent="MarginContainer/HBoxContainer/PlayerStats" unique_id=241202172]
 layout_mode = 2
 text = "Player"
+label_settings = SubResource("LabelSettings_lgetq")
 
 [node name="Score" type="Label" parent="MarginContainer/HBoxContainer/PlayerStats" unique_id=491764788]
 layout_mode = 2
-text = "Probability score: 0"
+text = "probability score: 0"
+label_settings = SubResource("LabelSettings_fascv")
