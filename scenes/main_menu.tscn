@@ -1,15 +1,8 @@
 [gd_scene format=3 uid="uid://c7ikn4rfmah5j"]
 
 [ext_resource type="FontFile" uid="uid://cgd5ur2hhq0qc" path="res://assets/team_building/Firlest-Regular.otf" id="1_ekxnf"]
-[ext_resource type="Shader" uid="uid://bxbmupg237y3o" path="res://shader/main_menu.gdshader" id="2_wu84c"]
 [ext_resource type="Script" path="res://scripts/play_button.gd" id="3_bqqt6"]
 [ext_resource type="Texture2D" uid="uid://qtr33xat13cb" path="res://assets/main_menu_bg.jpg" id="4_8ln24"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_8ln24"]
-render_priority = 10
-shader = ExtResource("2_wu84c")
-shader_parameter/gaussian_sigma = 0.3
-shader_parameter/power = 0.5
 
 [node name="MainMenu" type="Control" unique_id=1665474800]
 layout_mode = 3
@@ -29,6 +22,7 @@ offset_left = 419.0
 offset_top = 93.0
 offset_right = 1445.0
 offset_bottom = 449.0
+theme_override_colors/default_color = Color(0.09, 0.09, 0.09, 0.8745098)
 theme_override_fonts/normal_font = ExtResource("1_ekxnf")
 theme_override_font_sizes/normal_font_size = 256
 bbcode_enabled = true
@@ -38,7 +32,6 @@ vertical_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1453809100]
 z_index = -4096
-material = SubResource("ShaderMaterial_8ln24")
 layout_mode = 0
 offset_right = 1904.039
 offset_bottom = 1084.0
