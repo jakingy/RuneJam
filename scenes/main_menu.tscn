@@ -7,8 +7,8 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rtw2f"]
 shader = ExtResource("3_wu84c")
-shader_parameter/colors = 0.0
-shader_parameter/dither = 0.0
+shader_parameter/colors = 4.43200016302
+shader_parameter/dither = 0.5
 
 [node name="MainMenu" type="Control" unique_id=1665474800]
 layout_mode = 3
@@ -36,7 +36,17 @@ text = "[wave amp=50.0 freq=2.0 connected=1]JAMGAME"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PlayButton" type="Button" parent="." unique_id=1826692501]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1453809100]
+z_index = -4096
+material = SubResource("ShaderMaterial_rtw2f")
+layout_mode = 0
+offset_right = 1904.039
+offset_bottom = 1084.0
+texture = ExtResource("4_8ln24")
+expand_mode = 3
+
+[node name="PlayButton" type="Button" parent="TextureRect" unique_id=1826692501]
+z_index = 282
 layout_mode = 0
 offset_left = 819.0
 offset_top = 638.0
@@ -47,13 +57,4 @@ theme_override_font_sizes/font_size = 64
 text = "play"
 script = ExtResource("3_bqqt6")
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=1453809100]
-z_index = -4096
-material = SubResource("ShaderMaterial_rtw2f")
-layout_mode = 0
-offset_right = 1904.039
-offset_bottom = 1084.0
-texture = ExtResource("4_8ln24")
-expand_mode = 3
-
-[connection signal="pressed" from="PlayButton" to="PlayButton" method="_on_pressed"]
+[connection signal="pressed" from="TextureRect/PlayButton" to="TextureRect/PlayButton" method="_on_pressed"]

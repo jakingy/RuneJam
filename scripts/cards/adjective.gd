@@ -24,6 +24,7 @@ func _init(p_words: String = "", p_tier: float = 0, p_max_health_multiplier_weig
 	speed_multiplier_weight = p_speed_multiplier_weight
 
 func normalise() -> void:
+	return
 	var sum: float = max_health_multiplier_weight + physical_attack_multiplier_weight + physical_defence_multiplier_weight \
 	+ magic_attack_multiplier_weight + magic_defence_multiplier_weight + speed_multiplier_weight
 	max_health_multiplier_weight /= sum
@@ -40,19 +41,19 @@ func get_tier() -> float:
 	return tier
 
 func get_max_health_multiplier() -> float:
-	return 6 * tier * max_health_multiplier_weight
+	return 1.5 ** (log(tier + 1) * max_health_multiplier_weight)
 
 func get_physical_attack_multiplier() -> float:
-	return 6 * tier * physical_attack_multiplier_weight
+	return 1.5 ** (log(tier + 1) * physical_attack_multiplier_weight)
 
 func get_physical_defence_multiplier() -> float:
-	return 6 * tier * physical_defence_multiplier_weight
+	return 1.5 ** (log(tier + 1) * physical_defence_multiplier_weight)
 
 func get_magic_attack_multiplier() -> float:
-	return 6 * tier * magic_attack_multiplier_weight
+	return 1.5 ** (log(tier + 1) * magic_attack_multiplier_weight)
 
 func get_magic_defence_multiplier() -> float:
-	return 6 * tier * magic_defence_multiplier_weight
+	return 1.5 ** (log(tier + 1) * magic_defence_multiplier_weight)
 
 func get_speed_multiplier() -> float:
-	return 6 * tier * speed_multiplier_weight
+	return 1.5 ** (log(tier + 1) * speed_multiplier_weight)
