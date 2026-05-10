@@ -40,34 +40,35 @@ func get_max_health() -> int:
 	var val = noun.get_max_health()
 	for adj in adjectives:
 		val += adj.get_max_health_bias()
-	return val
+	return max(val, 1)
 
 func get_physical_attack() -> int:
 	var val = noun.get_physical_attack()
 	for adj in adjectives:
 		val += adj.get_physical_attack_bias()
-	return val
+	return max(val, 0)
 
 func get_physical_defence() -> int:
 	var val = noun.get_physical_defence()
 	for adj in adjectives:
 		val += adj.get_physical_defence_bias()
-	return val
+	return max(val, 0)
 
 func get_magic_attack() -> int:
 	var val = noun.get_magic_attack()
 	for adj in adjectives:
 		val += adj.get_magic_attack_bias()
-	return val
+	return max(val, 0)
 	
 func get_magic_defence() -> int:
 	var val = noun.get_magic_defence()
 	for adj in adjectives:
 		val += adj.get_magic_defence_bias()
-	return val
+	return max(val, 0)
+
 	
 func get_speed() -> int:
 	var val = noun.get_speed()
 	for adj in adjectives:
 		val += adj.get_speed_bias()
-	return val
+	return max(val, 0)
