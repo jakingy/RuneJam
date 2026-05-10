@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://byn3bpynbcday" path="res://scripts/manuscript.gd" id="2_th188"]
 [ext_resource type="Resource" uid="uid://7brlw3k4jyod" path="res://fonts/font_library.tres" id="3_p1qf1"]
 [ext_resource type="AudioStream" uid="uid://c8ilrp2r6hmg3" path="res://assets/music/twilight_battle.ogg" id="6_6vh42"]
+[ext_resource type="FontFile" uid="uid://cxt57kso8qnxi" path="res://fonts/squarecaps.medium.ttf" id="6_6vh42"]
 
 [sub_resource type="Environment" id="Environment_p1qf1"]
 background_mode = 3
@@ -17,9 +18,19 @@ glow_strength = 0.8
 glow_bloom = 0.08
 glow_hdr_scale = 1.16
 
+[sub_resource type="LabelSettings" id="LabelSettings_4k1nj"]
+font = ExtResource("6_6vh42")
+font_size = 170
+
+[sub_resource type="SystemFont" id="SystemFont_f4pi3"]
+font_names = PackedStringArray("Palatino")
+
 [node name="Battle" type="Node2D" unique_id=538913616]
 script = ExtResource("1_dn72j")
+starting_characters = null
+initialization_constraints = null
 enable_initialiser_tts = true
+elevenlabs_voice_id = null
 elevenlabs_initializer_voice_ids = Array[String](["UmQN7jS1Ee8B1czsUtQh"])
 elevenlabs_voice_speed = 1.2
 initialiser_tts_volume_db = 10.0
@@ -189,3 +200,36 @@ mouse_filter = 2
 stream = ExtResource("6_6vh42")
 volume_db = -20.0
 autoplay = true
+[node name="GameOverScreen" type="ColorRect" parent="UILayer" unique_id=1238711590]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7058824)
+
+[node name="CenterContainer" type="CenterContainer" parent="UILayer/GameOverScreen" unique_id=1964513251]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UILayer/GameOverScreen/CenterContainer" unique_id=231321149]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="ResultLabel" type="Label" parent="UILayer/GameOverScreen/CenterContainer/VBoxContainer" unique_id=1749129655]
+layout_mode = 2
+text = "Victory!"
+label_settings = SubResource("LabelSettings_4k1nj")
+
+[node name="RestartButton" type="Button" parent="UILayer/GameOverScreen/CenterContainer/VBoxContainer" unique_id=1713609249]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_f4pi3")
+theme_override_font_sizes/font_size = 35
+text = "Play again"
+
+[connection signal="pressed" from="UILayer/GameOverScreen/CenterContainer/VBoxContainer/RestartButton" to="." method="_on_restart_button_pressed"]

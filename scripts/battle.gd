@@ -109,6 +109,11 @@ const ELEMENTAL_INTERACTION_MAP = {
 @onready var manuscript: VBoxContainer = $UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript
 @onready var map_manager: Node = $UILayer/MainLayout/BattleLayout/MapColumn/Map/MapImage/GridManager
 
+@onready var game_over_screen = $UILayer/GameOverScreen
+@onready var result_label = $UILayer/GameOverScreen/CenterContainer/VBoxContainer/ResultLabel
+@onready var player_input = $UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding/InputBar/PlayerInput
+@onready var play_btn = $UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding/InputBar/PlayBtn
+
 var current_phase = "idle"
 var game_state: Dictionary = {}
 
@@ -2542,3 +2547,18 @@ func adjust_prob(amount: int, is_player: bool):
 	else:
 		opp_prob += amount;
 		opp_prob_changed.emit(opp_prob)
+
+
+func _on_restart_button_pressed() -> void:
+	get_tree().reload_current_scene()
+
+func end_game(player_won: bool):
+	player_input.editable = false
+	play_btn.disabled = true
+	if player_won:
+		result_label.text = "Victory!"
+		result_label.add_theme_color_override("font_color", Color(0.8, 0.6, 0.2))
+	else:
+		result_label.text = "Defeat..."
+		result_label.add_theme_color_override("font_color", Color(0.8, 0.2, 0.2))
+	game_over_screen.show()
