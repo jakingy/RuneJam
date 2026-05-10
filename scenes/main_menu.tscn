@@ -1,14 +1,15 @@
 [gd_scene format=3 uid="uid://c7ikn4rfmah5j"]
 
 [ext_resource type="FontFile" uid="uid://cgd5ur2hhq0qc" path="res://assets/team_building/Firlest-Regular.otf" id="1_ekxnf"]
+[ext_resource type="Shader" uid="uid://bxbmupg237y3o" path="res://shader/main_menu.gdshader" id="2_wu84c"]
 [ext_resource type="Script" path="res://scripts/play_button.gd" id="3_bqqt6"]
-[ext_resource type="Shader" uid="uid://bfgkme56q8tq5" path="res://shader/colour_reduction_and_dither.gdshader" id="3_wu84c"]
 [ext_resource type="Texture2D" uid="uid://qtr33xat13cb" path="res://assets/main_menu_bg.jpg" id="4_8ln24"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_rtw2f"]
-shader = ExtResource("3_wu84c")
-shader_parameter/colors = 4.43200016302
-shader_parameter/dither = 0.5
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8ln24"]
+render_priority = 10
+shader = ExtResource("2_wu84c")
+shader_parameter/gaussian_sigma = 0.3
+shader_parameter/power = 0.5
 
 [node name="MainMenu" type="Control" unique_id=1665474800]
 layout_mode = 3
@@ -28,17 +29,16 @@ offset_left = 419.0
 offset_top = 93.0
 offset_right = 1445.0
 offset_bottom = 449.0
-theme_override_colors/default_color = Color(0.9607843, 0.92941177, 0.8392157, 1)
 theme_override_fonts/normal_font = ExtResource("1_ekxnf")
 theme_override_font_sizes/normal_font_size = 256
 bbcode_enabled = true
-text = "[wave amp=50.0 freq=2.0 connected=1]JAMGAME"
+text = "[wave amp=50.0 freq=2.0 connected=1]RUNEJAM"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1453809100]
 z_index = -4096
-material = SubResource("ShaderMaterial_rtw2f")
+material = SubResource("ShaderMaterial_8ln24")
 layout_mode = 0
 offset_right = 1904.039
 offset_bottom = 1084.0
