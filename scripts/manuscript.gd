@@ -133,7 +133,7 @@ func _ready() -> void:
 	refresh_send_button_state()
 	queue_manuscript_refresh()
 	
-	run_debug_test.call_deferred()
+	#run_debug_test.call_deferred()
 
 
 
