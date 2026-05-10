@@ -1,11 +1,12 @@
-[gd_resource type="Resource" script_class="Noun" format=3]
+[gd_resource type="Resource" script_class="Noun" format=3 uid="uid://drp16pd52hpo6"]
 
-[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_noun"]
+[ext_resource type="Script" uid="uid://dm0487dyx88tq" path="res://scripts/cards/noun.gd" id="1_noun"]
 
 [resource]
 script = ExtResource("1_noun")
 words = "mage"
 tier = 2.4
+element = "fire"
 max_health_weight = 0.3
 physical_attack_weight = 0.2
 physical_defence_weight = 0.2

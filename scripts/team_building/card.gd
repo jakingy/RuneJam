@@ -93,6 +93,8 @@ func animate_to_position(pos: Vector2) -> void:
 	var tween: Tween = get_tree().create_tween()
 	tween.tween_property(self, "position", pos, 0.1)
 
+
+
 func _on_area_2d_mouse_shape_entered(shape_idx: int) -> void:
 	emit_signal("hovered", self)
 

@@ -1,6 +1,7 @@
 extends Node2D
 
 const CARD_SCENE_PATH = "res://scenes/team_building/card.tscn"
+const BATTLE_SCENE_PATH = "res://scenes/battle.tscn"
 
 var card_node_scene
 var turn_count = 0
@@ -8,6 +9,8 @@ var bot_hand_ref
 var usr_hand_ref
 var card_scene
 var bot_deck: Array[Card] = []
+var noun_turn_count = 3
+var adj_turn_count = 5
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -26,22 +29,45 @@ func _ready() -> void:
 	for noun in base_nouns:
 		bot_deck.append(Card.new(noun))
 		
+	noun_turn_count -= 1
+		
 
 
 func connect_signal(card_manager):
 	card_manager.connect("submit_turn", on_user_submit_turn)
 	
 func on_user_submit_turn():
-	if turn_count < 3:
+	if turn_count < 8:
 		turn_count += 1
 		bot_move()
-	if turn_count == 3:
+	if turn_count == 8:
 		$Deck.empty_deck()
 		print('Done phrase')
+		var next_scene_resource = load(BATTLE_SCENE_PATH)
+		var next_scene = next_scene_resource.instantiate()
+
+		# Pass your custom data
+		next_scene.starting_characters = get_user_team() + get_bot_team()
+		
+		print(next_scene.starting_characters)
+
+		# 1. Cache the tree before we delete anything!
+		var tree = get_tree() 
+		var root = tree.root
+		var current_scene = tree.current_scene
+
+		# 2. Remove the old scene
+		root.remove_child(current_scene)
+		current_scene.queue_free()
+
+		# 3. Add the new scene and update current_scene using the cached 'tree' variable
+		root.add_child(next_scene)
+		tree.current_scene = next_scene
 		return
 	$Deck.empty_deck()
 	bot_deck.clear()
-	if randi_range(1, 2) == 1:
+	if adj_turn_count > 0 and (randi_range(1, 2) == 1 or noun_turn_count == 0):
+		adj_turn_count -= 1
 		var cards: Array[Card] = []
 		var base_adjs: Array[Adjective] = CardsManager.draw_adjectives()
 		print(base_adjs)
@@ -53,6 +79,7 @@ func on_user_submit_turn():
 		for adj in base_adjs:
 			bot_deck.append(Card.new(Noun.new('Effect'), [adj]))
 	else:
+		noun_turn_count -= 1
 		var cards: Array[Card] = []
 		var base_nouns: Array[Noun] = CardsManager.draw_nouns()
 		for noun in base_nouns:
