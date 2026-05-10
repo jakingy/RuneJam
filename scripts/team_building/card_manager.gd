@@ -43,15 +43,17 @@ func finish_drag():
 	card_being_dragged.z_index = 1
 	var hand = raycast_check_for_hand()
 	var card = raycast_check_for_another_card(card_being_dragged)
-	if card:
+	if card and check_combine_needed(card, card_being_dragged):
+		var card_dragged = card_being_dragged
 		print(card)
-		var combined = await combine_card(card, card_being_dragged)
-		if combined:
-			card_being_dragged.holder.cards.erase(card_being_dragged)
-			self.remove_child(card_being_dragged)
-			if hand and hand.name == "Hand":
-				emit_signal("submit_turn")
-				return
+		self.remove_child(card_being_dragged)
+		card_being_dragged = null
+		card_dragged.holder.cards.erase(card_dragged)
+		card_dragged.holder.update()
+		var combined = await combine_card(card, card_dragged)
+		if hand and hand.name == "Hand":
+			emit_signal("submit_turn")
+		return
 		
 	if hand and hand.name == "Hand" and card_being_dragged.noun != "Effect":
 		card_being_dragged.scale = Vector2(1.0, 1.0)
@@ -60,6 +62,7 @@ func finish_drag():
 		card_being_dragged.holder = hand
 		emit_signal("submit_turn")
 	else:
+		print(card_being_dragged.noun)
 		card_being_dragged.holder.update()
 	card_being_dragged = null
 	
@@ -143,6 +146,15 @@ func get_card_with_highest_z_index(arr: Array[Dictionary]):
 		if current_card.z_index > res.z_index:
 			res = current_card
 	return res
+	
+func check_combine_needed(card: Node2D, card_dragged):
+	var type1 = 1 if card.the_card.get_noun_str() != "Effect" else 0
+	var type2 = 1 if card_dragged.the_card.get_noun_str() != "Effect" else 0
+	if type1 == type2:
+		# fuse
+		if card.holder.name == "Hand" or card.holder.name == "BotHand":
+			return false
+	return true
 	
 func combine_card(card: Node2D, card_dragged: Node2D) -> bool:
 	var type1 = 1 if card.the_card.get_noun_str() != "Effect" else 0
