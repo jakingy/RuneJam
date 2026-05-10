@@ -16,6 +16,7 @@ func compute_attack_damage(attacker: Card, defender: Card, is_magic: bool) -> fl
 		"lightning -> water" = 1.5,
 		"fire -> plant" = 1.5,
 		"light -> dark" = 1.5,
+		"dark -> light" = 1.5,
 		"dark -> plant" = 1.5,
 		"plant -> water" = 1.5,
 		"ice -> earth" = 1.5,
