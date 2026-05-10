@@ -311,14 +311,23 @@ func _clear_markers() -> void:
 # ─────────────────────────────────────────────────────────────
 
 func _update_marker_from_entity(marker: MapMarker, entity: Dictionary, request_portrait_if_new: bool) -> void:
+	var entity_id: String = str(entity.get("id", ""))
+	if entity_id.is_empty():
+		return
+
+	# MapMarker is a Node2D in this project and does not define a custom `id` property.
+	# Store the game-state id on the node name/meta instead, and use that everywhere.
+	if marker.name != entity_id:
+		marker.name = entity_id
+	marker.set_meta("entity_id", entity_id)
+	marker.set_meta("entity_snapshot", entity.duplicate(true))
+
 	var side: String = _entity_side(entity)
 	_set_marker_ring_color(marker, side)
-	marker.set_meta("entity_id", str(entity.get("id", "")))
-	marker.set_meta("entity_snapshot", entity.duplicate(true))
 
 	var pos: Vector3i = _entity_grid_position(entity)
 	var base_pos: Vector2 = get_pixel_position_from_grid(pos.x, pos.y)
-	marker.position = base_pos + _get_token_offset(marker.id)
+	marker.position = base_pos + _get_token_offset(entity_id)
 	_apply_marker_elevation(marker, pos.z)
 
 	if _is_character_entity(entity):
