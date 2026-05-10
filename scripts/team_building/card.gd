@@ -108,7 +108,7 @@ func set_card_name(new_name: String, name_label):
 	var current_size = max_font_size
 	var max_width = 104.0 if name_label.name != "Element" else 68.0
 	
-	name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	name_label.add_theme_font_size_override("normal_font_size", current_size)
 	await get_tree().process_frame 
 	while name_label.get_content_width() > 104.0 and current_size > min_font_size:
