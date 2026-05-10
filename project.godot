@@ -11,16 +11,16 @@ config_version=5
 [application]
 
 config/name="RuneJam"
-run/main_scene="uid://b84s6xaupclk4"
+run/main_scene="uid://bnxdepebgxvq"
 config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
 
 CardsManager="*uid://yhpwvu024g24"
+OpenaiClient="*res://scripts/openai_client.gd"
 RunwareClient="*res://scripts/runware_client.gd"
 TextEffects="*uid://ck05c5mn71ai4"
-OpenaiClient="*res://scripts/openai_client.gd"
 ElevenlabsClient="*res://scripts/elevenlabs_client.gd"
 
 [display]
