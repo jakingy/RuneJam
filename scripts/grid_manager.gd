@@ -218,7 +218,7 @@ func move_token(entity_id: String, x: int, y: int, z: int = 0) -> void:
 		push_warning("Tried to move marker, but ID was not found: %s" % entity_id)
 		return
 
-	var target_pixel_pos: Vector2 = get_pixel_position_from_grid(x, y)
+	var target_pixel_pos: Vector2 = get_pixel_position_from_grid(x, y) + _get_token_offset(entity_id)
 	var move_tween: Tween = create_tween()
 	move_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 	move_tween.tween_property(marker, "position", target_pixel_pos, movement_time)
@@ -317,7 +317,8 @@ func _update_marker_from_entity(marker: MapMarker, entity: Dictionary, request_p
 	marker.set_meta("entity_snapshot", entity.duplicate(true))
 
 	var pos: Vector3i = _entity_grid_position(entity)
-	marker.position = get_pixel_position_from_grid(pos.x, pos.y)
+	var base_pos: Vector2 = get_pixel_position_from_grid(pos.x, pos.y)
+	marker.position = base_pos + _get_token_offset(marker.id)
 	_apply_marker_elevation(marker, pos.z)
 
 	if _is_character_entity(entity):
@@ -396,7 +397,7 @@ func move_characters_simultaneously(moves: Array) -> void:
 		var marker: MapMarker = _marker_for_id(target_id)
 
 		if marker != null:
-			var target_pixel_pos: Vector2 = get_pixel_position_from_grid(target_grid_x, target_grid_y)
+			var target_pixel_pos: Vector2 = get_pixel_position_from_grid(target_grid_x, target_grid_y) + _get_token_offset(target_id)
 			board_tween.tween_property(marker, "position", target_pixel_pos, movement_time)
 			_apply_marker_elevation(marker, target_grid_z)
 		else:
@@ -954,3 +955,13 @@ func _spawn_debug_markers() -> void:
 
 	call_deferred("spawn_character", character_a)
 	call_deferred("spawn_character", character_b)
+
+func _get_token_offset(entity_id: String, max_radius: float = 12.0) -> Vector2:
+	if entity_id.is_empty():
+		return Vector2.ZERO
+	var id_hash: int = entity_id.hash()
+	var stable_angle: float = float(id_hash % 360) * (TAU / 360.0)
+	var stable_distance: float = float(id_hash % int(max_radius * 10)) / 10.0
+	var offset_x: float = cos(stable_angle) * stable_distance
+	var offset_y: float = sin(stable_angle) * stable_distance
+	return Vector2(offset_x, offset_y)
