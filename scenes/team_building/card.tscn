@@ -13,12 +13,12 @@ size = Vector2(166, 248)
 script = ExtResource("1_m3pg1")
 
 [node name="CardImageFront" type="Sprite2D" parent="." unique_id=1013422075]
+visible = false
 position = Vector2(0, -6.103515e-05)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_m3pg1")
 
 [node name="CardImageBack" type="Sprite2D" parent="." unique_id=984327392]
-visible = false
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("3_y1xvm")
 
@@ -42,9 +42,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Element" type="RichTextLabel" parent="." unique_id=737272777]
-offset_left = -31.0
+offset_left = -34.0
 offset_top = -61.0
-offset_right = 30.0
+offset_right = 34.0
 offset_bottom = -43.0
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_fonts/normal_font = ExtResource("4_m3pg1")

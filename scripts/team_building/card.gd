@@ -40,8 +40,8 @@ func update_img():
 	display.display_character(the_card.get_noun_str(), the_card.get_adjectives_str())
 	
 func update_labels():
-	$FrontName.text = noun
-	$Name.text = noun
+	set_card_name(noun, $FrontName)
+	set_card_name(noun, $Name)
 	$Element.text = element
 	$MaxHealth.text = "H: " + str(max_health)
 	$PhysicAttack.text = "P.A: " + str(physical_attack)
@@ -93,6 +93,27 @@ func animate_to_position(pos: Vector2) -> void:
 	var tween: Tween = get_tree().create_tween()
 	tween.tween_property(self, "position", pos, 0.1)
 
+func set_card_name(new_name: String, name_label):
+	var visible = name_label.visible
+	if visible:
+		name_label.visible = false
+	name_label.text = new_name
+	
+	var max_font_size = 32
+	var min_font_size = 5
+	var current_size = max_font_size
+	var max_width = 104.0 if name_label.name != "Element" else 68.0
+	
+	name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	name_label.add_theme_font_size_override("normal_font_size", current_size)
+	await get_tree().process_frame 
+	while name_label.get_content_width() > 104.0 and current_size > min_font_size:
+		current_size -= 1
+		name_label.add_theme_font_size_override("normal_font_size", current_size)
+		await get_tree().process_frame
+		
+	if visible:
+		name_label.visible = true
 
 
 func _on_area_2d_mouse_shape_entered(shape_idx: int) -> void:
