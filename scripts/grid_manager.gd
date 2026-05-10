@@ -17,6 +17,13 @@ class_name GridManager
 @export var enable_character_tooltips: bool = true
 @export var tooltip_radius_px: float = 34.0
 @export var hp_delta_float_time: float = 0.85
+@export var character_jitter_radius_px: float = 7.0
+@export var item_jitter_radius_px: float = 16.0
+@export var feature_jitter_radius_px: float = 20.0
+@export var character_marker_scale: float = 1.0
+@export var item_marker_scale: float = 0.68
+@export var battlefield_feature_marker_scale: float = 0.52
+@export var attached_marker_scale: float = 0.35
 
 @onready var map_image: TextureRect = $".."
 @onready var marker_container: Node2D = $MarkerContainer
@@ -32,6 +39,11 @@ var _current_tooltip_entity_id = ""
 const TEAM_A_COLOR := Color.BLUE
 const TEAM_B_COLOR := Color.RED
 const NEUTRAL_COLOR := Color.YELLOW
+
+const FEATURE_Z_INDEX := 4
+const OBJECT_Z_INDEX := 12
+const CHARACTER_Z_INDEX := 30
+const ATTACHED_Z_INDEX_OFFSET := 6
 
 const ELEMENT_EFFECTS := [
 	"fire",
@@ -130,6 +142,34 @@ func redraw_tokens(game_state: Dictionary) -> void:
 
 	var wanted_ids: Dictionary = {}
 
+	# Draw low-priority battlefield features first, then items, then characters.
+	# The z-index and scale helpers below also enforce this priority visually.
+	var features: Array = _state_battlefield_features(game_state)
+	for feature_variant in features:
+		if not (feature_variant is Dictionary):
+			continue
+
+		var feature: Dictionary = feature_variant
+		var feature_id = str(feature.get("id", ""))
+		if feature_id.is_empty():
+			continue
+
+		wanted_ids[feature_id] = true
+		spawn_battlefield_feature(feature)
+
+	var objects: Array = _array_from(game_state.get("objects", []))
+	for object_variant in objects:
+		if not (object_variant is Dictionary):
+			continue
+
+		var object_data: Dictionary = object_variant
+		var object_id = str(object_data.get("id", ""))
+		if object_id.is_empty():
+			continue
+
+		wanted_ids[object_id] = true
+		spawn_object(object_data)
+
 	var characters: Array = _array_from(game_state.get("characters", []))
 	for character_variant in characters:
 		if not (character_variant is Dictionary):
@@ -147,22 +187,9 @@ func redraw_tokens(game_state: Dictionary) -> void:
 		wanted_ids[character_id] = true
 		spawn_character(character)
 
-	var objects: Array = _array_from(game_state.get("objects", []))
-	for object_variant in objects:
-		if not (object_variant is Dictionary):
-			continue
-
-		var object_data: Dictionary = object_variant
-		var object_id = str(object_data.get("id", ""))
-		if object_id.is_empty():
-			continue
-
-		wanted_ids[object_id] = true
-		spawn_object(object_data)
-
 	for child in marker_container.get_children():
-		if child is MapMarker and not wanted_ids.has(child.name):
-			_remove_marker(child.name, true)
+		if child is MapMarker and not wanted_ids.has(str(child.name)):
+			_remove_marker(str(child.name), false)
 
 	_sync_all_attachments_from_state(game_state)
 
@@ -181,6 +208,8 @@ func spawn_token(entity: Dictionary) -> void:
 
 	if _is_character_entity(entity):
 		spawn_character(entity)
+	elif _is_battlefield_feature_entity(entity):
+		spawn_battlefield_feature(entity)
 	else:
 		spawn_object(entity)
 
@@ -218,7 +247,8 @@ func move_token(entity_id: String, x: int, y: int, z: int = 0) -> void:
 		push_warning("Tried to move marker, but ID was not found: %s" % entity_id)
 		return
 
-	var target_pixel_pos: Vector2 = get_pixel_position_from_grid(x, y) + _get_token_offset(entity_id)
+	var entity_for_offset: Dictionary = _find_entity_in_game_state(entity_id, _last_game_state)
+	var target_pixel_pos: Vector2 = get_pixel_position_from_grid(x, y) + _get_token_offset_for_entity(entity_for_offset)
 	var move_tween: Tween = create_tween()
 	move_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 	move_tween.tween_property(marker, "position", target_pixel_pos, movement_time)
@@ -327,11 +357,14 @@ func _update_marker_from_entity(marker: MapMarker, entity: Dictionary, request_p
 
 	var pos: Vector3i = _entity_grid_position(entity)
 	var base_pos: Vector2 = get_pixel_position_from_grid(pos.x, pos.y)
-	marker.position = base_pos + _get_token_offset(entity_id)
+	marker.position = base_pos + _get_token_offset_for_entity(entity)
 	_apply_marker_elevation(marker, pos.z)
+	_apply_marker_visual_priority(marker, entity)
 
 	if _is_character_entity(entity):
 		_update_character_marker(marker, entity, request_portrait_if_new)
+	elif _is_battlefield_feature_entity(entity):
+		_update_battlefield_feature_marker(marker, entity, request_portrait_if_new)
 	else:
 		_update_object_marker(marker, entity, request_portrait_if_new)
 
@@ -355,6 +388,30 @@ func _update_object_marker(marker: MapMarker, object_data: Dictionary, request_p
 		var noun: String = str(object_data.get("name", object_data.get("id", "object")))
 		var adjectives: Array[String] = []
 		_request_marker_portrait(marker, noun, adjectives)
+
+
+func _update_battlefield_feature_marker(marker: MapMarker, feature: Dictionary, request_portrait_if_new: bool) -> void:
+	_set_marker_health(marker, 10000, 10000)
+	_set_feature_marker_color(marker, str(feature.get("feature_kind", "effect")))
+
+	if request_portrait_if_new:
+		var noun: String = str(feature.get("name", feature.get("id", "feature")))
+		var adjectives: Array[String] = [str(feature.get("feature_kind", "terrain_feature"))]
+		_request_marker_portrait(marker, noun, adjectives)
+
+
+func _set_feature_marker_color(marker: MapMarker, feature_kind: String) -> void:
+	if marker == null or not marker.has_method("set_ring_color"):
+		return
+	match feature_kind.strip_edges().to_lower():
+		"hazard":
+			marker.set_ring_color(Color(1.0, 0.32, 0.16, 1.0))
+		"zone":
+			marker.set_ring_color(Color(0.45, 0.75, 1.0, 1.0))
+		"terrain_feature":
+			marker.set_ring_color(Color(0.58, 0.43, 0.24, 1.0))
+		_:
+			marker.set_ring_color(Color(0.78, 0.68, 0.36, 1.0))
 
 
 func _set_marker_ring_color(marker: MapMarker, side: String) -> void:
@@ -406,7 +463,8 @@ func move_characters_simultaneously(moves: Array) -> void:
 		var marker: MapMarker = _marker_for_id(target_id)
 
 		if marker != null:
-			var target_pixel_pos: Vector2 = get_pixel_position_from_grid(target_grid_x, target_grid_y) + _get_token_offset(target_id)
+			var entity_for_offset: Dictionary = _find_entity_in_game_state(target_id, _last_game_state)
+			var target_pixel_pos: Vector2 = get_pixel_position_from_grid(target_grid_x, target_grid_y) + _get_token_offset_for_entity(entity_for_offset)
 			board_tween.tween_property(marker, "position", target_pixel_pos, movement_time)
 			_apply_marker_elevation(marker, target_grid_z)
 		else:
@@ -547,12 +605,11 @@ func attach_tokens(child_id: String, parent_id: String, attachment_mode: String)
 	}
 
 	child.position = parent.position + _attachment_offset(attachment_mode)
-	child.z_index = parent.z_index + 1
+	child.z_index = parent.z_index + ATTACHED_Z_INDEX_OFFSET
 
 	if child.has_method("set_attached_visual_state"):
 		child.set_attached_visual_state(parent_id, attachment_mode)
-	if child.has_method("set_marker_scale"):
-		child.set_marker_scale(0.35)
+	_apply_marker_scale(child, attached_marker_scale)
 
 
 func detach_token(child_id: String) -> void:
@@ -565,8 +622,8 @@ func detach_token(child_id: String) -> void:
 	child.z_index = 0
 	if child.has_method("clear_attached_visual_state"):
 		child.clear_attached_visual_state()
-	if child.has_method("set_marker_scale"):
-		child.set_marker_scale(1.0)
+	var entity: Dictionary = _find_entity_in_game_state(child_id, _last_game_state)
+	_apply_marker_visual_priority(child, entity)
 
 
 func _sync_all_attachments_from_state(game_state: Dictionary) -> void:
@@ -613,7 +670,7 @@ func _update_attached_children_positions(parent_id: String) -> void:
 
 		var mode: String = str(attachment_data.get("attachment_mode", ""))
 		child.position = parent.position + _attachment_offset(mode)
-		child.z_index = parent.z_index + 1
+		child.z_index = parent.z_index + ATTACHED_Z_INDEX_OFFSET
 
 
 func _detach_children_of_parent(parent_id: String) -> void:
@@ -649,16 +706,47 @@ func _attachment_offset(attachment_mode: String) -> Vector2:
 # ─────────────────────────────────────────────────────────────
 
 func spawn_battlefield_feature(feature: Dictionary) -> void:
-	# Future: draw zones, hazards, effects, terrain overlays.
-	print("TODO map.spawn_battlefield_feature: ", feature.get("id", ""))
+	var feature_id: String = str(feature.get("id", ""))
+	if feature_id.is_empty():
+		push_warning("Cannot spawn battlefield feature with empty id.")
+		return
+
+	var existing: MapMarker = _marker_for_id(feature_id)
+	if existing != null:
+		_update_marker_from_entity(existing, feature, false)
+		return
+
+	var marker: MapMarker = _instantiate_marker(feature_id)
+	if marker == null:
+		return
+
+	_update_marker_from_entity(marker, feature, true)
 
 
 func remove_battlefield_feature(feature_id: String) -> void:
-	print("TODO map.remove_battlefield_feature: ", feature_id)
+	_remove_marker(feature_id, true)
 
 
 func redraw_battlefield_features(game_state: Dictionary = {}) -> void:
-	print("TODO map.redraw_battlefield_features")
+	var state = game_state if not game_state.is_empty() else _last_game_state
+	_last_game_state = state.duplicate(true)
+	var wanted_feature_ids: Dictionary = {}
+	for feature_variant in _state_battlefield_features(state):
+		if not (feature_variant is Dictionary):
+			continue
+		var feature: Dictionary = feature_variant
+		var feature_id = str(feature.get("id", ""))
+		if feature_id.is_empty():
+			continue
+		wanted_feature_ids[feature_id] = true
+		spawn_battlefield_feature(feature)
+
+	for child in marker_container.get_children():
+		if child is MapMarker:
+			var child_id = str(child.name)
+			var child_entity = _find_entity_in_game_state(child_id, state)
+			if _is_battlefield_feature_entity(child_entity) and not wanted_feature_ids.has(child_id):
+				_remove_marker(child_id, false)
 
 
 
@@ -889,6 +977,11 @@ func _find_entity_in_game_state(entity_id: String, game_state: Dictionary) -> Di
 		if object_data is Dictionary and str(object_data.get("id", "")) == entity_id:
 			return object_data
 
+	var features: Array = _state_battlefield_features(game_state)
+	for feature in features:
+		if feature is Dictionary and str(feature.get("id", "")) == entity_id:
+			return feature
+
 	return {}
 
 
@@ -896,9 +989,21 @@ func _is_character_entity(entity: Dictionary) -> bool:
 	return entity.has("hp") and entity.has("max_hp")
 
 
+func _is_battlefield_feature_entity(entity: Dictionary) -> bool:
+	return entity.has("feature_kind") or (entity.has("width") and entity.has("height") and entity.has("location_label"))
+
+
+func _state_battlefield_features(game_state: Dictionary) -> Array:
+	var battlefield_variant: Variant = game_state.get("battlefield", {})
+	if not (battlefield_variant is Dictionary):
+		return []
+	var battlefield: Dictionary = battlefield_variant
+	return _array_from(battlefield.get("battlefield_features", []))
+
+
 func _entity_should_be_hidden(entity: Dictionary) -> bool:
 	if _is_character_entity(entity):
-		return int(entity.get("hp", 0)) <= 0
+		return int(entity.get("hp", entity.get("max_hp", 1))) <= 0
 	return false
 
 
@@ -965,12 +1070,52 @@ func _spawn_debug_markers() -> void:
 	call_deferred("spawn_character", character_a)
 	call_deferred("spawn_character", character_b)
 
-func _get_token_offset(entity_id: String, max_radius: float = 12.0) -> Vector2:
+func _get_token_offset_for_entity(entity: Dictionary) -> Vector2:
+	if entity.is_empty():
+		return Vector2.ZERO
+	var entity_id = str(entity.get("id", ""))
 	if entity_id.is_empty():
 		return Vector2.ZERO
-	var id_hash: int = entity_id.hash()
+	if _is_character_entity(entity):
+		return _get_token_offset(entity_id, character_jitter_radius_px)
+	if _is_battlefield_feature_entity(entity):
+		return _get_token_offset(entity_id, feature_jitter_radius_px)
+	return _get_token_offset(entity_id, item_jitter_radius_px)
+
+
+func _apply_marker_visual_priority(marker: MapMarker, entity: Dictionary) -> void:
+	if marker == null:
+		return
+	if entity.is_empty():
+		marker.z_index = OBJECT_Z_INDEX
+		_apply_marker_scale(marker, item_marker_scale)
+		return
+	if _is_character_entity(entity):
+		marker.z_index = CHARACTER_Z_INDEX
+		_apply_marker_scale(marker, character_marker_scale)
+	elif _is_battlefield_feature_entity(entity):
+		marker.z_index = FEATURE_Z_INDEX
+		_apply_marker_scale(marker, battlefield_feature_marker_scale)
+	else:
+		marker.z_index = OBJECT_Z_INDEX
+		_apply_marker_scale(marker, item_marker_scale)
+
+
+func _apply_marker_scale(marker: MapMarker, scale_value: float) -> void:
+	if marker == null:
+		return
+	if marker.has_method("set_marker_scale"):
+		marker.set_marker_scale(scale_value)
+	else:
+		marker.scale = Vector2.ONE * scale_value
+
+
+func _get_token_offset(entity_id: String, max_radius: float = 12.0) -> Vector2:
+	if entity_id.is_empty() or max_radius <= 0.0:
+		return Vector2.ZERO
+	var id_hash: int = abs(entity_id.hash())
 	var stable_angle: float = float(id_hash % 360) * (TAU / 360.0)
-	var stable_distance: float = float(id_hash % int(max_radius * 10)) / 10.0
-	var offset_x: float = cos(stable_angle) * stable_distance
-	var offset_y: float = sin(stable_angle) * stable_distance
-	return Vector2(offset_x, offset_y)
+	var stable_distance_steps = maxi(1, int(max_radius * 10.0))
+	var stable_distance: float = 2.0 + float(id_hash % stable_distance_steps) / 10.0
+	stable_distance = minf(stable_distance, max_radius)
+	return Vector2(cos(stable_angle), sin(stable_angle)) * stable_distance

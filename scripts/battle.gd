@@ -11,6 +11,85 @@ const MAP_WIDTH = 16
 const MAP_HEIGHT = 16
 const BATTLE_STYLE = "dramatic fantasy arena battle"
 
+const END_GAME_VICTORY_COLOR = Color(0.8, 0.6, 0.2, 1.0)
+const END_GAME_DEFEAT_COLOR = Color(0.8, 0.2, 0.2, 1.0)
+const END_GAME_DRAW_COLOR = Color(0.92, 0.84, 0.54, 1.0)
+
+const BATTLE_THEME_LIBRARY = [
+	{
+		"name": "Lantern Orchard",
+		"map_name_hint": "Lantern Orchard",
+		"visual_theme_hint": "glowing orchard lanes, broken stone walls, lantern-lit roots, light evening mist",
+		"feature_suggestions": ["broken stone wall cover", "lantern-lit root patches", "misty orchard lane"]
+	},
+	{
+		"name": "Chapel Steps",
+		"map_name_hint": "Chapel Steps",
+		"visual_theme_hint": "weathered chapel stair, cracked marble, faded banners, candlelit stone",
+		"feature_suggestions": ["raised chapel stair", "cracked marble cover", "fallen candle stands"]
+	},
+	{
+		"name": "Necropolis Verge",
+		"map_name_hint": "Necropolis Verge",
+		"visual_theme_hint": "graveyard slope, cracked tombstones, dead grass, drifting grave mist",
+		"feature_suggestions": ["tombstone cover", "grave mist zone", "dead grass slope"]
+	},
+	{
+		"name": "Basalt Causeway",
+		"map_name_hint": "Basalt Causeway",
+		"visual_theme_hint": "narrow volcanic bridge, ash gusts, basalt pillars, glowing fissures below",
+		"feature_suggestions": ["basalt pillar cover", "glowing fissure hazard", "ash gust lane"]
+	},
+	{
+		"name": "Ruined Dais",
+		"map_name_hint": "Ruined Dais",
+		"visual_theme_hint": "obsidian ruin arena, cracked central dais, ember glow, high broken arches",
+		"feature_suggestions": ["cracked central dais", "broken arch cover", "ember-lit rubble"]
+	},
+	{
+		"name": "Flooded Scriptoria",
+		"map_name_hint": "Flooded Scriptoria",
+		"visual_theme_hint": "half-submerged archive halls, floating tomes, slick stone, pale blue reflections",
+		"feature_suggestions": ["shallow water zone", "floating tome obstacle", "slick stone path"]
+	},
+	{
+		"name": "Red Quarry Terraces",
+		"map_name_hint": "Red Quarry Terraces",
+		"visual_theme_hint": "stepped red quarry, rope lifts, dust plumes, shattered cranes",
+		"feature_suggestions": ["raised quarry terrace", "shattered crane cover", "dust plume zone"]
+	},
+	{
+		"name": "Stormwall Ramparts",
+		"map_name_hint": "Stormwall Ramparts",
+		"visual_theme_hint": "wind-lashed fortress wall, storm banners, wet stone, lightning-lit cloudline",
+		"feature_suggestions": ["storm banner cover", "wet rampart ledge", "wind shear lane"]
+	},
+	{
+		"name": "Shattered Foundry",
+		"map_name_hint": "Shattered Foundry",
+		"visual_theme_hint": "broken war foundry, chain gantries, sparks, molten channels, smoke haze",
+		"feature_suggestions": ["molten channel hazard", "chain gantry bridge", "smoke haze zone"]
+	},
+	{
+		"name": "Worldscar Gate",
+		"map_name_hint": "Worldscar Gate",
+		"visual_theme_hint": "cataclysmic gate plateau, torn sky, ancient seal fragments, abyssal wind",
+		"feature_suggestions": ["ancient seal fragment", "abyssal wind zone", "cracked gate platform"]
+	},
+	{
+		"name": "Crystal Root Grotto",
+		"map_name_hint": "Crystal Root Grotto",
+		"visual_theme_hint": "underground root cavern, luminous crystal veins, mossy shelves, violet dust",
+		"feature_suggestions": ["crystal vein cover", "moss shelf elevation", "violet dust zone"]
+	},
+	{
+		"name": "Sunspire Court",
+		"map_name_hint": "Sunspire Court",
+		"visual_theme_hint": "golden temple courtyard, sun mirrors, tiled terraces, radiant heat shimmer",
+		"feature_suggestions": ["sun mirror pillar", "radiant tile zone", "raised temple terrace"]
+	},
+]
+
 const COST_VERDICT_HISTORY_MAX = 24
 const COST_VERDICT_HISTORY_CONTEXT_LIMIT = 4
 const POWER_MULTIPLIER_VERDICT_HISTORY_MAX = 48
@@ -88,6 +167,8 @@ const ELEMENTAL_INTERACTION_MAP = {
 
 @export var starting_characters: Array[Dictionary] = []
 @export var initialization_constraints: Dictionary = {}
+# Empty means choose a random theme from BATTLE_THEME_LIBRARY for each new game.
+@export var selected_battle_theme: String = ""
 
 @export_group("Initialiser TTS")
 @export var enable_initialiser_tts: bool = false
@@ -97,7 +178,7 @@ const ELEMENTAL_INTERACTION_MAP = {
 	"UmQN7jS1Ee8B1czsUtQh",
 	"flHkNRp1BlvT73UL6gyz",
 ]
-# Old battle-script live-streaming settings. Use PCM for AudioStreamGenerator playback.
+
 @export var elevenlabs_model_id: String = "eleven_flash_v2_5"
 @export var elevenlabs_output_format: String = "pcm_24000"
 @export var elevenlabs_voice_speed: float = 1.15
@@ -109,13 +190,14 @@ const ELEMENTAL_INTERACTION_MAP = {
 @onready var manuscript: VBoxContainer = $UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript
 @onready var map_manager: Node = $UILayer/MainLayout/BattleLayout/MapColumn/Map/MapImage/GridManager
 
-@onready var game_over_screen = $UILayer/GameOverScreen
-@onready var result_label = $UILayer/GameOverScreen/CenterContainer/VBoxContainer/ResultLabel
+@onready var game_over_screen: Control = get_node_or_null("UILayer/GameOverScreen") as Control
+@onready var result_label: Label = get_node_or_null("UILayer/GameOverScreen/CenterContainer/VBoxContainer/ResultLabel") as Label
 @onready var player_input = $UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding/InputBar/PlayerInput
 @onready var play_btn = $UILayer/MainLayout/BattleLayout/WritingColumn/Manuscript/ManuscriptFrame/ManuscriptShell/PaperMargin/ManuscriptPaperSurface/ManuscriptPaperPadding/ManuscriptPaperContent/InputPadding/InputBar/PlayBtn
 
 var current_phase = "idle"
 var game_state: Dictionary = {}
+var _active_battle_theme: Dictionary = {}
 
 var last_team_a_action = ""
 var last_cost_result: Dictionary = {}
@@ -132,6 +214,8 @@ var _queued_fragment_apply_count = 0
 var _streamed_any_fragments = false
 var _finished_fragment_keys: Dictionary = {}
 var _streamed_fragments_for_history: Array = []
+
+var _game_over_result_tween: Tween = null
 
 var _speculative_request_id = 0
 var _speculative_narrator_input: Dictionary = {}
@@ -461,14 +545,61 @@ func _build_schemas() -> void:
 
 
 func _build_initializer_input(characters_without_positions: Array = starting_characters) -> Dictionary:
+	_active_battle_theme = _select_battle_theme()
+	var visual_theme_hint = str(_active_battle_theme.get("visual_theme_hint", BATTLE_STYLE))
+	var map_name_hint = str(_active_battle_theme.get("map_name_hint", _active_battle_theme.get("name", "Battlefield")))
 	return {
 		"characters": _build_initializer_characters(characters_without_positions),
 		"starting_probability": STARTING_PROBABILITY,
-		"battle_style": BATTLE_STYLE,
+		"battle_style": visual_theme_hint,
+		"battle_theme_options": _battle_theme_hint_entries(),
+		"map_name_hint": map_name_hint,
+		"visual_theme_hint": visual_theme_hint,
+		"battlefield_feature_suggestions": _active_battle_theme.get("feature_suggestions", []),
 		"map_width": MAP_WIDTH,
 		"map_height": MAP_HEIGHT,
 		"initialization_constraints": _merged_initialization_constraints(),
 	}
+
+
+func _select_battle_theme() -> Dictionary:
+	if BATTLE_THEME_LIBRARY.is_empty():
+		return {
+			"name": "Battlefield",
+			"map_name_hint": "Battlefield",
+			"visual_theme_hint": BATTLE_STYLE,
+			"feature_suggestions": [],
+		}
+
+	var requested = selected_battle_theme.strip_edges().to_lower()
+	if not requested.is_empty():
+		for theme_variant in BATTLE_THEME_LIBRARY:
+			if not (theme_variant is Dictionary):
+				continue
+			var theme: Dictionary = theme_variant
+			if str(theme.get("name", "")).strip_edges().to_lower() == requested:
+				return theme.duplicate(true)
+			if str(theme.get("map_name_hint", "")).strip_edges().to_lower() == requested:
+				return theme.duplicate(true)
+
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	return (BATTLE_THEME_LIBRARY[rng.randi_range(0, BATTLE_THEME_LIBRARY.size() - 1)] as Dictionary).duplicate(true)
+
+
+func _battle_theme_hint_entries() -> Array:
+	var result: Array = []
+	for theme_variant in BATTLE_THEME_LIBRARY:
+		if not (theme_variant is Dictionary):
+			continue
+		var theme: Dictionary = theme_variant
+		result.append({
+			"name": str(theme.get("name", "")),
+			"map_name_hint": str(theme.get("map_name_hint", theme.get("name", ""))),
+			"visual_theme_hint": str(theme.get("visual_theme_hint", BATTLE_STYLE)),
+			"feature_suggestions": theme.get("feature_suggestions", []),
+		})
+	return result
 
 
 func _build_initializer_characters(raw_characters: Array) -> Array:
@@ -498,7 +629,6 @@ func _build_initializer_characters(raw_characters: Array) -> Array:
 			raw_hp = character["max_hp"]
 
 		character["hp"] = clampi(raw_hp, 1, character["max_hp"])
-		character["hp"] = int(round(float(character.get("hp", character["max_hp"]))))
 		character["physical_attack"] = int(round(float(character.get("physical_attack", 10))))
 		character["physical_defence"] = int(round(float(character.get("physical_defence", 10))))
 		character["magic_power"] = int(round(float(character.get("magic_power", 10))))
@@ -561,6 +691,12 @@ func _merged_initialization_constraints() -> Dictionary:
 		"stats_are_already_rounded_to_integers": true,
 		"use_reduced_elements_only": true,
 		"allowed_elements": ELEMENT_TYPES,
+		"use_interesting_battlefield_theme": true,
+		"include_battlefield_features": true,
+		"battlefield_features_should_be_tokenizable": true,
+		"avoid_overloading_with_battlefield_features": true,
+		"spread_features_across_lanes": true,
+		"battlefield_theme_library": _battle_theme_hint_entries(),
 	}
 	for key in initialization_constraints.keys():
 		result[key] = initialization_constraints[key]
@@ -614,6 +750,8 @@ func _start_round() -> void:
 	redraw_tokens()
 	_sync_token_attachments()
 
+	# Start blind Team B prefetch immediately when this round becomes available.
+	# _start_round() is called only after the previous initializer/narrator resolution has completed.
 	_start_team_b_prefetch()
 
 	manuscript.enable_input("Enter your action.")
@@ -820,17 +958,21 @@ func _finish_narrator_round(narrator_data: Dictionary) -> void:
 		history.append(history_line)
 		game_state["recent_round_history"] = history
 
-	game_state["round_number"] = int(game_state.get("round_number", 1)) + 1
-	game_state["phase"] = "round_planning"
-	_apply_round_income()
+
+	var winner = _resolve_winner_after_round()
+	game_state["winner"] = winner
+
 	redraw_tokens()
 	_sync_token_attachments()
 
-	var winner = str(game_state.get("winner", "None"))
 	if winner != "None":
 		_enter_post_game(winner)
-	else:
-		_start_round()
+		return
+
+	game_state["round_number"] = int(game_state.get("round_number", 1)) + 1
+	game_state["phase"] = "round_planning"
+	_apply_round_income()
+	_start_round()
 
 
 func _apply_round_income() -> void:
@@ -840,10 +982,58 @@ func _apply_round_income() -> void:
 	adjust_prob(ROUND_INCOME, false)
 
 
+func _resolve_winner_after_round() -> String:
+	var explicit_winner = str(game_state.get("winner", "None")).strip_edges()
+	if explicit_winner in ["Team A", "Team B", "Draw"]:
+		return explicit_winner
+
+	var team_a_alive = _side_has_living_characters("Team A")
+	var team_b_alive = _side_has_living_characters("Team B")
+
+	if team_a_alive and team_b_alive:
+		return "None"
+	if team_a_alive and not team_b_alive:
+		return "Team A"
+	if team_b_alive and not team_a_alive:
+		return "Team B"
+	return "Draw"
+
+
+func _side_has_living_characters(side_name: String) -> bool:
+	var characters: Array = game_state.get("characters", []) if game_state.get("characters", []) is Array else []
+	for character_variant in characters:
+		if not (character_variant is Dictionary):
+			continue
+		var character: Dictionary = character_variant
+		if str(character.get("side", "")).strip_edges() != side_name:
+			continue
+		if int(character.get("hp", 0)) > 0:
+			return true
+	return false
+
+
 func _enter_post_game(winner: String) -> void:
 	current_phase = "post_game"
-	manuscript.add_system_message("Game Over! Winner: %s" % winner)
-	manuscript.disable_input("Game ended.")
+	var clean_winner = winner.strip_edges()
+	manuscript.add_system_message("Game Over! Winner: %s" % clean_winner)
+	if clean_winner == "Team A":
+		end_game(true)
+	elif clean_winner == "Team B":
+		end_game(false)
+	else:
+		_show_game_over_screen(_local_result_title(clean_winner), END_GAME_DRAW_COLOR)
+	if is_instance_valid(manuscript):
+		manuscript.disable_input("Game ended.")
+
+
+func _local_result_title(winner: String) -> String:
+	if winner == "Draw":
+		return "Draw"
+	if winner == "Team A":
+		return "Victory!"
+	if winner == "Team B":
+		return "Defeat..."
+	return "Battle Over"
 
 
 
@@ -1808,8 +1998,10 @@ func _normalize_game_state(value: Variant) -> Dictionary:
 	adjust_prob(STARTING_PROBABILITY, true)
 	state["map_width"] = MAP_WIDTH
 	state["map_height"] = MAP_HEIGHT
-	state["map_name"] = str(state.get("map_name", "Unnamed Arena"))
-	state["visual_theme"] = str(state.get("visual_theme", BATTLE_STYLE))
+	var fallback_map_name = str(_active_battle_theme.get("map_name_hint", "Unnamed Arena")) if not _active_battle_theme.is_empty() else "Unnamed Arena"
+	var fallback_visual_theme = str(_active_battle_theme.get("visual_theme_hint", BATTLE_STYLE)) if not _active_battle_theme.is_empty() else BATTLE_STYLE
+	state["map_name"] = str(state.get("map_name", fallback_map_name))
+	state["visual_theme"] = str(state.get("visual_theme", fallback_visual_theme))
 	state["characters"] = _normalize_character_array(state.get("characters", []))
 	state["objects"] = _normalize_object_array(state.get("objects", []))
 	state["ongoing_effects"] = _string_array(state.get("ongoing_effects", []))
@@ -2461,12 +2653,15 @@ func _call_cost_judge(side: String, action: String) -> Dictionary:
 
 
 func _call_team_b_action() -> Dictionary:
+	# Team B is intentionally blind to the current Team A move.
+	# Keep this field present for prompt compatibility, but always empty.
 	var input_obj = {
 		"side": "Team B",
 		"game_state": game_state,
-		"recent_team_a_action": last_team_a_action,
+		"recent_team_a_action": "",
 		"team_b_probability": int(game_state.get("team_b_probability", 0)),
 		"allowed_elements": ELEMENT_TYPES,
+		"team_b_does_not_know_team_a_action": true,
 	}
 	var team_b_prompt = DataUtils.load_prompt_text("res://prompts/enemy-ai.txt")
 	return await OpenaiClient.call_structured(
@@ -2508,33 +2703,30 @@ func _fallback_team_b_cost() -> Dictionary:
 
 func _team_b_cost_fallback(judged_cost: Dictionary, team_b_probability: int) -> Dictionary:
 	var cheaper_alternative = str(judged_cost.get("cheaper_alternative", "")).strip_edges()
+	var original_cost = maxi(1, int(judged_cost.get("probability_cost", 1)))
+	var half_previous_cost = int(floor(float(original_cost) * 0.5))
+	var fallback_cost = mini(team_b_probability, mini(half_previous_cost, 5))
+	fallback_cost = maxi(1, fallback_cost)
 
 	if cheaper_alternative.is_empty():
 		return {
 			"action": "Team B takes a simple guarded stance.",
 			"cost": {
-				"probability_cost": 1,
+				"probability_cost": mini(team_b_probability, 1),
 				"cost_band": "easy",
 				"status": "playable",
-				"short_player_summary": "",
+				"short_player_summary": "Team B cannot afford its intended move and falls back to a simple guarded stance.",
 				"cheaper_alternative": "",
 			},
 		}
-
-	var original_cost = maxi(1, int(judged_cost.get("probability_cost", 1)))
-	var fallback_cost = mini(
-		team_b_probability,
-		mini(int(floor(float(original_cost) * 0.5)), 5)
-	)
-	fallback_cost = maxi(1, fallback_cost)
 
 	return {
 		"action": cheaper_alternative,
 		"cost": {
 			"probability_cost": fallback_cost,
-			"cost_band": "easy",
+			"cost_band": "easy" if fallback_cost <= 3 else "grounded",
 			"status": "playable",
-			"short_player_summary": "Fallback to the cost judge's cheaper alternative for Team B.",
+			"short_player_summary": "Team B cannot afford its intended move and uses the cost judge's cheaper alternative.",
 			"cheaper_alternative": "",
 		},
 	}
@@ -2552,13 +2744,88 @@ func adjust_prob(amount: int, is_player: bool):
 func _on_restart_button_pressed() -> void:
 	get_tree().reload_current_scene()
 
-func end_game(player_won: bool):
-	player_input.editable = false
-	play_btn.disabled = true
+func end_game(player_won: bool) -> void:
+	current_phase = "post_game"
 	if player_won:
-		result_label.text = "Victory!"
-		result_label.add_theme_color_override("font_color", Color(0.8, 0.6, 0.2))
+		game_state["winner"] = "Team A"
+		_show_game_over_screen("Victory!", END_GAME_VICTORY_COLOR)
 	else:
-		result_label.text = "Defeat..."
-		result_label.add_theme_color_override("font_color", Color(0.8, 0.2, 0.2))
-	game_over_screen.show()
+		game_state["winner"] = "Team B"
+		_show_game_over_screen("Defeat...", END_GAME_DEFEAT_COLOR)
+	if is_instance_valid(manuscript):
+		manuscript.disable_input("Game ended.")
+
+
+func _show_game_over_screen(result_text: String, result_color: Color) -> void:
+	# The game-over UI is optional in some scenes. Resolve nodes lazily so
+	# end_game can be reused from stripped-down battle scenes.
+	_resolve_game_over_nodes()
+
+	if is_instance_valid(player_input):
+		player_input.editable = false
+	if is_instance_valid(play_btn):
+		play_btn.disabled = true
+
+	if is_instance_valid(result_label):
+		result_label.text = result_text
+		# Match the old behaviour: result_label.modulate carries the final colour.
+		# Theme override is also set defensively in case a scene theme changes font colour.
+		result_label.add_theme_color_override("font_color", result_color)
+		result_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.82))
+		result_label.add_theme_constant_override("outline_size", 5)
+		result_label.add_theme_font_size_override("font_size", 56)
+		result_label.self_modulate = Color.WHITE
+		result_label.modulate = result_color
+		_play_game_over_result_text_effect(result_color)
+
+	if is_instance_valid(game_over_screen):
+		game_over_screen.show()
+	else:
+		push_warning("end_game called, but no GameOverScreen node was found.")
+
+
+func _play_game_over_result_text_effect(result_color: Color) -> void:
+	if not is_instance_valid(result_label):
+		return
+
+	if is_instance_valid(_game_over_result_tween):
+		_game_over_result_tween.kill()
+
+	result_label.scale = Vector2.ONE * 0.86
+	result_label.modulate = result_color
+	result_label.pivot_offset = result_label.size * 0.5
+
+	_game_over_result_tween = create_tween()
+	_game_over_result_tween.set_parallel(true)
+	_game_over_result_tween.tween_property(result_label, "scale", Vector2.ONE * 1.18, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_game_over_result_tween.tween_property(result_label, "modulate", Color(result_color.r * 1.35, result_color.g * 1.35, result_color.b * 1.35, 1.0), 0.22)
+	_game_over_result_tween.chain().tween_property(result_label, "scale", Vector2.ONE, 0.26).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_game_over_result_tween.parallel().tween_property(result_label, "modulate", result_color, 0.26)
+	_game_over_result_tween.chain().tween_property(result_label, "scale", Vector2.ONE * 1.035, 0.78).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_game_over_result_tween.tween_property(result_label, "scale", Vector2.ONE, 0.78).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+func _resolve_game_over_nodes() -> void:
+	if not is_instance_valid(game_over_screen):
+		game_over_screen = _find_first_node_by_path_or_name([
+			"UILayer/GameOverScreen",
+			"GameOverScreen",
+		]) as Control
+
+	if not is_instance_valid(result_label):
+		result_label = _find_first_node_by_path_or_name([
+			"UILayer/GameOverScreen/CenterContainer/VBoxContainer/ResultLabel",
+			"GameOverScreen/CenterContainer/VBoxContainer/ResultLabel",
+			"ResultLabel",
+		]) as Label
+
+
+func _find_first_node_by_path_or_name(candidates: Array[String]) -> Node:
+	for candidate in candidates:
+		var direct = get_node_or_null(candidate)
+		if direct != null:
+			return direct
+		var found = find_child(candidate, true, false)
+		if found != null:
+			return found
+	return null
