@@ -49,7 +49,6 @@ color = Color(0.69411767, 1, 0.64705884, 1)
 
 [node name="BotHand" parent="." unique_id=814759873 instance=ExtResource("3_nq0av")]
 z_index = -1
-<<<<<<< HEAD
 position = Vector2(960, 210)
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1897373429]
@@ -140,11 +139,3 @@ text = "My hand"
 fit_content = true
 horizontal_alignment = 1
 vertical_alignment = 1
-=======
-position = Vector2(960, 180)
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1277122012]
-stream = ExtResource("5_ktq82")
-volume_db = -6.0
-autoplay = true
->>>>>>> fc75a28 (Add music)
