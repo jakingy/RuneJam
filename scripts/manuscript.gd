@@ -993,7 +993,9 @@ func add_stamp_msg(sections: Array, bg: Color, border: Color, title: String = ""
 	if not title.is_empty():
 		var title_bbcode := stamp_text_with_wrapping(title.to_upper(), effect_name, effect_params)
 		var glow_open := "[glow r=%s g=%s b=%s]" % [str(title_color.r), str(title_color.g), str(title_color.b)]
-		parts.append("[font_size=13]%s%s[/glow][/font_size]" % [glow_open, title_bbcode])
+		
+		var base_color_html := title_color.clamp().to_html()
+		parts.append("[font_size=13][b][color=%s]%s%s[/glow][/color][/b][/font_size]" % [base_color_html, glow_open, title_bbcode])
 
 	for section in sections:
 		if not (section is Dictionary):
@@ -1043,7 +1045,7 @@ func add_narrate_msg(
 	vbox.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	if not title.is_empty():
-		vbox.add_child(create_glow_title(title, title_color))
+		vbox.add_child(create_glow_title(title, title_color, title_color.clamp()))
 
 	var content := RichTextLabel.new()
 	content.bbcode_enabled = true
@@ -1069,18 +1071,18 @@ func add_narrate_msg(
 	return panel
 
 
-func create_glow_title(title: String, color: Color) -> RichTextLabel:
+func create_glow_title(title: String, glow_color: Color, base_color: Color = COLOR_TEXT) -> RichTextLabel:
 	var rtl := RichTextLabel.new()
 	rtl.bbcode_enabled = true
 	rtl.fit_content = true
 	rtl.scroll_active = false
-	rtl.add_theme_color_override("default_color", COLOR_TEXT)
+	rtl.add_theme_color_override("default_color", base_color)
 	rtl.add_theme_font_size_override("normal_font_size", MANUSCRIPT_TITLE_SIZE)
 	rtl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	make_rich_text_selectable(rtl)
 	ensure_text_effects(rtl)
 	apply_font_to_rich_text(rtl, "narrator")
-	rtl.text = TextEffects.wrap_glow(title.to_upper(), color)
+	rtl.text = "[b]" + TextEffects.wrap_glow(title.to_upper(), glow_color) + "[/b]"
 	return rtl
 
 
@@ -1134,7 +1136,7 @@ func add_team_a_message(text: String) -> PanelContainer:
 		Color(0.086, 0.149, 0.251),
 		Color(0.165, 0.29, 0.478),
 		"Your Action",
-		Color(0.5, 1.0, 6.0, 1.0)
+		Color(0.2, 0.6, 1.0, 1.0)
 	)
 
 
@@ -1144,7 +1146,7 @@ func add_team_b_message(text: String) -> PanelContainer:
 		Color(0.165, 0.086, 0.086),
 		Color(0.353, 0.165, 0.165),
 		"Opponent",
-		Color(6.0, 0.8, 0.5, 1.0),
+		Color(1.0, 0.2, 0.2, 1.0),
 		TextEffects.writing_narrator()
 	)
 
