@@ -77,7 +77,7 @@ func on_user_submit_turn():
 		
 		base_adjs = CardsManager.draw_adjectives()
 		for adj in base_adjs:
-			bot_deck.append(Card.new(Noun.new('Effect'), [adj]))
+			bot_deck.append(Card.new(Noun.new('Effect', 1.0, "", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0), [adj]))
 	else:
 		noun_turn_count -= 1
 		var cards: Array[Card] = []
@@ -122,14 +122,15 @@ func get_bot_team() -> Array[Dictionary]:
 	return res
 
 func convert_card_to_llm_schema(card: Card, team: String, team_name: String, id: int):
+	print(card.get_max_health())
 	var res: Dictionary = {}
-	res["id"] = team + "_unit_" + str(id)
+	res["id"] = team + "_unit_" + str(id) + "_" + card.get_name_str()
 	res["display_name"] = card.get_name_str()
 	res["nouns"] = [card.get_noun_str()]
 	res["adjectives"] = card.get_adjectives_str()
 	res["elements"] = [card.get_element()]
 	res["side"] = team_name
-	res["max hp"] = card.get_max_health()
+	res["max_hp"] = card.get_max_health()
 	res["hp"] = card.get_max_health()
 	res["physical_attack"] = card.get_physical_attack()
 	res["physical_defence"] = card.get_physical_defence()

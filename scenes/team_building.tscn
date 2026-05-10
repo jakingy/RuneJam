@@ -4,14 +4,9 @@
 [ext_resource type="Script" uid="uid://dfgyl8v3eweei" path="res://scripts/team_building/card_manager.gd" id="1_nq0av"]
 [ext_resource type="PackedScene" uid="uid://uoc7fgrfx0c4" path="res://scenes/team_building/hand.tscn" id="3_nq0av"]
 [ext_resource type="Script" uid="uid://c1isifbere2g6" path="res://scripts/team_building/deck.gd" id="4_8jl1w"]
-
-[ext_resource type="Texture2D" uid="uid://pexp8ed5kjfp" path="res://assets/team_building/mykhailo-120.jpeg" id="5_ktq82"]
 [ext_resource type="Texture2D" uid="uid://ln0i1rntwujo" path="res://assets/team_building/medieval-paper.png" id="6_l1l0t"]
 [ext_resource type="Texture2D" uid="uid://da6rmnesrr55v" path="res://assets/team_building/milan-vasek-worldmap-wip.jpg" id="7_jiwfj"]
 [ext_resource type="FontFile" uid="uid://dos2mi3v2wsjw" path="res://fonts/Blackcraft-yw6zM.ttf" id="8_t4ld2"]
-
-[ext_resource type="AudioStream" uid="uid://dnst7n88x2fsn" path="res://assets/music/fantasy_forest_battle.ogg" id="5_ktq82"]
-
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nq0av"]
 size = Vector2(1280, 360)
@@ -56,7 +51,6 @@ visible = false
 z_index = -2
 position = Vector2(1269.3557, 541.5767)
 scale = Vector2(0.66291255, 0.4933242)
-texture = ExtResource("5_ktq82")
 
 [node name="HandHolder" type="Sprite2D" parent="." unique_id=353432862]
 position = Vector2(961.99994, 356.50003)
