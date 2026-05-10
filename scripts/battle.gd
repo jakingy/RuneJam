@@ -485,7 +485,14 @@ func _build_initializer_characters(raw_characters: Array) -> Array:
 		character["adjectives"] = _string_array(character.get("adjectives", []))
 		character["elements"] = _filtered_elements(character.get("elements", []))
 		character["side"] = _normalized_side(str(character.get("side", "Neutral")))
-		character["max_hp"] = int(round(float(character.get("max_hp", 100))))
+		character["max_hp"] = maxi(1, int(round(float(character.get("max_hp", 100)))))
+		var raw_hp = int(round(float(character.get("hp", character["max_hp"]))))
+
+		# Treat hp <= 0 on starting characters as "not initialized yet", not dead.
+		if raw_hp <= 0:
+			raw_hp = character["max_hp"]
+
+		character["hp"] = clampi(raw_hp, 1, character["max_hp"])
 		character["hp"] = int(round(float(character.get("hp", character["max_hp"]))))
 		character["physical_attack"] = int(round(float(character.get("physical_attack", 10))))
 		character["physical_defence"] = int(round(float(character.get("physical_defence", 10))))
