@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://b84s6xaupclk4"]
+[gd_scene format=3 uid="uid://dldktl1oci84f"]
 
 [ext_resource type="Script" uid="uid://h3dyt5deriek" path="res://scenes/team_building.gd" id="1_8jl1w"]
 [ext_resource type="Script" uid="uid://dfgyl8v3eweei" path="res://scripts/team_building/card_manager.gd" id="1_nq0av"]

@@ -40,8 +40,12 @@ func update_img():
 	display.display_character(the_card.get_noun_str(), the_card.get_adjectives_str())
 	
 func update_labels():
-	set_card_name(noun, $FrontName)
-	set_card_name(noun, $Name)
+	if noun != "Effect":
+		set_card_name(the_card.get_name_str(), $FrontName)
+		set_card_name(the_card.get_name_str(), $Name)
+	else:
+		set_card_name(the_card.get_adjectives_str()[0], $FrontName)
+		set_card_name(the_card.get_adjectives_str()[0], $Name)
 	$Element.text = element
 	$MaxHealth.text = "H: " + str(max_health)
 	$PhysicAttack.text = "P.A: " + str(physical_attack)
