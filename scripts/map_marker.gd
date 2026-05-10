@@ -9,6 +9,7 @@ extends Node2D
 var explosion_scene: PackedScene = preload("res://scenes/exploding_effect.tscn")
 var smoke_scene: PackedScene = preload("res://scenes/landing_smoke.tscn")
 var health_tween: Tween
+var scale_tween: Tween
 
 var elevation_tween: Tween
 var current_z: int = 0
@@ -67,6 +68,13 @@ func _spawn_smoke() -> void:
 
 func set_ring_color(new_color: Color) -> void:
 	health_ring.tint_progress = new_color
+
+func set_marker_scale(target_scale: float, duration: float = 0.3) -> void:
+	if scale_tween and scale_tween.is_valid():
+		scale_tween.kill()
+	scale_tween = create_tween()
+	scale_tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	scale_tween.tween_property(self, "scale", Vector2(target_scale, target_scale), duration)
 
 func request_portrait(noun: String, adjs: Array[String]) -> void:
 	if character_display.has_method("display_character"):

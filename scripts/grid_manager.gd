@@ -541,6 +541,8 @@ func attach_tokens(child_id: String, parent_id: String, attachment_mode: String)
 
 	if child.has_method("set_attached_visual_state"):
 		child.set_attached_visual_state(parent_id, attachment_mode)
+	if child.has_method("set_marker_scale"):
+		child.set_marker_scale(0.35)
 
 
 func detach_token(child_id: String) -> void:
@@ -553,6 +555,8 @@ func detach_token(child_id: String) -> void:
 	child.z_index = 0
 	if child.has_method("clear_attached_visual_state"):
 		child.clear_attached_visual_state()
+	if child.has_method("set_marker_scale"):
+		child.set_marker_scale(1.0)
 
 
 func _sync_all_attachments_from_state(game_state: Dictionary) -> void:

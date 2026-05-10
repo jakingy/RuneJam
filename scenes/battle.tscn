@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dxp3t5ee0c4kt" path="res://scripts/battle.gd" id="1_dn72j"]
 [ext_resource type="PackedScene" uid="uid://ca6cvu2yx7w6j" path="res://scenes/map.tscn" id="2_a12nh"]
-[ext_resource type="PackedScene" uid="uid://bk5g0gqslmyuc" path="res://scenes/battle_ui.tscn" id="2_lpir7"]
+[ext_resource type="PackedScene" path="res://scenes/battle_ui.tscn" id="2_lpir7"]
 [ext_resource type="Script" uid="uid://byn3bpynbcday" path="res://scripts/manuscript.gd" id="2_th188"]
 [ext_resource type="Resource" uid="uid://7brlw3k4jyod" path="res://fonts/font_library.tres" id="3_p1qf1"]
 [ext_resource type="AudioStream" uid="uid://c8ilrp2r6hmg3" path="res://assets/music/twilight_battle.ogg" id="6_6vh42"]

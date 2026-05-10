@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ch8on2xej3olr"]
 
-[ext_resource type="Script" uid="uid://dwx6h3qc76q6o" path="res://scripts/map_marker.gd" id="1_rbw48"]
+[ext_resource type="Script" uid="uid://cpjidqdqst7xu" path="res://scripts/map_marker.gd" id="1_rbw48"]
 [ext_resource type="Texture2D" uid="uid://cx31cqts0mt4p" path="res://assets/marker/HealthRingEmpty.png" id="1_t8lt4"]
 [ext_resource type="Texture2D" uid="uid://cknvth8xdpbss" path="res://assets/marker/HealthRing.png" id="2_6kfhq"]
 [ext_resource type="PackedScene" uid="uid://cv36o3y1ebw62" path="res://scenes/character_display.tscn" id="2_reat5"]
