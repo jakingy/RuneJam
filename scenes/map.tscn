@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ca6cvu2yx7w6j"]
 
 [ext_resource type="Script" uid="uid://dy1blymito328" path="res://scripts/grid_manager.gd" id="1_4xfga"]
-[ext_resource type="Texture2D" uid="uid://det8wijocf6py" path="res://assets/map/placeholder_map.jpg" id="1_paxxb"]
+[ext_resource type="Texture2D" uid="uid://dih61i4qwm0n0" path="res://assets/map/placeholder_map4.jpg" id="1_paxxb"]
 
 [node name="Map" type="Control" unique_id=151688534]
 clip_contents = true

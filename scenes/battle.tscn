@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" path="res://scenes/battle_ui.tscn" id="2_lpir7"]
 [ext_resource type="Script" uid="uid://byn3bpynbcday" path="res://scripts/manuscript.gd" id="2_th188"]
 [ext_resource type="Resource" uid="uid://7brlw3k4jyod" path="res://fonts/font_library.tres" id="3_p1qf1"]
-[ext_resource type="AudioStream" uid="uid://c8ilrp2r6hmg3" path="res://assets/music/twilight_battle.ogg" id="6_6vh42"]
 [ext_resource type="FontFile" uid="uid://cxt57kso8qnxi" path="res://fonts/squarecaps.medium.ttf" id="6_6vh42"]
 
 [sub_resource type="Environment" id="Environment_p1qf1"]
@@ -196,10 +195,6 @@ layout_mode = 0
 offset_right = 1.0
 mouse_filter = 2
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1885200970]
-stream = ExtResource("6_6vh42")
-volume_db = -20.0
-autoplay = true
 [node name="GameOverScreen" type="ColorRect" parent="UILayer" unique_id=1238711590]
 visible = false
 anchors_preset = 15
@@ -231,5 +226,9 @@ layout_mode = 2
 theme_override_fonts/font = SubResource("SystemFont_f4pi3")
 theme_override_font_sizes/font_size = 35
 text = "Play again"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1885200970]
+volume_db = -20.0
+autoplay = true
 
 [connection signal="pressed" from="UILayer/GameOverScreen/CenterContainer/VBoxContainer/RestartButton" to="." method="_on_restart_button_pressed"]
