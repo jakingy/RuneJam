@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_roomg"]
+
+[resource]
+script = ExtResource("1_roomg")
+words = "Golem"
+tier = 3.0
+element = "earth"
+max_health_weight = 3.0
+physical_attack_weight = 2.2
+physical_defence_weight = 3.0
+magic_attack_weight = 0.5
+magic_defence_weight = 1.5
+speed_weight = 0.4

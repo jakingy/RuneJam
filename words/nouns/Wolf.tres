@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_56qxn"]
+
+[resource]
+script = ExtResource("1_56qxn")
+words = "Wolf"
+tier = 2.0
+element = "earth"
+max_health_weight = 1.2
+physical_attack_weight = 1.5
+physical_defence_weight = 0.8
+magic_attack_weight = 0.2
+magic_defence_weight = 0.7
+speed_weight = 1.6

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Adjective" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/adjective.gd" id="1_tftaf"]
+
+[resource]
+script = ExtResource("1_tftaf")
+words = "Vast"
+tier = 4.0
+max_health_bias_weight = 1.0
+physical_defence_bias_weight = 0.5
+magic_defence_bias_weight = 0.4
+speed_bias_weight = -0.8

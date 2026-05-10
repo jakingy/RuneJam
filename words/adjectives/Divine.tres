@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Adjective" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/adjective.gd" id="1_7gx5s"]
+
+[resource]
+script = ExtResource("1_7gx5s")
+words = "Divine"
+tier = 5.0
+max_health_bias_weight = 0.8
+physical_attack_bias_weight = 0.5
+physical_defence_bias_weight = 0.5
+magic_attack_bias_weight = 0.8
+magic_defence_bias_weight = 0.8
+speed_bias_weight = 0.2

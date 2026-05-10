@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_s0046"]
+
+[resource]
+script = ExtResource("1_s0046")
+words = "Wraith"
+tier = 3.0
+element = "dark"
+max_health_weight = 1.4
+physical_attack_weight = 1.2
+physical_defence_weight = 0.8
+magic_attack_weight = 2.5
+magic_defence_weight = 2.0
+speed_weight = 1.7

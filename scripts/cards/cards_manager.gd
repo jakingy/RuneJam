@@ -119,7 +119,6 @@ func get_base_adjectives() -> Array[Adjective]:
 			var adj_res = load(full_path)
 			
 			if adj_res is Adjective:
-				adj_res.normalise()
 				base_adjs.append(adj_res)
 		
 		file_name = dir.get_next()
@@ -144,14 +143,13 @@ func fuse_adjectives(adj1: Adjective, adj2: Adjective) -> Adjective:
 	var new_adj: Adjective = Adjective.new (
 		await PromptAPI.fuse_adjectives([adj1.get_words(), adj2.get_words()]),
 		max(adj1.tier, adj2.tier),
-		(adj1.max_health_multiplier_weight + adj2.max_health_multiplier_weight) / 2,
-		(adj1.physical_attack_multiplier_weight + adj2.physical_attack_multiplier_weight) / 2,
-		(adj1.physical_defence_multiplier_weight + adj2.physical_defence_multiplier_weight) / 2,
-		(adj1.magic_attack_multiplier_weight + adj2.magic_attack_multiplier_weight) / 2,
-		(adj1.magic_defence_multiplier_weight + adj2.magic_defence_multiplier_weight) / 2,
-		(adj1.speed_multiplier_weight + adj2.speed_multiplier_weight) / 2
+		(adj1.max_health_bias_weight + adj2.max_health_bias_weight) / 2,
+		(adj1.physical_attack_bias_weight + adj2.physical_attack_bias_weight) / 2,
+		(adj1.physical_defence_bias_weight + adj2.physical_defence_bias_weight) / 2,
+		(adj1.magic_attack_bias_weight + adj2.magic_attack_bias_weight) / 2,
+		(adj1.magic_defence_bias_weight + adj2.magic_defence_bias_weight) / 2,
+		(adj1.speed_bias_weight + adj2.speed_bias_weight) / 2
 	)
-	new_adj.normalise()
 	return new_adj
 
 func create_card(noun: Noun = null, adjectives: Array[Adjective] = []) -> Card:

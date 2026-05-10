@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Adjective" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/adjective.gd" id="1_yf4fn"]
+
+[resource]
+script = ExtResource("1_yf4fn")
+words = "Ancient"
+tier = 3.0
+max_health_bias_weight = 0.9
+physical_attack_bias_weight = -0.2
+physical_defence_bias_weight = 0.4
+magic_attack_bias_weight = 0.4
+magic_defence_bias_weight = 0.5
+speed_bias_weight = -0.7

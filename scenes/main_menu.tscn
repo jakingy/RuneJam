@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://bnxdepebgxvq"]
+[gd_scene format=3 uid="uid://c7ikn4rfmah5j"]
 
 [ext_resource type="FontFile" uid="uid://cgd5ur2hhq0qc" path="res://assets/team_building/Firlest-Regular.otf" id="1_ekxnf"]
-[ext_resource type="Script" uid="uid://chvp1wta714tl" path="res://scripts/play_button.gd" id="3_bqqt6"]
+[ext_resource type="Script" path="res://scripts/play_button.gd" id="3_bqqt6"]
 [ext_resource type="Shader" uid="uid://bfgkme56q8tq5" path="res://shader/colour_reduction_and_dither.gdshader" id="3_wu84c"]
 [ext_resource type="Texture2D" uid="uid://qtr33xat13cb" path="res://assets/main_menu_bg.jpg" id="4_8ln24"]
 

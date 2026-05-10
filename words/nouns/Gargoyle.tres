@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_co10h"]
+
+[resource]
+script = ExtResource("1_co10h")
+words = "Gargoyle"
+tier = 2.0
+element = "earth"
+max_health_weight = 1.8
+physical_attack_weight = 1.4
+physical_defence_weight = 2.2
+magic_attack_weight = 0.6
+magic_defence_weight = 1.2
+speed_weight = 0.5

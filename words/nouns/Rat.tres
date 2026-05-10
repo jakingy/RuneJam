@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_phatu"]
+
+[resource]
+script = ExtResource("1_phatu")
+words = "Rat"
+tier = 1.0
+element = "earth"
+max_health_weight = 0.8
+physical_attack_weight = 1.2
+physical_defence_weight = 0.5
+magic_attack_weight = 0.2
+magic_defence_weight = 0.5
+speed_weight = 1.5

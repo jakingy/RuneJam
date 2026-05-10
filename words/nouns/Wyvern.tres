@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_ct8pm"]
+
+[resource]
+script = ExtResource("1_ct8pm")
+words = "Wyvern"
+tier = 3.0
+element = "fire"
+max_health_weight = 2.2
+physical_attack_weight = 2.0
+physical_defence_weight = 1.5
+magic_attack_weight = 1.6
+magic_defence_weight = 1.2
+speed_weight = 1.8

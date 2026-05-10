@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_7xxpq"]
+
+[resource]
+script = ExtResource("1_7xxpq")
+words = "Djinn"
+tier = 4.0
+element = "air"
+max_health_weight = 2.4
+physical_attack_weight = 2.0
+physical_defence_weight = 1.8
+magic_attack_weight = 3.6
+magic_defence_weight = 3.0
+speed_weight = 3.2

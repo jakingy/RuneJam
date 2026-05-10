@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_0giaf"]
+
+[resource]
+script = ExtResource("1_0giaf")
+words = "Valkyrie"
+tier = 4.0
+element = "lightning"
+max_health_weight = 2.8
+physical_attack_weight = 3.0
+physical_defence_weight = 2.2
+magic_attack_weight = 2.5
+magic_defence_weight = 2.0
+speed_weight = 2.8

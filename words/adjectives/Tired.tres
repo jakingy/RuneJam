@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Adjective" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/adjective.gd" id="1_t2o1m"]
+
+[resource]
+script = ExtResource("1_t2o1m")
+words = "Tired"
+tier = 1.0
+max_health_bias_weight = 0.3
+physical_attack_bias_weight = -0.4
+physical_defence_bias_weight = -0.2
+magic_attack_bias_weight = -0.2
+magic_defence_bias_weight = -0.1
+speed_bias_weight = -0.5

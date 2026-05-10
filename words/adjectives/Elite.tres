@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Adjective" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/adjective.gd" id="1_kly6s"]
+
+[resource]
+script = ExtResource("1_kly6s")
+words = "Elite"
+tier = 5.0
+max_health_bias_weight = 0.4
+physical_attack_bias_weight = 0.4
+physical_defence_bias_weight = 0.4
+magic_attack_bias_weight = 0.4
+magic_defence_bias_weight = 0.4
+speed_bias_weight = 0.4

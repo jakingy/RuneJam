@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_uvg1s"]
+
+[resource]
+script = ExtResource("1_uvg1s")
+words = "Bat"
+tier = 1.0
+element = "air"
+max_health_weight = 0.7
+physical_attack_weight = 1.0
+physical_defence_weight = 0.4
+magic_attack_weight = 0.3
+magic_defence_weight = 0.6
+speed_weight = 2.0

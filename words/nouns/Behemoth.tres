@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_wmy1s"]
+
+[resource]
+script = ExtResource("1_wmy1s")
+words = "Behemoth"
+tier = 4.0
+element = "earth"
+max_health_weight = 4.5
+physical_attack_weight = 3.5
+physical_defence_weight = 3.5
+magic_attack_weight = 0.5
+magic_defence_weight = 2.0
+speed_weight = 0.6

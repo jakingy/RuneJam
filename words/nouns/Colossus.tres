@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_hgdrm"]
+
+[resource]
+script = ExtResource("1_hgdrm")
+words = "Colossus"
+tier = 5.0
+element = "ice"
+max_health_weight = 5.8
+physical_attack_weight = 4.8
+physical_defence_weight = 5.2
+magic_attack_weight = 2.5
+magic_defence_weight = 4.0
+speed_weight = 1.2

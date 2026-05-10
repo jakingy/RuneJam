@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_82wc7"]
+
+[resource]
+script = ExtResource("1_82wc7")
+words = "Dewdrop"
+tier = 1.0
+element = "water"
+max_health_weight = 0.9
+physical_attack_weight = 0.4
+physical_defence_weight = 0.8
+magic_attack_weight = 1.2
+magic_defence_weight = 1.2
+speed_weight = 0.8

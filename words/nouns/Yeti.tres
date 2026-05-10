@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_g5oqu"]
+
+[resource]
+script = ExtResource("1_g5oqu")
+words = "Yeti"
+tier = 3.0
+element = "ice"
+max_health_weight = 2.5
+physical_attack_weight = 2.2
+physical_defence_weight = 1.8
+magic_attack_weight = 0.8
+magic_defence_weight = 1.2
+speed_weight = 0.7

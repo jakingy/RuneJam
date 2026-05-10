@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Adjective" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/adjective.gd" id="1_300wl"]
+
+[resource]
+script = ExtResource("1_300wl")
+words = "Bloated"
+tier = 1.0
+max_health_bias_weight = 0.7
+physical_attack_bias_weight = -0.3
+physical_defence_bias_weight = 0.2
+magic_attack_bias_weight = -0.5
+magic_defence_bias_weight = -0.4
+speed_bias_weight = -0.6

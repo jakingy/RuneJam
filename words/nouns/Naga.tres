@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Noun" format=3]
+
+[ext_resource type="Script" path="res://scripts/cards/noun.gd" id="1_wuygk"]
+
+[resource]
+script = ExtResource("1_wuygk")
+words = "Naga"
+tier = 3.0
+element = "water"
+max_health_weight = 1.9
+physical_attack_weight = 1.7
+physical_defence_weight = 1.4
+magic_attack_weight = 2.0
+magic_defence_weight = 1.6
+speed_weight = 1.4
