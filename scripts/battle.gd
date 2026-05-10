@@ -708,6 +708,7 @@ func _confirm_team_a_action() -> void:
 	manuscript.disable_input("Resolving round.")
 
 	var cost = int(last_cost_result.get("probability_cost", 0))
+	adjust_prob(-cost, true)
 	game_state["team_a_probability"] = maxi(0, int(game_state.get("team_a_probability", 0)) - cost)
 	_resolve_round()
 
@@ -732,6 +733,7 @@ func _resolve_round() -> void:
 	_apply_team_b_affordability_fallback()
 
 	var tb_cost = int(round_team_b_cost_result.get("probability_cost", 1))
+	adjust_prob(-tb_cost, false)
 	game_state["team_b_probability"] = maxi(0, int(game_state.get("team_b_probability", 0)) - tb_cost)
 
 	manuscript.add_team_b_message(round_team_b_action)
@@ -822,6 +824,8 @@ func _finish_narrator_round(narrator_data: Dictionary) -> void:
 func _apply_round_income() -> void:
 	game_state["team_a_probability"] = int(game_state.get("team_a_probability", 0)) + ROUND_INCOME
 	game_state["team_b_probability"] = int(game_state.get("team_b_probability", 0)) + ROUND_INCOME
+	adjust_prob(ROUND_INCOME, true)
+	adjust_prob(ROUND_INCOME, false)
 
 
 func _enter_post_game(winner: String) -> void:
@@ -1788,6 +1792,8 @@ func _normalize_game_state(value: Variant) -> Dictionary:
 	state["winner"] = str(state.get("winner", "None"))
 	state["team_a_probability"] = int(state.get("team_a_probability", STARTING_PROBABILITY))
 	state["team_b_probability"] = int(state.get("team_b_probability", STARTING_PROBABILITY))
+	adjust_prob(STARTING_PROBABILITY, false)
+	adjust_prob(STARTING_PROBABILITY, true)
 	state["map_width"] = MAP_WIDTH
 	state["map_height"] = MAP_HEIGHT
 	state["map_name"] = str(state.get("map_name", "Unnamed Arena"))
